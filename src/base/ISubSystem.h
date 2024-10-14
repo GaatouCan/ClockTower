@@ -11,10 +11,11 @@ namespace base {
         ISubSystem() = default;
         virtual ~ISubSystem() = default;
 
+        virtual void init() = 0;
+
     public:
         DISABLE_COPY_MOVE(ISubSystem)
-        virtual void init() = 0;
-        virtual const char* name() const = 0;
+        [[nodiscard]] virtual const char* name() const = 0;
     };
 
     template<class T>

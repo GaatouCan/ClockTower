@@ -1,6 +1,7 @@
 #include "ConnectionHandlerImpl.h"
 #include "../GameWorld.h"
 #include "../../system/protocol/ProtocolSystem.h"
+#include "../../system/login/LoginSystem.h"
 
 #include <spdlog/spdlog.h>
 
@@ -15,7 +16,9 @@ namespace base {
 
     awaitable<void> ConnectionHandlerImpl::onReadPackageT(const ConnectionPointer &conn, Package *pkg) {
         if (!conn->context().has_value()) {
-            // TODO: Login Logic
+            if (const auto sys = GetSystem<LoginSystem>(); sys != nullptr) {
+                co_await sys->onLogin(conn, pkg);
+            }
             co_return;
         }
 

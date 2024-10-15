@@ -81,6 +81,8 @@ with open(os.path.join(GENERATED_DIR, 'ProtoType.generated.h'), 'w', encoding='u
         file.write('\n')
         package_index += 1
 
+    file.write('\t\tPROTO_TYPE_MAX,\n')    
+
     file.write('\t}; // ProtoType\n')
     file.write('} // protocol')
 

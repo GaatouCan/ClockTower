@@ -10,12 +10,12 @@ namespace base {
     static constexpr uint32_t PACKAGE_VERSION = 20241013;
     static constexpr uint32_t UNAVAILABLE_PACKAGE_ID = 1000;
 
-    enum class ECodecMethod : uint16_t {
+    enum class CodecMethod : uint16_t {
         LINE_BASED,
         PROTOBUF
     };
 
-    static constexpr auto DEFAULT_ENCODING_METHOD = ECodecMethod::PROTOBUF;
+    static constexpr auto DEFAULT_ENCODING_METHOD = CodecMethod::PROTOBUF;
 
     class Package final : public IPackage {
 
@@ -25,7 +25,7 @@ namespace base {
             uint32_t magic;
             uint32_t version;
 
-            ECodecMethod method;
+            CodecMethod method;
             uint16_t reserved;
 
             uint32_t id;
@@ -52,14 +52,17 @@ namespace base {
         void invalid() override;
         [[nodiscard]] bool isAvailable() const override;
 
-        Package &changeMethod(ECodecMethod method);
+        Package &changeMethod(CodecMethod method);
         Package &setPackageId(uint32_t id);
 
         Package &setData(std::string_view data);
         Package &setData(const std::stringstream &ss);
 
-        [[nodiscard]] ECodecMethod method() const;
-        [[nodiscard]] uint32_t id() const;
+        [[nodiscard]] uint32_t magic() const;
+        [[nodiscard]] uint32_t version() const;
+
+        [[nodiscard]] CodecMethod method() const;
+        [[nodiscard]] uint32_t id() const override;
 
         [[nodiscard]] size_t dataLength() const;
 

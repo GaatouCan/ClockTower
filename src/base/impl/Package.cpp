@@ -85,7 +85,7 @@ namespace base {
         return header_.id > UNAVAILABLE_PACKAGE_ID;
     }
 
-    Package &Package::changeMethod(const ECodecMethod method) {
+    Package &Package::changeMethod(const CodecMethod method) {
         header_.method = method;
         return *this;
     }
@@ -106,7 +106,15 @@ namespace base {
         return setData(ss.str());
     }
 
-    ECodecMethod Package::method() const {
+    uint32_t Package::magic() const {
+        return header_.magic;
+    }
+
+    uint32_t Package::version() const {
+        return header_.version;
+    }
+
+    CodecMethod Package::method() const {
         return header_.method;
     }
 

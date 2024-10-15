@@ -7,6 +7,8 @@ namespace base {
     public:
         virtual ~IPackage() = default;
 
+        [[nodiscard]] virtual uint32_t id() const { return 0; }
+
         /**
          * Reset the package content
          */

@@ -6,12 +6,14 @@
 
 #include <concepts>
 
+class Player;
+
 namespace base {
 
     class Connection;
     class Package;
 
-    using ProtoFunctor = awaitable<void>(*)(const std::shared_ptr<class Player>&, Package *);
+    using ProtoFunctor = awaitable<void>(*)(const std::shared_ptr<Player>&, Package *);
 
     class ProtocolSystem final : public ISubSystem {
 

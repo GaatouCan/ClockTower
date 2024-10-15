@@ -1,5 +1,6 @@
 #include "ProtocolSystem.h"
 #include "../impl/ProtocolHandlerImpl.h"
+#include "../../player/Player.h"
 
 namespace base {
     void ProtocolSystem::init() {

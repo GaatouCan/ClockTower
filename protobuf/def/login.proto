@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package Login;
+
+enum UserRole {
+  PLAYER = 0;
+  MANAGER = 1;
+  DEVELOPER = 2;
+  ADMIN = 3;
+}
+
+message CS_Login_Request {
+  uint64 player_id = 1;
+  UserRole role = 2;
+  string token = 3;
+  bool override = 4;
+}
+
+message SC_Login_Response {
+  bool result = 1;
+  int32 progress = 2;
+  string describe = 3;
+}
+
+message SC_Override_Login_Response {
+  uint64 player_id = 1;
+}

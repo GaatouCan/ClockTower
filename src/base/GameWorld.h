@@ -100,7 +100,7 @@ namespace base {
  * @param priority Low value first
  */
 #define REGISTER_SYSTEM(sys, priority) \
-    static base::UameWorld::TSystemRegister<sys> g_##sys##_register(priority);
+    static base::GameWorld::TSystemRegister<sys> g_##sys##_register(priority);
 
 inline base::GameWorld &GetWorld() {
     static base::GameWorld world;

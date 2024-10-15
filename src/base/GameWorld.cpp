@@ -5,14 +5,22 @@
 #include "impl/PackageCodecImpl.h"
 #include "impl/ConnectionHandlerImpl.h"
 
+#include "../system/config/ConfigSystem.h"
+#include "../system/protocol/ProtocolSystem.h"
+
 #include <spdlog/spdlog.h>
 
 namespace base {
+
+    REGISTER_SYSTEM(ConfigSystem, 0)
+    REGISTER_SYSTEM(ProtocolSystem, 1)
+
     GameWorld::GameWorld()
         : acceptor_(ctx_),
           fullTimer_(ctx_),
           inited_(false),
           running_(false) {
+
     }
 
     GameWorld::~GameWorld() {

@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package Chat;
+
+message CS_Chat_Room_Request {
+  uint64 roomId = 1;
+}
+
+message SC_Chat_Room_Response {
+  uint64 roomId = 1;
+  uint64 leader = 2;
+
+  message ChatRoomMember {
+    uint32 pid = 1;
+    bool online = 2;
+  }
+
+  repeated ChatRoomMember memberList = 3;
+
+  enum Reason {
+    NORMAL_SEND = 0;
+    MEMBER_ENTERED = 1;
+    MEMBER_EXITED = 2;
+  }
+
+  Reason reason = 4;
+}

@@ -9,6 +9,7 @@
 #include "../system/protocol/ProtocolSystem.h"
 #include "../system/manager/ManagerSystem.h"
 #include "../system/database/DatabaseSystem.h"
+#include "../system/login/LoginSystem.h"
 
 #include <spdlog/spdlog.h>
 
@@ -16,6 +17,7 @@ namespace base {
 
     REGISTER_SYSTEM(ConfigSystem, 0)
     REGISTER_SYSTEM(ProtocolSystem, 1)
+    REGISTER_SYSTEM(LoginSystem, 2)
     REGISTER_SYSTEM(DatabaseSystem, 9)
     REGISTER_SYSTEM(ManagerSystem, 10)
 
@@ -90,17 +92,28 @@ namespace base {
             acceptor_.open(tcp::v4());
             acceptor_.bind({tcp::v4(), 8080});
 
+            const auto loginSys = GetSystem<LoginSystem>();
+            if (loginSys == nullptr) {
+                throw std::runtime_error("Failed to get login system");
+            }
+
             while (running_) {
                 // PackagePool and io_context in per sub thread
                 auto &[pool, ctx] = pool_.nextContextNode();
 
                 if (auto [ec, socket] = co_await acceptor_.async_accept(ctx); socket.is_open()) {
+
                     const std::string addr = socket.remote_endpoint().address().to_string();
+                    const std::string key = fmt::format("{} - {}", addr, CurrentTimeCount());
+
                     spdlog::debug("new connection from: {}", addr);
 
                     const auto conn = std::make_shared<Connection>(std::move(socket), pool);
 
-                    const std::string key = fmt::format("{} - {}", addr, CurrentTimeCount());
+                    if (!loginSys->verifyAddress(conn)) {
+                        conn->disconnect();
+                        continue;
+                    }
 
                     conn->setCodec<PackageCodecImpl>()
                             .setHandler<ConnectionHandlerImpl>()

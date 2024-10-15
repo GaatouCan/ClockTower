@@ -1,0 +1,14 @@
+server:
+  port: 8080
+  context_num: 4
+
+database:
+  pool:
+    min_num: 24
+    max_num: 120
+  mysql:
+    host: localhost
+    port: 33060
+    user: root
+    passwd: 12345678
+    database: ClockTower

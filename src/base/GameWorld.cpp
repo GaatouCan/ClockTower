@@ -27,6 +27,10 @@ namespace base {
 
     GameWorld::~GameWorld() {
         shutdown();
+
+        for (const auto sys : std::views::values(systemMap_)) {
+            delete sys;
+        }
     }
 
     GameWorld & GameWorld::init() {

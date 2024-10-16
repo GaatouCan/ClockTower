@@ -32,16 +32,16 @@ namespace base {
         IPackage *acquire();
         void recycle(IPackage *pkg);
 
-        static void readConfig(const YAML::Node &cfg);
+        static void LoadConfig(const YAML::Node &cfg);
 
-        static void setDefaultCapacity(size_t capacity);
-        static void setMinimumCapacity(size_t capacity);
+        static void SetDefaultCapacity(size_t capacity);
+        static void SetMinimumCapacity(size_t capacity);
 
-        static void setExpanseRate(float rate);
-        static void setExpanseScale(float scale);
+        static void SetExpanseRate(float rate);
+        static void SetExpanseScale(float scale);
 
-        static void setCollectRate(float rate);
-        static void setCollectScale(float scale);
+        static void SetCollectRate(float rate);
+        static void SetCollectScale(float scale);
 
     private:
         void expanse();

@@ -50,52 +50,52 @@ namespace base {
         collect();
     }
 
-    void PackagePool::readConfig(const YAML::Node &cfg) {
+    void PackagePool::LoadConfig(const YAML::Node &cfg) {
         if (cfg["package"].IsNull() && cfg["package"]["pool"].IsNull())
             return;
 
         if (!cfg["package"]["pool"]["default_capacity"].IsNull())
-            setDefaultCapacity(cfg["package"]["pool"]["default_capacity"].as<size_t>());
+            SetDefaultCapacity(cfg["package"]["pool"]["default_capacity"].as<size_t>());
 
         if (!cfg["package"]["pool"]["minimum_capacity"].IsNull())
-            setMinimumCapacity(cfg["package"]["pool"]["minimum_capacity"].as<size_t>());
+            SetMinimumCapacity(cfg["package"]["pool"]["minimum_capacity"].as<size_t>());
 
         if (!cfg["package"]["pool"]["expanse_rate"].IsNull())
-            setExpanseRate(cfg["package"]["pool"]["expanse_rate"].as<float>());
+            SetExpanseRate(cfg["package"]["pool"]["expanse_rate"].as<float>());
 
         if (!cfg["package"]["pool"]["expanse_scale"].IsNull())
-            setExpanseScale(cfg["package"]["pool"]["expanse_scale"].as<float>());
+            SetExpanseScale(cfg["package"]["pool"]["expanse_scale"].as<float>());
 
         if (!cfg["package"]["pool"]["collect_rate"].IsNull())
-            setCollectRate(cfg["package"]["pool"]["collect_rate"].as<float>());
+            SetCollectRate(cfg["package"]["pool"]["collect_rate"].as<float>());
 
         if (!cfg["package"]["pool"]["collect_scale"].IsNull())
-            setCollectScale(cfg["package"]["pool"]["collect_scale"].as<float>());
+            SetCollectScale(cfg["package"]["pool"]["collect_scale"].as<float>());
 
         spdlog::info("Package pool config set.");
     }
 
-    void PackagePool::setDefaultCapacity(const size_t capacity) {
+    void PackagePool::SetDefaultCapacity(const size_t capacity) {
         defaultCapacity = capacity;
     }
 
-    void PackagePool::setMinimumCapacity(const size_t capacity) {
+    void PackagePool::SetMinimumCapacity(const size_t capacity) {
         minCapacity = capacity;
     }
 
-    void PackagePool::setExpanseRate(const float rate) {
+    void PackagePool::SetExpanseRate(const float rate) {
         expanseRate = rate;
     }
 
-    void PackagePool::setExpanseScale(const float scale) {
+    void PackagePool::SetExpanseScale(const float scale) {
         expanseScale = scale;
     }
 
-    void PackagePool::setCollectRate(const float rate) {
+    void PackagePool::SetCollectRate(const float rate) {
         collectRate = rate;
     }
 
-    void PackagePool::setCollectScale(const float scale) {
+    void PackagePool::SetCollectScale(const float scale) {
         collectScale = scale;
     }
 

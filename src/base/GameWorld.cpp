@@ -53,7 +53,7 @@ namespace base {
         const auto &config = GetServerConfig();
 
         // Set PackagePool static option
-        PackagePool::readConfig(config);
+        PackagePool::LoadConfig(config);
 
         pool_.start(config["server"]["work_thread"].as<size_t>());
 

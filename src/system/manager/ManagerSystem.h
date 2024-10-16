@@ -11,16 +11,16 @@ namespace base {
     class ManagerSystem final : public ISubSystem {
         SUB_SYSTEM_BODY(ManagerSystem)
 
-        void init() override;
+        void Init() override;
 
         template<MANAGER_TYPE T>
-        void createManager(asio::io_context &ctx) {
+        void CreateManager(asio::io_context &ctx) {
             mgrMap_[typeid(T)] = new T(ctx);
         }
 
     public:
         template<MANAGER_TYPE T>
-        T *getManager() {
+        T *GetManager() {
             if (const auto it = mgrMap_.find(typeid(T)); it != mgrMap_.end()) {
                 return dynamic_cast<T *>(it->second);
             }
@@ -38,5 +38,5 @@ T *GetManager() {
     if (sys == nullptr)
         throw std::runtime_error("Cannot find ManagerSystem");
 
-    return sys->getManager<T>();
+    return sys->GetManager<T>();
 }

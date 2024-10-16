@@ -24,8 +24,8 @@ namespace base {
 
         DISABLE_COPY_MOVE(MultiContextPool)
 
-        void start(size_t num = std::thread::hardware_concurrency());
+        void Start(size_t num = std::thread::hardware_concurrency());
 
-        ContextNode &nextContextNode();
+        ContextNode &NextContextNode();
     };
 } // base

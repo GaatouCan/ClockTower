@@ -19,27 +19,27 @@ namespace base {
 
         SUB_SYSTEM_BODY(ProtocolSystem)
 
-        void init() override;
+        void Init() override;
 
-        void registerProtocol() const;
+        void RegisterProtocol() const;
 
     public:
         template<typename T>
         requires std::derived_from<T, TProtocolHandler<ProtoFunctor>>
-        void setHandler() {
+        void SetHandler() {
             if (handler_ != nullptr)
                 handler_.reset();
 
             handler_ = std::make_unique<T>();
         }
 
-        awaitable<void> onReadPackage(const std::shared_ptr<Connection> &conn, IPackage *pkg) const;
+        awaitable<void> OnReadPackage(const std::shared_ptr<Connection> &conn, IPackage *pkg) const;
 
     private:
         std::unique_ptr<TProtocolHandler<ProtoFunctor>> handler_;
     };
 
 #define REGISTER_PROTOCOL(proto) \
-    handler_->registerProtocol(ProtoType::proto, &proto);
+    handler_->Register(ProtoType::proto, &proto);
 
 } // base

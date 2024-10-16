@@ -5,7 +5,7 @@ namespace base {
         : ctx_(ctx) {
     }
 
-    asio::io_context & IManager::getIOContext() const {
+    asio::io_context & IManager::GetIOContext() const {
         return ctx_;
     }
 } // base

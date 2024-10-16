@@ -47,29 +47,29 @@ namespace base {
         Package(uint32_t id, std::string_view data);
         Package(uint32_t id, const std::stringstream &ss);
 
-        void reset() override;
-        void invalid() override;
-        [[nodiscard]] bool isAvailable() const override;
+        void Reset() override;
+        void Invalid() override;
+        [[nodiscard]] bool IsAvailable() const override;
 
-        Package &setPackageId(uint32_t id);
-        [[nodiscard]] uint32_t id() const override;
+        Package &SetPackageID(uint32_t id);
+        [[nodiscard]] uint32_t GetID() const override;
 
-        Package &setData(std::string_view data);
-        Package &setData(const std::stringstream &ss);
+        Package &SetData(std::string_view data);
+        Package &SetData(const std::stringstream &ss);
 
-        Package &setMagic(uint32_t magic);
-        [[nodiscard]] uint32_t magic() const;
+        Package &SetMagic(uint32_t magic);
+        [[nodiscard]] uint32_t GetMagic() const;
 
-        Package &setVersion(uint32_t version);
-        [[nodiscard]] uint32_t version() const;
+        Package &SetVersion(uint32_t version);
+        [[nodiscard]] uint32_t GetVersion() const;
 
-        Package &changeMethod(CodecMethod method);
-        [[nodiscard]] CodecMethod method() const;
+        Package &ChangeMethod(CodecMethod method);
+        [[nodiscard]] CodecMethod GetMethod() const;
 
-        [[nodiscard]] size_t dataLength() const;
+        [[nodiscard]] size_t GetDataLength() const;
 
-        [[nodiscard]] std::string data() const;
-        [[nodiscard]] const std::vector<uint8_t> &rawData() const;
+        [[nodiscard]] std::string GetData() const;
+        [[nodiscard]] const std::vector<uint8_t> &GetRawData() const;
 
         static constexpr size_t headerSize = sizeof(Header);
     };

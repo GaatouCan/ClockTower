@@ -17,7 +17,7 @@ namespace base {
         }
     }
 
-    void MultiContextPool::start(const size_t num) {
+    void MultiContextPool::Start(const size_t num) {
         nodeVec_ = std::vector<ContextNode>(num);
         for (auto &node : nodeVec_) {
             workVec_.emplace_back(node.ctx);
@@ -32,7 +32,7 @@ namespace base {
         spdlog::info("MultiContextPool started with {} thread", num);
     }
 
-    ContextNode &MultiContextPool::nextContextNode() {
+    ContextNode &MultiContextPool::NextContextNode() {
         auto &res = nodeVec_[nextIndex_++];
         nextIndex_ = nextIndex_ % nodeVec_.size();
         return res;

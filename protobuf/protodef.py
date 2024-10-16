@@ -134,7 +134,7 @@ with open(os.path.join(GENERATED_DIR, 'Protocol.generated.cpp'), 'w', encoding='
 
     file.write('#include "../src/system/protocol/ProtocolSystem.h"\n\n')
 
-    file.write('void base::ProtocolSystem::registerProtocol() const {\n')
+    file.write('void base::ProtocolSystem::RegisterProtocol() const {\n')
     file.write('\tusing namespace protocol;\n')
 
     for package in proto_data:

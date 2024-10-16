@@ -4,26 +4,26 @@
 #include <spdlog/spdlog.h>
 
 namespace base {
-    awaitable<void> ProtocolHandlerImpl::execute(const std::shared_ptr<Connection> &conn, IPackage *pkg) {
-        if (!pkg->isAvailable()) {
+    awaitable<void> ProtocolHandlerImpl::Execute(const std::shared_ptr<Connection> &conn, IPackage *pkg) {
+        if (!pkg->IsAvailable()) {
             spdlog::warn("{} - Package unavailable", __func__);
             co_return;
         }
 
-        if (pkg->id() >= static_cast<uint32_t>(ProtoType::PROTO_TYPE_MAX)) {
+        if (pkg->GetID() >= static_cast<uint32_t>(ProtoType::PROTO_TYPE_MAX)) {
             spdlog::warn("{} - Protocol type out of range", __func__);
             co_return;
         }
 
-        const auto type = static_cast<ProtoType>(pkg->id());
+        const auto type = static_cast<ProtoType>(pkg->GetID());
 
-        auto func = find(type);
+        auto func = Find(type);
         if (!func) {
             spdlog::warn("{} - Protocol type not found", __func__);
             co_return;
         }
 
-        const auto pid = std::any_cast<uint64_t>(conn->context());
+        const auto pid = std::any_cast<uint64_t>(conn->GetContext());
         // TODO: Find Player Logic
 
         co_await std::invoke(func, nullptr, dynamic_cast<Package *>(pkg));

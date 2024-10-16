@@ -7,23 +7,23 @@ namespace base {
     public:
         virtual ~IPackage() = default;
 
-        [[nodiscard]] virtual uint32_t id() const { return 0; }
+        [[nodiscard]] virtual uint32_t GetID() const { return 0; }
 
         /**
          * Reset all content in package
          */
-        virtual void reset() = 0;
+        virtual void Reset() = 0;
 
         /**
          * Make package unavailable
          */
-        virtual void invalid() = 0;
+        virtual void Invalid() = 0;
 
         /**
          * Judge whether the package is valid
          * @return bool
          */
-        [[nodiscard]] virtual bool isAvailable() const = 0;
+        [[nodiscard]] virtual bool IsAvailable() const = 0;
     };
 
     template<typename T>

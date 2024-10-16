@@ -6,7 +6,7 @@
 namespace base {
     class LoginHandlerImpl final : public TLoginHandler<Package> {
     public:
-        asio::awaitable<void> login(const std::shared_ptr<Connection> &conn, const LoginInfo &) override;
-        LoginInfo parseLoginInfoT(Package *) override;
+        asio::awaitable<void> OnPlayerLogin(const std::shared_ptr<Connection> &conn, const LoginInfo &) override;
+        LoginInfo ParseLoginInfoT(Package *) override;
     };
 } // base

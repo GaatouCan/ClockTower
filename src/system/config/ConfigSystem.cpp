@@ -5,7 +5,7 @@
 #include <spdlog/spdlog.h>
 
 namespace base {
-    void ConfigSystem::init() {
+    void ConfigSystem::Init() {
         spdlog::info("Using configuration file: {}", YAMLPath_ + SERVER_CONFIG_FILE);
 
         config_ = YAML::LoadFile(YAMLPath_ + SERVER_CONFIG_FILE);
@@ -36,19 +36,19 @@ namespace base {
         });
     }
 
-    void ConfigSystem::setYAMLPath(const std::string &path) {
+    void ConfigSystem::SetYAMLPath(const std::string &path) {
         YAMLPath_ = path;
     }
 
-    void ConfigSystem::setJSONPath(const std::string &path) {
+    void ConfigSystem::SetJSONPath(const std::string &path) {
         JSONPath_ = path;
     }
 
-    const YAML::Node & ConfigSystem::serverConfig() const {
+    const YAML::Node & ConfigSystem::GetConfig() const {
         return config_;
     }
 
-    std::optional<nlohmann::json> ConfigSystem::find(const std::string &path, const uint64_t id) const {
+    std::optional<nlohmann::json> ConfigSystem::Find(const std::string &path, const uint64_t id) const {
         if (const auto it = configMap_.find(path); it != configMap_.end()) {
             if (it->second.contains(std::to_string(id)))
                 return it->second[std::to_string(id)];

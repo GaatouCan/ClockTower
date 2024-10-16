@@ -30,14 +30,14 @@ namespace base {
     }
 
     GameWorld::~GameWorld() {
-        shutdown();
+        Shutdown();
 
         for (const auto sys : std::views::values(systemMap_)) {
             delete sys;
         }
     }
 
-    GameWorld & GameWorld::init() {
+    GameWorld & GameWorld::Init() {
         while (!initPriority_.empty()) {
             auto [priority, type] = initPriority_.top();
             initPriority_.pop();
@@ -46,8 +46,8 @@ namespace base {
             if (iter == systemMap_.end())
                 continue;
 
-            iter->second->init();
-            spdlog::info("{} initialized.", iter->second->name());
+            iter->second->Init();
+            spdlog::info("{} initialized.", iter->second->GetSystemName());
         }
 
         const auto &config = GetServerConfig();
@@ -55,27 +55,27 @@ namespace base {
         // Set PackagePool static option
         PackagePool::LoadConfig(config);
 
-        pool_.start(config["server"]["work_thread"].as<size_t>());
+        pool_.Start(config["server"]["work_thread"].as<size_t>());
 
         inited_ = true;
         return *this;
     }
 
-    GameWorld & GameWorld::run() {
+    GameWorld & GameWorld::Run() {
         running_ = true;
 
         asio::signal_set signals(ctx_, SIGINT, SIGTERM);
         signals.async_wait([&](auto, auto) {
-            shutdown();
+            Shutdown();
         });
 
-        co_spawn(ctx_, waitForConnect(), detached);
+        co_spawn(ctx_, WaitForConnect(), detached);
         ctx_.run();
 
         return *this;
     }
 
-    GameWorld & GameWorld::shutdown() {
+    GameWorld & GameWorld::Shutdown() {
         if (!inited_)
             return *this;
 
@@ -92,7 +92,7 @@ namespace base {
         return *this;
     }
 
-    awaitable<void> GameWorld::waitForConnect() {
+    awaitable<void> GameWorld::WaitForConnect() {
         const auto &config = GetServerConfig();
 
         try {
@@ -106,13 +106,13 @@ namespace base {
 
             while (running_) {
                 // PackagePool and io_context in per sub thread
-                auto &[pool, ctx] = pool_.nextContextNode();
+                auto &[pool, ctx] = pool_.NextContextNode();
 
                 if (auto [ec, socket] = co_await acceptor_.async_accept(ctx); socket.is_open()) {
                     const auto addr = socket.remote_endpoint().address();
                     spdlog::debug("New connection from: {}", addr.to_string());
 
-                    if (!loginSys->verifyAddress(socket.remote_endpoint().address())) {
+                    if (!loginSys->VerifyAddress(socket.remote_endpoint().address())) {
                         spdlog::debug("Rejected connection from: {}", addr.to_string());
                         continue;
                     }
@@ -122,13 +122,13 @@ namespace base {
 
                     const std::string key = fmt::format("{} - {}", addr.to_string(), CurrentTimeCount());
 
-                    conn->setCodec<PackageCodecImpl>()
-                            .setHandler<ConnectionHandlerImpl>()
-                            .setWatchdogTimeout(30)
-                            .setWriteTimeout(5)
-                            .setReadTimeout(5)
-                            .setKey(key)
-                            .connect();
+                    conn->SetCodec<PackageCodecImpl>()
+                            .SetHandler<ConnectionHandlerImpl>()
+                            .SetWatchdogTimeout(30)
+                            .SetWriteTimeout(5)
+                            .SetReadTimeout(5)
+                            .SetKey(key)
+                            .ConnectToClient();
 
                     connMap_[key] = conn;
 
@@ -140,11 +140,11 @@ namespace base {
             }
         } catch (std::exception &e) {
             spdlog::error("{} - {}", __func__, e.what());
-            shutdown();
+            Shutdown();
         }
     }
 
-    void GameWorld::removeConnection(const std::string &key) {
+    void GameWorld::RemoveConnection(const std::string &key) {
         if (std::this_thread::get_id() != threadId_) {
             co_spawn(ctx_, [this, &key]() mutable -> awaitable<void> {
                 connMap_.erase(key);

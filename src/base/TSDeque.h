@@ -12,17 +12,17 @@ namespace base {
         TSDeque() = default;
         ~TSDeque() = default;
 
-        T &front() {
+        T &Front() {
             std::shared_lock lock(sharedMutex_);
             return deque_.front();
         }
 
-        T &back() {
+        T &Back() {
             std::shared_lock lock(sharedMutex_);
             return deque_.back();
         }
 
-        void pushFront(const T &data) {
+        void PushFront(const T &data) {
             std::unique_lock lock(sharedMutex_);
             deque_.push_front(data);
 
@@ -30,7 +30,7 @@ namespace base {
             condVar_.notify_one();
         }
 
-        void pushBack(const T &data) {
+        void PushBack(const T &data) {
             std::unique_lock lock(sharedMutex_);
             deque_.push_back(data);
 
@@ -38,7 +38,7 @@ namespace base {
             condVar_.notify_one();
         }
 
-        void pushFront(T &&data) {
+        void PushFront(T &&data) {
             std::unique_lock lock(sharedMutex_);
             deque_.emplace_front(data);
 
@@ -46,7 +46,7 @@ namespace base {
             condVar_.notify_one();
         }
 
-        void pushBack(T &&data) {
+        void PushBack(T &&data) {
             std::unique_lock lock(sharedMutex_);
             deque_.emplace_back(data);
 
@@ -54,45 +54,45 @@ namespace base {
             condVar_.notify_one();
         }
 
-        T popFront() {
+        T PopFront() {
             std::unique_lock lock(sharedMutex_);
             T data = deque_.front();
             deque_.pop_front();
             return data;
         }
 
-        T popBack() {
+        T PopBack() {
             std::unique_lock lock(sharedMutex_);
             T data = deque_.back();
             deque_.pop_back();
             return data;
         }
 
-        bool empty() const {
+        bool IsEmpty() const {
             std::shared_lock lock(sharedMutex_);
             return deque_.empty();
         }
 
-        size_t size() const {
+        size_t Size() const {
             std::shared_lock lock(sharedMutex_);
             return deque_.size();
         }
 
-        void clear() {
+        void Clear() {
             std::unique_lock lock(sharedMutex_);
             deque_.clear();
         }
 
-        void quit() {
+        void Quit() {
             quit_ = true;
             condVar_.notify_all();
         }
 
-        bool isRunning() const {
+        bool IsRunning() const {
             return !quit_;
         }
 
-        void wait() {
+        void Wait() {
             std::unique_lock lock(blockMutex_);
             condVar_.wait(lock, [this] { return !deque_.empty() || quit_; });
         }

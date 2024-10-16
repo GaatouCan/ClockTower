@@ -62,77 +62,77 @@ namespace base {
         : Package(id, ss.str()) {
     }
 
-    void Package::reset() {
+    void Package::Reset() {
         memset(&header_, 0, sizeof(header_));
 
         data_.clear();
         data_.shrink_to_fit();
     }
 
-    void Package::invalid() {
+    void Package::Invalid() {
         header_.id = UNAVAILABLE_PACKAGE_ID;
     }
 
-    bool Package::isAvailable() const {
+    bool Package::IsAvailable() const {
         return header_.id > UNAVAILABLE_PACKAGE_ID;
     }
 
-    Package &Package::changeMethod(const CodecMethod method) {
+    Package &Package::ChangeMethod(const CodecMethod method) {
         header_.method = method;
         return *this;
     }
 
-    Package &Package::setPackageId(const uint32_t id) {
+    Package &Package::SetPackageID(const uint32_t id) {
         header_.id = id;
         return *this;
     }
 
-    Package &Package::setData(const std::string_view data) {
+    Package &Package::SetData(const std::string_view data) {
         data_.resize(data.size());
         memcpy(data_.data(), data.data(), data.size());
         header_.size = data_.size();
         return *this;
     }
 
-    Package &Package::setData(const std::stringstream &ss) {
-        return setData(ss.str());
+    Package &Package::SetData(const std::stringstream &ss) {
+        return SetData(ss.str());
     }
 
-    Package & Package::setMagic(const uint32_t magic) {
+    Package & Package::SetMagic(const uint32_t magic) {
         header_.magic = magic;
         return *this;
     }
 
-    Package & Package::setVersion(const uint32_t version) {
+    Package & Package::SetVersion(const uint32_t version) {
         header_.version = version;
         return *this;
     }
 
-    uint32_t Package::magic() const {
+    uint32_t Package::GetMagic() const {
         return header_.magic;
     }
 
-    uint32_t Package::version() const {
+    uint32_t Package::GetVersion() const {
         return header_.version;
     }
 
-    CodecMethod Package::method() const {
+    CodecMethod Package::GetMethod() const {
         return header_.method;
     }
 
-    uint32_t Package::id() const {
+    uint32_t Package::GetID() const {
         return header_.id;
     }
 
-    size_t Package::dataLength() const {
+    size_t Package::GetDataLength() const {
         return data_.size();
     }
 
-    std::string Package::data() const {
+    std::string Package::GetData() const {
         return {data_.begin(), data_.end()};
     }
 
-    const std::vector<uint8_t> &Package::rawData() const {
+    const std::vector<uint8_t> &Package::GetRawData() const {
         return data_;
     }
 } // base

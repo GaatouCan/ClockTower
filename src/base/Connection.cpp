@@ -10,85 +10,85 @@ namespace base {
     }
 
     Connection::~Connection() {
-        disconnect();
+        Disconnect();
     }
 
-    void Connection::connect() {
+    void Connection::ConnectToClient() {
         deadline_ = std::chrono::steady_clock::now() + expireTime_;
 
         if (handler_ != nullptr)
-            handler_->onConnected(shared_from_this());
+            handler_->OnConnected(shared_from_this());
 
         co_spawn(socket_.get_executor(), [self = shared_from_this()]() mutable -> awaitable<void> {
             try {
-                co_await (self->read() || self->watchdog());
+                co_await (self->ReadPackage() || self->Watchdog());
             } catch (std::exception &e) {
                 spdlog::error("Connection::connect() - {}", e.what());
             }
         }, detached);
     }
 
-    void Connection::disconnect() {
+    void Connection::Disconnect() {
         if (socket_.is_open()) {
             socket_.close();
             if (handler_ != nullptr)
-                handler_->onClosed(shared_from_this());
+                handler_->OnClosed(shared_from_this());
         }
 
-        while (output_.empty()) {
-            pool_.recycle(output_.popFront());
+        while (output_.IsEmpty()) {
+            pool_.Recycle(output_.PopFront());
         }
     }
 
-    Connection & Connection::setContext(const std::any &ctx) {
+    Connection & Connection::SetContext(const std::any &ctx) {
         ctx_ = ctx;
         return *this;
     }
 
-    Connection & Connection::resetContext() {
+    Connection & Connection::ResetContext() {
         ctx_.reset();
         return *this;
     }
 
-    Connection & Connection::setKey(const std::string &key) {
+    Connection & Connection::SetKey(const std::string &key) {
         key_ = key;
         return *this;
     }
 
-    Connection & Connection::setWatchdogTimeout(uint32_t sec) {
+    Connection & Connection::SetWatchdogTimeout(uint32_t sec) {
         expireTime_ = std::chrono::seconds(sec);
         return *this;
     }
 
-    Connection & Connection::setWriteTimeout(uint32_t sec) {
+    Connection & Connection::SetWriteTimeout(uint32_t sec) {
         writeTimeout_ = std::chrono::seconds(sec);
         return *this;
     }
 
-    Connection & Connection::setReadTimeout(uint32_t sec) {
+    Connection & Connection::SetReadTimeout(uint32_t sec) {
         readTimeout_ = std::chrono::seconds(sec);
         return *this;
     }
 
-    IPackage * Connection::buildPackage() const {
-        return pool_.acquire();
+    IPackage * Connection::BuildPackage() const {
+        return pool_.Acquire();
     }
 
-    void Connection::send(IPackage *pkg) {
-        const bool bEmpty = output_.empty();
-        output_.pushBack(pkg);
+    void Connection::Send(IPackage *pkg) {
+        const bool bEmpty = output_.IsEmpty();
+        output_.PushBack(pkg);
 
         if (bEmpty)
-            co_spawn(socket_.get_executor(), write(), detached);
+            co_spawn(socket_.get_executor(), WritePackage(), detached);
     }
 
-    asio::ip::address Connection::remoteAddress() const {
-        if (isConnected())
+    asio::ip::address Connection::RemoteAddress() const {
+        if (IsConnected())
             return socket_.remote_endpoint().address();
         return {};
     }
 
-    awaitable<void> Connection::watchdog() {
+    awaitable<void> Connection::Watchdog() {
         try {
             decltype(deadline_) now;
             do {
@@ -107,72 +107,72 @@ namespace base {
 
             if (socket_.is_open()) {
                 spdlog::error("Watchdog timer timeout {}", socket_.remote_endpoint().address().to_string());
-                disconnect();
+                Disconnect();
             }
         } catch (std::exception &e) {
             spdlog::error("{} : {}", __func__, e.what());
         }
     }
 
-    awaitable<void> Connection::write() {
+    awaitable<void> Connection::WritePackage() {
         try {
             if (codec_ == nullptr) {
                 spdlog::error("{} - codec undefined", __func__);
-                disconnect();
+                Disconnect();
                 co_return;
             }
 
-            while (socket_.is_open() && !output_.empty()) {
-                const auto pkg = output_.popFront();
+            while (socket_.is_open() && !output_.IsEmpty()) {
+                const auto pkg = output_.PopFront();
 
-                co_await codec_->encode(socket_, pkg);
+                co_await codec_->Encode(socket_, pkg);
 
-                if (pkg->isAvailable()) {
+                if (pkg->IsAvailable()) {
                     if (handler_ != nullptr) {
-                        co_await handler_->onWritePackage(shared_from_this());
+                        co_await handler_->OnWritePackage(shared_from_this());
                     }
                 } else
                     spdlog::error("{} - write failed", __func__);
 
-                pool_.recycle(pkg);
+                pool_.Recycle(pkg);
             }
         } catch (std::exception &e) {
             spdlog::error("{} : {}", __func__, e.what());
-            disconnect();
+            Disconnect();
         }
     }
 
-    awaitable<void> Connection::read() {
+    awaitable<void> Connection::ReadPackage() {
         try {
             if (codec_ == nullptr) {
                 spdlog::error("{} - codec undefined", __func__);
-                disconnect();
+                Disconnect();
                 co_return;
             }
 
             while (socket_.is_open()) {
-                const auto pkg = buildPackage();
+                const auto pkg = BuildPackage();
 
-                co_await codec_->decode(socket_, pkg);
+                co_await codec_->Decode(socket_, pkg);
 
-                if (!pkg->isAvailable()) {
+                if (!pkg->IsAvailable()) {
                     deadline_ = std::chrono::steady_clock::now() + expireTime_;
 
                     if (handler_ != nullptr) {
-                        co_await handler_->onReadPackage(shared_from_this(), pkg);
+                        co_await handler_->OnReadPackage(shared_from_this(), pkg);
                     }
                 } else
                     spdlog::error("{} - read failed", __func__);
 
-                pool_.recycle(pkg);
+                pool_.Recycle(pkg);
             }
         } catch (std::exception &e) {
             spdlog::error("{} : {}", __func__, e.what());
-            disconnect();
+            Disconnect();
         }
     }
 
-    awaitable<void> Connection::timeout(const std::chrono::duration<uint32_t> expire) {
+    awaitable<void> Connection::Timeout(const std::chrono::duration<uint32_t> expire) {
         SteadyTimer timer(co_await asio::this_coro::executor);
         timer.expires_after(expire);
         co_await timer.async_wait();

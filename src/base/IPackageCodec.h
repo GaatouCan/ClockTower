@@ -10,26 +10,26 @@ namespace base {
     public:
         virtual ~IPackageCodec() = default;
 
-        virtual awaitable<void> encode(TcpSocket &socket, IPackage *pkg) = 0;
-        virtual awaitable<void> decode(TcpSocket &socket, IPackage *pkg) = 0;
+        virtual awaitable<void> Encode(TcpSocket &socket, IPackage *pkg) = 0;
+        virtual awaitable<void> Decode(TcpSocket &socket, IPackage *pkg) = 0;
     };
 
     template<PACKAGE_TYPE T>
     class TPackageCodec : public IPackageCodec {
     public:
-        awaitable<void> encode(TcpSocket &socket, IPackage *pkg) override {
+        awaitable<void> Encode(TcpSocket &socket, IPackage *pkg) override {
             if (pkg == nullptr)
                 throw std::invalid_argument(std::format("{} - Package is nullptr", __func__));
-            co_await encodeT(socket, dynamic_cast<T *>(pkg));
+            co_await EncodeT(socket, dynamic_cast<T *>(pkg));
         }
 
-        awaitable<void> decode(TcpSocket &socket, IPackage *pkg) override {
+        awaitable<void> Decode(TcpSocket &socket, IPackage *pkg) override {
             if (pkg == nullptr)
                 throw std::invalid_argument(std::format("{} - Package is nullptr", __func__));
-            co_await decodeT(socket, dynamic_cast<T *>(pkg));
+            co_await DecodeT(socket, dynamic_cast<T *>(pkg));
         }
 
-        virtual awaitable<void> encodeT(TcpSocket &socket, T *pkg) = 0;
-        virtual awaitable<void> decodeT(TcpSocket &socket, T *pkg) = 0;
+        virtual awaitable<void> EncodeT(TcpSocket &socket, T *pkg) = 0;
+        virtual awaitable<void> DecodeT(TcpSocket &socket, T *pkg) = 0;
     };
 }

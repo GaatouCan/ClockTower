@@ -6,18 +6,18 @@
 #include <spdlog/spdlog.h>
 
 namespace base {
-    void ConnectionHandlerImpl::onConnected(const ConnectionPointer &conn) {
+    void ConnectionHandlerImpl::OnConnected(const ConnectionPointer &conn) {
 
     }
 
-    void ConnectionHandlerImpl::onClosed(const ConnectionPointer &conn) {
-        GetWorld().removeConnection(conn->key());
+    void ConnectionHandlerImpl::OnClosed(const ConnectionPointer &conn) {
+        GetWorld().RemoveConnection(conn->GetKey());
     }
 
-    awaitable<void> ConnectionHandlerImpl::onReadPackageT(const ConnectionPointer &conn, Package *pkg) {
-        if (!conn->context().has_value()) {
+    awaitable<void> ConnectionHandlerImpl::OnReadPackageT(const ConnectionPointer &conn, Package *pkg) {
+        if (!conn->GetContext().has_value()) {
             if (const auto sys = GetSystem<LoginSystem>(); sys != nullptr) {
-                co_await sys->onLogin(conn, pkg);
+                co_await sys->OnLogin(conn, pkg);
             }
             co_return;
         }
@@ -28,6 +28,6 @@ namespace base {
             co_return;
         }
 
-        co_await sys->onReadPackage(conn, pkg);
+        co_await sys->OnReadPackage(conn, pkg);
     }
 } // base

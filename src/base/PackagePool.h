@@ -29,8 +29,8 @@ namespace base {
 
         DISABLE_COPY_MOVE(PackagePool)
 
-        IPackage *acquire();
-        void recycle(IPackage *pkg);
+        IPackage *Acquire();
+        void Recycle(IPackage *pkg);
 
         static void LoadConfig(const YAML::Node &cfg);
 
@@ -44,7 +44,7 @@ namespace base {
         static void SetCollectScale(float scale);
 
     private:
-        void expanse();
-        void collect();
+        void Expanse();
+        void Collect();
     };
 } // base

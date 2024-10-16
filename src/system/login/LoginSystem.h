@@ -11,13 +11,13 @@ namespace base {
     class LoginSystem final : public ISubSystem {
 
         SUB_SYSTEM_BODY(LoginSystem)
-        void init() override;
+        void Init() override;
 
     public:
-        bool verifyAddress(const asio::ip::address& addr);
-        uint64_t verifyToken(uint64_t pid, const std::string &token);
+        bool VerifyAddress(const asio::ip::address& addr);
+        uint64_t VerifyToken(uint64_t pid, const std::string &token);
 
-        awaitable<void> onLogin(const std::shared_ptr<Connection> &conn, IPackage *pkg);
+        awaitable<void> OnLogin(const std::shared_ptr<Connection> &conn, IPackage *pkg);
 
     private:
         std::unique_ptr<ILoginHandler> handler_;

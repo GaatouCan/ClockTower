@@ -1,6 +1,6 @@
 #include "ManagerSystem.h"
 
 namespace base {
-    void ManagerSystem::init() {
+    void ManagerSystem::Init() {
     }
 } // base

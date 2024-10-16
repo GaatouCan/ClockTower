@@ -6,7 +6,7 @@
 namespace base {
     class PackageCodecImpl final : public TPackageCodec<Package>{
     public:
-        awaitable<void> encodeT(TcpSocket &socket, Package *pkg) override;
-        awaitable<void> decodeT(TcpSocket &socket, Package *pkg) override;
+        awaitable<void> EncodeT(TcpSocket &socket, Package *pkg) override;
+        awaitable<void> DecodeT(TcpSocket &socket, Package *pkg) override;
     };
 } // base

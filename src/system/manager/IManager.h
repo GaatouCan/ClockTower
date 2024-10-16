@@ -15,7 +15,7 @@ namespace base {
 
         DISABLE_COPY_MOVE(IManager)
 
-        [[nodiscard]] asio::io_context &getIOContext() const;
+        [[nodiscard]] asio::io_context &GetIOContext() const;
     };
 
     template<typename T>

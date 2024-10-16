@@ -18,16 +18,16 @@ void InitPackage(base::IPackage *pkg) {
         return;
 
     if (!cfg["package"]["magic"].IsNull())
-        tmp->setMagic(cfg["package"]["magic"].as<uint32_t>());
+        tmp->SetMagic(cfg["package"]["magic"].as<uint32_t>());
 
     if (!cfg["package"]["version"].IsNull())
-        tmp->setVersion(cfg["package"]["version"].as<uint32_t>());
+        tmp->SetVersion(cfg["package"]["version"].as<uint32_t>());
 
     if (!cfg["package"]["method"].IsNull()) {
         if (const auto method = cfg["package"]["method"].as<std::string>(); method == "LineBased")
-            tmp->changeMethod(base::CodecMethod::LINE_BASED);
+            tmp->ChangeMethod(base::CodecMethod::LINE_BASED);
         else if (method == "Protobuf")
-            tmp->changeMethod(base::CodecMethod::PROTOBUF);
+            tmp->ChangeMethod(base::CodecMethod::PROTOBUF);
     }
 }
 

@@ -1,6 +1,6 @@
 #include "DatabaseSystem.h"
 
 namespace base {
-    void DatabaseSystem::init() {
+    void DatabaseSystem::Init() {
     }
 } // base

@@ -3,14 +3,14 @@
 #include "../../player/Player.h"
 
 namespace base {
-    void ProtocolSystem::init() {
-        setHandler<ProtocolHandlerImpl>();
-        registerProtocol();
+    void ProtocolSystem::Init() {
+        SetHandler<ProtocolHandlerImpl>();
+        RegisterProtocol();
     }
 
-    awaitable<void> ProtocolSystem::onReadPackage(const std::shared_ptr<Connection> &conn, IPackage *pkg) const {
+    awaitable<void> ProtocolSystem::OnReadPackage(const std::shared_ptr<Connection> &conn, IPackage *pkg) const {
         if (handler_ != nullptr) {
-            co_await handler_->execute(conn, pkg);
+            co_await handler_->Execute(conn, pkg);
         }
         co_return;
     }

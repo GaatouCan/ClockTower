@@ -44,21 +44,21 @@ namespace base {
         Connection(TcpSocket socket, PackagePool &pool);
         ~Connection();
 
-        void connect();
-        void disconnect();
+        void ConnectToClient();
+        void Disconnect();
 
-        Connection &setContext(const std::any &ctx);
-        Connection &resetContext();
+        Connection &SetContext(const std::any &ctx);
+        Connection &ResetContext();
 
-        Connection &setKey(const std::string &key);
+        Connection &SetKey(const std::string &key);
 
-        Connection &setWatchdogTimeout(uint32_t sec);
-        Connection &setWriteTimeout(uint32_t sec);
-        Connection &setReadTimeout(uint32_t sec);
+        Connection &SetWatchdogTimeout(uint32_t sec);
+        Connection &SetWriteTimeout(uint32_t sec);
+        Connection &SetReadTimeout(uint32_t sec);
 
         template<typename T>
         requires std::derived_from<T, IPackageCodec>
-        Connection &setCodec() {
+        Connection &SetCodec() {
             if (codec_ != nullptr)
                 codec_.reset();
 
@@ -68,7 +68,7 @@ namespace base {
 
         template<typename T>
         requires std::derived_from<T, IConnectionHandler>
-        Connection &setHandler() {
+        Connection &SetHandler() {
             if (handler_ != nullptr)
                 handler_.reset();
 
@@ -76,24 +76,23 @@ namespace base {
             return *this;
         }
 
+        IPackage *BuildPackage() const;
+        void Send(IPackage *pkg);
 
-        IPackage *buildPackage() const;
-        void send(IPackage *pkg);
+        [[nodiscard]] bool IsConnected() const { return socket_.is_open(); }
+        [[nodiscard]] std::string GetKey() const { return key_; }
+        [[nodiscard]] const std::any &GetContext() const { return ctx_; }
 
-        [[nodiscard]] bool isConnected() const { return socket_.is_open(); }
-        [[nodiscard]] std::string key() const { return key_; }
-        [[nodiscard]] const std::any &context() const { return ctx_; }
+        [[nodiscard]] TcpSocket &GetSocket() { return socket_; }
 
-        [[nodiscard]] TcpSocket &socket() { return socket_; }
-
-        [[nodiscard]] asio::ip::address remoteAddress() const;
+        [[nodiscard]] asio::ip::address RemoteAddress() const;
 
     private:
-        awaitable<void> watchdog();
+        awaitable<void> Watchdog();
 
-        awaitable<void> write();
-        awaitable<void> read();
+        awaitable<void> WritePackage();
+        awaitable<void> ReadPackage();
 
-        static awaitable<void> timeout(std::chrono::duration<uint32_t> expire);
+        static awaitable<void> Timeout(std::chrono::duration<uint32_t> expire);
     };
 } // base

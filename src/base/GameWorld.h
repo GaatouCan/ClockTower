@@ -52,15 +52,15 @@ namespace base {
 
         DISABLE_COPY_MOVE(GameWorld)
 
-        GameWorld &init();
-        GameWorld &run();
+        GameWorld &Init();
+        GameWorld &Run();
 
-        GameWorld &shutdown();
+        GameWorld &Shutdown();
 
-        void removeConnection(const std::string &key);
+        void RemoveConnection(const std::string &key);
 
         template<SYSTEM_TYPE T>
-        T *getSystem() noexcept {
+        T *GetSystem() noexcept {
             if (const auto iter = systemMap_.find(typeid(T)); iter!= systemMap_.end()) {
                 return dynamic_cast<T *>(iter->second);
             }
@@ -71,13 +71,13 @@ namespace base {
         class TSystemRegister {
         public:
             explicit TSystemRegister(const int priority = 0) {
-                GetWorld().createSystem<T>(priority);
+                GetWorld().CreateSystem<T>(priority);
             }
         };
 
     private:
         template<SYSTEM_TYPE T>
-        T *createSystem(const int priority = 0) {
+        T *CreateSystem(const int priority = 0) {
             if (inited_)
                 return nullptr;
 
@@ -89,7 +89,7 @@ namespace base {
             return res;
         }
 
-        awaitable<void> waitForConnect();
+        awaitable<void> WaitForConnect();
 
     };
 } // base
@@ -109,5 +109,5 @@ inline base::GameWorld &GetWorld() {
 
 template<base::SYSTEM_TYPE T>
 T *GetSystem() {
-    return  GetWorld().getSystem<T>();
+    return  GetWorld().GetSystem<T>();
 }

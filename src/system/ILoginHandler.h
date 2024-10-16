@@ -14,17 +14,17 @@ namespace base {
     public:
         virtual ~ILoginHandler() = default;
 
-        virtual LoginInfo parseLoginInfo(IPackage *) = 0;
-        virtual asio::awaitable<void> login(const std::shared_ptr<class Connection> &conn, const LoginInfo &) = 0;
+        virtual LoginInfo ParseLoginInfo(IPackage *) = 0;
+        virtual asio::awaitable<void> OnPlayerLogin(const std::shared_ptr<class Connection> &conn, const LoginInfo &) = 0;
     };
 
     template<PACKAGE_TYPE T>
     class TLoginHandler : public ILoginHandler {
     public:
-        LoginInfo parseLoginInfo(IPackage *pkg) override {
-            return parseLoginInfoT(dynamic_cast<T *>(pkg));
+        LoginInfo ParseLoginInfo(IPackage *pkg) override {
+            return ParseLoginInfoT(dynamic_cast<T *>(pkg));
         }
 
-        virtual LoginInfo parseLoginInfoT(T *) = 0;
+        virtual LoginInfo ParseLoginInfoT(T *) = 0;
     };
 }

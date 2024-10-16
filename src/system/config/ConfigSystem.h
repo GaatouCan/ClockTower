@@ -15,15 +15,15 @@ namespace base {
 
         SUB_SYSTEM_BODY(ConfigSystem)
 
-        void init() override;
+        void Init() override;
 
     public:
-        void setYAMLPath(const std::string &path);
-        void setJSONPath(const std::string &path);
+        void SetYAMLPath(const std::string &path);
+        void SetJSONPath(const std::string &path);
 
-        const YAML::Node &serverConfig() const;
+        const YAML::Node &GetConfig() const;
 
-        std::optional<nlohmann::json> find(const std::string &path, uint64_t id) const;
+        std::optional<nlohmann::json> Find(const std::string &path, uint64_t id) const;
 
     private:
         std::string YAMLPath_;
@@ -39,5 +39,5 @@ inline const YAML::Node &GetServerConfig() {
     if (sys == nullptr)
         throw std::runtime_error("Config System not found");
 
-    return sys->serverConfig();
+    return sys->GetConfig();
 }

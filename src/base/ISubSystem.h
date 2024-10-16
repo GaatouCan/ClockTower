@@ -11,11 +11,11 @@ namespace base {
         ISubSystem() = default;
         virtual ~ISubSystem() = default;
 
-        virtual void init() = 0;
+        virtual void Init() = 0;
 
     public:
         DISABLE_COPY_MOVE(ISubSystem)
-        [[nodiscard]] virtual const char* name() const = 0;
+        [[nodiscard]] virtual const char* GetSystemName() const = 0;
     };
 
     template<class T>
@@ -24,7 +24,7 @@ namespace base {
 #define SUB_SYSTEM_BODY(sys) \
     friend GameWorld; \
 public: \
-    [[nodiscard]] constexpr const char *name() const override { \
+    [[nodiscard]] constexpr const char *GetSystemName() const override { \
         return #sys; \
     } \
 private:

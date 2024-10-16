@@ -28,8 +28,8 @@ namespace base {
         }
     }
 
-    IPackage * PackagePool::acquire() {
-        expanse();
+    IPackage * PackagePool::Acquire() {
+        Expanse();
 
         IPackage *pkg = queue_.front();
         queue_.pop();
@@ -40,14 +40,14 @@ namespace base {
         return pkg;
     }
 
-    void PackagePool::recycle(IPackage *pkg) {
+    void PackagePool::Recycle(IPackage *pkg) {
         if (pkg != nullptr) {
-            pkg->reset();
+            pkg->Reset();
             queue_.push(pkg);
             useCount_--;
         }
 
-        collect();
+        Collect();
     }
 
     void PackagePool::LoadConfig(const YAML::Node &cfg) {
@@ -99,7 +99,7 @@ namespace base {
         collectScale = scale;
     }
 
-    void PackagePool::expanse() {
+    void PackagePool::Expanse() {
         if (std::floor(queue_.size() / useCount_) >= expanseRate)
             return;
 
@@ -109,7 +109,7 @@ namespace base {
         }
     }
 
-    void PackagePool::collect() {
+    void PackagePool::Collect() {
         if (queue_.size() <= minCapacity || std::floor(queue_.size() / useCount_) < collectRate)
             return;
 

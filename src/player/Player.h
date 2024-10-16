@@ -24,7 +24,7 @@ public:
 
     template<typename FUNC, typename ... ARGS>
     void runInThread(FUNC &&func, ARGS &&... args) {
-        co_spawn(conn_->socket().get_executor(), [func = std::move(func), ...args = std::forward<ARGS>(args)]() -> awaitable<void> {
+        co_spawn(conn_->GetSocket().get_executor(), [func = std::move(func), ...args = std::forward<ARGS>(args)]() -> awaitable<void> {
             std::invoke(func, args...);
             co_return;
         }, detached);

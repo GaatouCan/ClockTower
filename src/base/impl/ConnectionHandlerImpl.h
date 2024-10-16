@@ -7,8 +7,8 @@
 namespace base {
     class ConnectionHandlerImpl final : public TConnectionHandler<Package> {
     public:
-        void onConnected(const ConnectionPointer &) override;
-        void onClosed(const ConnectionPointer &) override;
-        awaitable<void> onReadPackageT(const ConnectionPointer &conn, Package *pkg) override;
+        void OnConnected(const ConnectionPointer &) override;
+        void OnClosed(const ConnectionPointer &) override;
+        awaitable<void> OnReadPackageT(const ConnectionPointer &conn, Package *pkg) override;
     };
 } // base

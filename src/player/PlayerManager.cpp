@@ -27,3 +27,11 @@ std::shared_ptr<Player> PlayerManager::FindPlayer(const uint64_t pid) {
     }
     return nullptr;
 }
+
+void PlayerManager::RemovePlayer(const uint64_t pid) {
+    if (!IsSameThread()) {
+        RunInThread(&PlayerManager::RemovePlayer, this, pid);
+        return;
+    }
+    playerMap_.erase(pid);
+}

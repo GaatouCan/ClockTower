@@ -20,4 +20,5 @@ public:
     void PushPlayer(const std::shared_ptr<Player>& plr);
 
     std::shared_ptr<Player> FindPlayer(uint64_t pid);
+    void RemovePlayer(uint64_t pid);
 };

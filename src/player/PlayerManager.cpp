@@ -20,3 +20,10 @@ void PlayerManager::PushPlayer(const std::shared_ptr<Player>& plr) {
     }
     playerMap_[plr->GetPlayerID()] = plr;
 }
+
+std::shared_ptr<Player> PlayerManager::FindPlayer(const uint64_t pid) {
+    if (const auto it = playerMap_.find(pid); it != playerMap_.end()) {
+        return it->second;
+    }
+    return nullptr;
+}

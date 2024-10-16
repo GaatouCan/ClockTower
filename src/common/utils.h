@@ -8,6 +8,8 @@
 
 base::IPackage *CreatePackage();
 
+void InitPackage(base::IPackage *pkg);
+
 void TraverseFolder(const std::string &folder, const std::function<void(const std::filesystem::directory_entry &)> &func);
 
 std::string StringReplace(std::string source, char toReplace, char replacement);

@@ -4,10 +4,6 @@ namespace base {
     Package::Package()
         : header_() {
         memset(&header_, 0, sizeof(header_));
-
-        header_.magic = MAGIC_NUMBER;
-        header_.version = PACKAGE_VERSION;
-        header_.method = DEFAULT_ENCODING_METHOD;
     }
 
     Package::~Package() = default;
@@ -69,10 +65,6 @@ namespace base {
     void Package::reset() {
         memset(&header_, 0, sizeof(header_));
 
-        header_.magic = MAGIC_NUMBER;
-        header_.version = PACKAGE_VERSION;
-        header_.method = DEFAULT_ENCODING_METHOD;
-
         data_.clear();
         data_.shrink_to_fit();
     }
@@ -104,6 +96,16 @@ namespace base {
 
     Package &Package::setData(const std::stringstream &ss) {
         return setData(ss.str());
+    }
+
+    Package & Package::setMagic(const uint32_t magic) {
+        header_.magic = magic;
+        return *this;
+    }
+
+    Package & Package::setVersion(const uint32_t version) {
+        header_.version = version;
+        return *this;
     }
 
     uint32_t Package::magic() const {

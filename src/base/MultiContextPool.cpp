@@ -1,5 +1,7 @@
 #include "MultiContextPool.h"
 
+#include <spdlog/spdlog.h>
+
 namespace base {
     MultiContextPool::MultiContextPool()
         : nextIndex_(0) {
@@ -27,6 +29,7 @@ namespace base {
                 node.ctx.run();
             });
         }
+        spdlog::info("MultiContextPool started with {} thread", num);
     }
 
     ContextNode &MultiContextPool::nextContextNode() {

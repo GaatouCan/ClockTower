@@ -3,33 +3,45 @@
 #include "../common/common.h"
 
 #include <queue>
+#include <yaml-cpp/yaml.h>
 
 namespace base {
 
     class IPackage;
-
-    static constexpr size_t PACKAGE_POOL_DEFAULT_CAPACITY = 64;
-    static constexpr size_t PACKAGE_POOL_MINIMUM_CAPACITY = 16;
-
-    static constexpr float PACKAGE_POOL_EXPANSE_RATE = 0.3f;
-    static constexpr float PACKAGE_POOL_EXPANSE_SCALE = 0.7f;
-
-    static constexpr float PACKAGE_POOL_COLLECT_RATE = 1.f;
-    static constexpr float PACKAGE_POOL_COLLECT_SCALE = 0.7f;
 
     class PackagePool final {
 
         std::queue<IPackage *> queue_;
         size_t useCount_ = 0;
 
+        static size_t defaultCapacity;
+        static size_t minCapacity;
+
+        static float expanseRate;
+        static float expanseScale;
+
+        static float collectRate;
+        static float collectScale;
+
     public:
-        explicit PackagePool(size_t capacity = PACKAGE_POOL_DEFAULT_CAPACITY);
+        explicit PackagePool(size_t capacity = defaultCapacity);
         ~PackagePool();
 
         DISABLE_COPY_MOVE(PackagePool)
 
         IPackage *acquire();
         void recycle(IPackage *pkg);
+
+        static void readConfig(const YAML::Node &cfg);
+
+        static void setDefaultCapacity(size_t capacity);
+        static void setMinimumCapacity(size_t capacity);
+
+        static void setExpanseRate(float rate);
+        static void setExpanseScale(float scale);
+
+        static void setCollectRate(float rate);
+        static void setCollectScale(float scale);
 
     private:
         void expanse();

@@ -6,8 +6,7 @@
 #include <sstream>
 
 namespace base {
-    static constexpr uint32_t MAGIC_NUMBER = 168712;
-    static constexpr uint32_t PACKAGE_VERSION = 20241013;
+
     static constexpr uint32_t UNAVAILABLE_PACKAGE_ID = 1000;
 
     enum class CodecMethod : uint16_t {
@@ -52,17 +51,20 @@ namespace base {
         void invalid() override;
         [[nodiscard]] bool isAvailable() const override;
 
-        Package &changeMethod(CodecMethod method);
         Package &setPackageId(uint32_t id);
+        [[nodiscard]] uint32_t id() const override;
 
         Package &setData(std::string_view data);
         Package &setData(const std::stringstream &ss);
 
+        Package &setMagic(uint32_t magic);
         [[nodiscard]] uint32_t magic() const;
+
+        Package &setVersion(uint32_t version);
         [[nodiscard]] uint32_t version() const;
 
+        Package &changeMethod(CodecMethod method);
         [[nodiscard]] CodecMethod method() const;
-        [[nodiscard]] uint32_t id() const override;
 
         [[nodiscard]] size_t dataLength() const;
 

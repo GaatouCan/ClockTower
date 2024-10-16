@@ -50,7 +50,12 @@ namespace base {
             spdlog::info("{} initialized.", iter->second->name());
         }
 
-        pool_.start(4);
+        const auto &config = GetServerConfig();
+
+        // Set PackagePool static option
+        PackagePool::readConfig(config);
+
+        pool_.start(config["server"]["work_thread"].as<size_t>());
 
         inited_ = true;
         return *this;
@@ -88,9 +93,11 @@ namespace base {
     }
 
     awaitable<void> GameWorld::waitForConnect() {
+        const auto &config = GetServerConfig();
+
         try {
             acceptor_.open(tcp::v4());
-            acceptor_.bind({tcp::v4(), 8080});
+            acceptor_.bind({tcp::v4(), config["server"]["port"].as<uint16_t>()});
 
             const auto loginSys = GetSystem<LoginSystem>();
             if (loginSys == nullptr) {
@@ -102,18 +109,18 @@ namespace base {
                 auto &[pool, ctx] = pool_.nextContextNode();
 
                 if (auto [ec, socket] = co_await acceptor_.async_accept(ctx); socket.is_open()) {
-                    const std::string addr = socket.remote_endpoint().address().to_string();
-                    spdlog::debug("New connection from: {}", addr);
+                    const auto addr = socket.remote_endpoint().address();
+                    spdlog::debug("New connection from: {}", addr.to_string());
 
                     if (!loginSys->verifyAddress(socket.remote_endpoint().address())) {
-                        spdlog::debug("Rejected connection from: {}", addr);
+                        spdlog::debug("Rejected connection from: {}", addr.to_string());
                         continue;
                     }
 
                     const auto conn = std::make_shared<Connection>(std::move(socket), pool);
-                    spdlog::debug("Accept connection from: {}", addr);
+                    spdlog::debug("Accept connection from: {}", addr.to_string());
 
-                    const std::string key = fmt::format("{} - {}", addr, CurrentTimeCount());
+                    const std::string key = fmt::format("{} - {}", addr.to_string(), CurrentTimeCount());
 
                     conn->setCodec<PackageCodecImpl>()
                             .setHandler<ConnectionHandlerImpl>()
@@ -133,6 +140,7 @@ namespace base {
             }
         } catch (std::exception &e) {
             spdlog::error("{} - {}", __func__, e.what());
+            shutdown();
         }
     }
 

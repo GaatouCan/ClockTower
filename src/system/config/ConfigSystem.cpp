@@ -15,7 +15,7 @@ namespace base {
 
         assert(!config_["server"].IsNull());
         assert(!config_["server"]["port"].IsNull());
-        assert(!config_["server"]["context_num"].IsNull());
+        assert(!config_["server"]["work_thread"].IsNull());
 
         const std::string jsonPath = !JSONPath_.empty() ? JSONPath_ : YAMLPath_ + SERVER_CONFIG_JSON;
 

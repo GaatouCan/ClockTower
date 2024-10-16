@@ -1,6 +1,18 @@
 server:
   port: 8080
-  context_num: 4
+  work_thread: 4
+
+package:
+  magic: 23244435
+  version: 20241013
+  method: Protobuf
+  pool:
+    default_capacity: 64
+    minimum_capacity: 16
+    expanse_rate: 0.3
+    expanse_scale: 0.7
+    collect_rate: 1.0
+    collect_scale: 0.7
 
 database:
   pool:

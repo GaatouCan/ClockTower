@@ -4,7 +4,7 @@
 #include "../../base/impl/Package.h"
 
 namespace base {
-    class LoginHandlerImpl : public TLoginHandler<Package> {
+    class LoginHandlerImpl final : public TLoginHandler<Package> {
     public:
         asio::awaitable<void> login(const std::shared_ptr<Connection> &conn, const LoginInfo &) override;
         LoginInfo parseLoginInfoT(Package *) override;

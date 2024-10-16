@@ -59,7 +59,10 @@ namespace base {
 
         void RemoveConnection(const std::string &key);
 
-        const ContextNode &NextContextNode();
+        ContextNode &NextContextNode();
+
+        asio::io_context &GetIOContext();
+        std::thread::id GetThreadID() const;
 
         template<SYSTEM_TYPE T>
         T *GetSystem() noexcept {

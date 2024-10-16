@@ -13,6 +13,8 @@ namespace base {
 
         void Init() override;
 
+        void LoadManager();
+
         template<MANAGER_TYPE T>
         void CreateManager(asio::io_context &ctx, const std::thread::id &tid) {
             const auto mgr = new T(ctx);
@@ -34,6 +36,16 @@ namespace base {
         std::unordered_map<std::type_index, IManager *> mgrMap_;
     };
 } // base
+
+#define REGISTER_MANAGER(useMainThread, mgr) \
+    { \
+        if (useMainThread) { \
+            CreateManager<mgr>(GetWorld().GetIOContext(), GetWorld().GetThreadID()); \
+        } else { \
+            auto& [pool, ctx, tid] = GetWorld().NextContextNode();\
+            CreateManager<mgr>(ctx, tid); \
+        } \
+    }
 
 template<base::MANAGER_TYPE T>
 T *GetManager() {

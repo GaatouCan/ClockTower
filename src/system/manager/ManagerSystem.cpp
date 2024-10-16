@@ -2,5 +2,6 @@
 
 namespace base {
     void ManagerSystem::Init() {
+        LoadManager();
     }
 } // base

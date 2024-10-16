@@ -56,7 +56,9 @@ namespace base {
 
         pool_.Start(config["server"]["work_thread"].as<size_t>());
 
+        threadId_ = std::this_thread::get_id();
         inited_ = true;
+
         return *this;
     }
 
@@ -154,7 +156,15 @@ namespace base {
         connMap_.erase(key);
     }
 
-    const ContextNode & GameWorld::NextContextNode() {
+    ContextNode & GameWorld::NextContextNode() {
         return pool_.NextContextNode();
+    }
+
+    asio::io_context & GameWorld::GetIOContext() {
+        return ctx_;
+    }
+
+    std::thread::id GameWorld::GetThreadID() const {
+        return threadId_;
     }
 } // base

@@ -14,7 +14,7 @@ namespace base {
         void init() override;
 
     public:
-        bool verifyAddress(const std::shared_ptr<Connection> &conn);
+        bool verifyAddress(const asio::ip::address& addr);
         uint64_t verifyToken(uint64_t pid, const std::string &token);
 
         awaitable<void> onLogin(const std::shared_ptr<Connection> &conn, IPackage *pkg);

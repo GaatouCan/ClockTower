@@ -23,7 +23,7 @@ namespace base {
             try {
                 co_await (self->read() || self->watchdog());
             } catch (std::exception &e) {
-                spdlog::error("Connection::connectToClient: {}", e.what());
+                spdlog::error("Connection::connect() - {}", e.what());
             }
         }, detached);
     }
@@ -126,13 +126,14 @@ namespace base {
                 const auto pkg = output_.popFront();
 
                 co_await codec_->encode(socket_, pkg);
-                if (!pkg->isAvailable()) {
-                    spdlog::error("{} - write failed", __func__);
-                    continue;
-                }
 
-                if (handler_ != nullptr)
-                    co_await handler_->onWritePackage(shared_from_this());
+                if (pkg->isAvailable()) {
+                    if (handler_ != nullptr) {
+                        co_await handler_->onWritePackage(shared_from_this());
+                    }
+                } else
+                    spdlog::error("{} - write failed", __func__);
+
                 pool_.recycle(pkg);
             }
         } catch (std::exception &e) {
@@ -153,15 +154,15 @@ namespace base {
                 const auto pkg = buildPackage();
 
                 co_await codec_->decode(socket_, pkg);
+
                 if (!pkg->isAvailable()) {
+                    deadline_ = std::chrono::steady_clock::now() + expireTime_;
+
+                    if (handler_ != nullptr) {
+                        co_await handler_->onReadPackage(shared_from_this(), pkg);
+                    }
+                } else
                     spdlog::error("{} - read failed", __func__);
-                    continue;
-                }
-
-                deadline_ = std::chrono::steady_clock::now() + expireTime_;
-
-                if (handler_ != nullptr)
-                    co_await handler_->onReadPackage(shared_from_this(), pkg);
 
                 pool_.recycle(pkg);
             }

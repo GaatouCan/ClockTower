@@ -102,18 +102,18 @@ namespace base {
                 auto &[pool, ctx] = pool_.nextContextNode();
 
                 if (auto [ec, socket] = co_await acceptor_.async_accept(ctx); socket.is_open()) {
-
                     const std::string addr = socket.remote_endpoint().address().to_string();
-                    const std::string key = fmt::format("{} - {}", addr, CurrentTimeCount());
+                    spdlog::debug("New connection from: {}", addr);
 
-                    spdlog::debug("new connection from: {}", addr);
-
-                    const auto conn = std::make_shared<Connection>(std::move(socket), pool);
-
-                    if (!loginSys->verifyAddress(conn)) {
-                        conn->disconnect();
+                    if (!loginSys->verifyAddress(socket.remote_endpoint().address())) {
+                        spdlog::debug("Rejected connection from: {}", addr);
                         continue;
                     }
+
+                    const auto conn = std::make_shared<Connection>(std::move(socket), pool);
+                    spdlog::debug("Accept connection from: {}", addr);
+
+                    const std::string key = fmt::format("{} - {}", addr, CurrentTimeCount());
 
                     conn->setCodec<PackageCodecImpl>()
                             .setHandler<ConnectionHandlerImpl>()

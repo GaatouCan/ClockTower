@@ -7,7 +7,7 @@
 
 namespace base {
     void ConnectionHandlerImpl::onConnected(const ConnectionPointer &conn) {
-        return true;
+
     }
 
     void ConnectionHandlerImpl::onClosed(const ConnectionPointer &conn) {

@@ -4,7 +4,7 @@ namespace base {
     void LoginSystem::init() {
     }
 
-    bool LoginSystem::verifyAddress(const std::shared_ptr<Connection> &conn) {
+    bool LoginSystem::verifyAddress(const asio::ip::address& addr) {
         return true;
     }
 

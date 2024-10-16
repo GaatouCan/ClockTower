@@ -30,3 +30,5 @@ public:
         }, detached);
     }
 };
+
+std::shared_ptr<Player> CreatePlayer(const base::ConnectionPointer&, uint64_t);

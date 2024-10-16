@@ -27,3 +27,10 @@ std::thread::id Player::GetThreadID() const {
 bool Player::IsSameThread() const {
     return std::this_thread::get_id() == threadId_;
 }
+
+std::shared_ptr<Player> CreatePlayer(const base::ConnectionPointer &conn, const uint64_t pid) {
+    auto plr = std::make_shared<Player>(conn);
+    plr->SetPlayerId(pid);
+
+    return plr;
+}

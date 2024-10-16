@@ -14,8 +14,11 @@ namespace base {
         void Init() override;
 
         template<MANAGER_TYPE T>
-        void CreateManager(asio::io_context &ctx) {
-            mgrMap_[typeid(T)] = new T(ctx);
+        void CreateManager(asio::io_context &ctx, const std::thread::id &tid) {
+            const auto mgr = new T(ctx);
+            mgr->SetThreadID(tid);
+
+            mgrMap_[typeid(T)] = mgr;
         }
 
     public:

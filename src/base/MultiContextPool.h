@@ -8,6 +8,7 @@ namespace base {
     struct ContextNode {
         PackagePool pool;
         asio::io_context ctx;
+        std::thread::id tid;
     };
 
     class MultiContextPool final {

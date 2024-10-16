@@ -1,6 +1,5 @@
 #include "GameWorld.h"
 
-
 #include "../common/utils.h"
 #include "impl/PackageCodecImpl.h"
 #include "impl/ConnectionHandlerImpl.h"
@@ -106,7 +105,7 @@ namespace base {
 
             while (running_) {
                 // PackagePool and io_context in per sub thread
-                auto &[pool, ctx] = pool_.NextContextNode();
+                auto &[pool, ctx, tid] = pool_.NextContextNode();
 
                 if (auto [ec, socket] = co_await acceptor_.async_accept(ctx); socket.is_open()) {
                     const auto addr = socket.remote_endpoint().address();
@@ -153,5 +152,9 @@ namespace base {
             return;
         }
         connMap_.erase(key);
+    }
+
+    const ContextNode & GameWorld::NextContextNode() {
+        return pool_.NextContextNode();
     }
 } // base

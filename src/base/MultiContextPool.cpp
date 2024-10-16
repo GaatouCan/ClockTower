@@ -26,6 +26,8 @@ namespace base {
                 signals.async_wait([&](auto, auto) {
                     node.ctx.stop();
                 });
+
+                node.tid = std::this_thread::get_id();
                 node.ctx.run();
             });
         }
@@ -33,6 +35,9 @@ namespace base {
     }
 
     ContextNode &MultiContextPool::NextContextNode() {
+        if (nodeVec_.empty())
+            throw std::runtime_error("No context node available");
+
         auto &res = nodeVec_[nextIndex_++];
         nextIndex_ = nextIndex_ % nodeVec_.size();
         return res;

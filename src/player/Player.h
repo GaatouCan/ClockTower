@@ -16,15 +16,15 @@ public:
     explicit Player(base::ConnectionPointer conn);
     ~Player() override;
 
-    Player& setPlayerId(uint64_t id);
-    uint64_t pid() const;
+    Player& SetPlayerId(uint64_t id);
+    uint64_t GetPlayerID() const;
 
-    [[nodiscard]] std::thread::id threadId() const;
-    bool isInSameThread() const;
+    [[nodiscard]] std::thread::id GetThreadID() const;
+    bool IsSameThread() const;
 
     template<typename FUNC, typename ... ARGS>
-    void runInThread(FUNC &&func, ARGS &&... args) {
-        co_spawn(conn_->GetSocket().get_executor(), [func = std::move(func), ...args = std::forward<ARGS>(args)]() -> awaitable<void> {
+    void RunInThread(FUNC &&func, ARGS &&... args) {
+        co_spawn(conn_->GetSocket().get_executor(), [func = std::forward<FUNC>(func), ...args = std::forward<ARGS>(args)]() -> awaitable<void> {
             std::invoke(func, args...);
             co_return;
         }, detached);

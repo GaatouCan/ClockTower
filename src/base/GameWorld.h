@@ -59,6 +59,8 @@ namespace base {
 
         void RemoveConnection(const std::string &key);
 
+        const ContextNode &NextContextNode();
+
         template<SYSTEM_TYPE T>
         T *GetSystem() noexcept {
             if (const auto iter = systemMap_.find(typeid(T)); iter!= systemMap_.end()) {

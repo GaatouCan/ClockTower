@@ -42,6 +42,9 @@ namespace base {
         if (running_)
             return *this;
 
+        if (!func_)
+            return *this;
+
         co_spawn(ctx_, [this]() mutable -> awaitable<void> {
             try {
                 running_ = true;

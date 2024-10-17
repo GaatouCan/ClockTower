@@ -39,13 +39,15 @@ namespace base {
         co_spawn(ctx_, [this]() mutable -> awaitable<void> {
             try {
                 TimePoint point = std::chrono::steady_clock::now();
+                point = std::chrono::floor<std::chrono::seconds>(point);
+
                 while (!ctx_.stopped()) {
                     point += std::chrono::seconds(1);
                     timer_.expires_at(point);
                     co_await timer_.async_wait();
 
                     for (const auto mgr: std::views::values(mgrMap_))
-                        mgr->Tick(point);
+                        mgr->OnTick(point);
                 }
             } catch (std::exception &e) {
                 spdlog::warn("{}", e.what());

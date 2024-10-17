@@ -17,7 +17,7 @@ namespace base {
         return tid_ == std::this_thread::get_id();
     }
 
-    void IManager::Tick(TimePoint now) {
+    void IManager::OnTick(TimePoint now) {
     }
 
     asio::io_context & IManager::GetIOContext() const {

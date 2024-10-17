@@ -8,8 +8,6 @@ class Player final : public ICharacter, public std::enable_shared_from_this<Play
     base::ConnectionPointer conn_;
     uint64_t id_;
 
-    ThreadID tid_;
-
 public:
     Player() = delete;
 

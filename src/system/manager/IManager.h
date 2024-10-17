@@ -20,7 +20,7 @@ namespace base {
 
         DISABLE_COPY_MOVE(IManager)
 
-        virtual void Tick(TimePoint now);
+        virtual void OnTick(TimePoint now);
 
         [[nodiscard]] asio::io_context &GetIOContext() const;
 

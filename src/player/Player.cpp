@@ -4,8 +4,7 @@
 
 Player::Player(base::ConnectionPointer conn)
     : conn_(std::move(conn)),
-      id_(0),
-      tid_(conn_->GetThreadID()) {
+      id_(0) {
 }
 
 Player::~Player() {
@@ -25,11 +24,11 @@ base::ConnectionPointer Player::GetConnection() const {
 }
 
 ThreadID Player::GetThreadID() const {
-    return tid_;
+    return conn_->GetThreadID();
 }
 
 bool Player::IsSameThread() const {
-    return std::this_thread::get_id() == tid_;
+    return std::this_thread::get_id() == GetThreadID();
 }
 
 void Player::OnLogin() {

@@ -1,5 +1,7 @@
 #include "ProtocolHandlerImpl.h"
 #include "../../base/Connection.h"
+#include "../../system/manager/ManagerSystem.h"
+#include "../../player/PlayerManager.h"
 
 #include <spdlog/spdlog.h>
 
@@ -23,9 +25,15 @@ namespace base {
             co_return;
         }
 
-        const auto pid = std::any_cast<uint64_t>(conn->GetContext());
-        // TODO: Find Player Logic
+        const auto plrMgr = GetManager<PlayerManager>();
+        if (plrMgr == nullptr) {
+            spdlog::warn("{} - PlayerManager not found", __func__);
+            co_return;
+        }
 
-        co_await std::invoke(func, nullptr, dynamic_cast<Package *>(pkg));
+        const auto pid = std::any_cast<uint64_t>(conn->GetContext());
+        if (const auto plr = plrMgr->FindPlayer(pid); plr != nullptr) {
+            co_await std::invoke(func, plr, dynamic_cast<Package *>(pkg));
+        }
     }
 } // base

@@ -11,4 +11,5 @@ public:
     virtual ~IPlayerComponent();
 
     [[nodiscard]] ComponentModule *GetModule() const;
+    [[nodiscard]] class Player *GetOwner() const;
 };

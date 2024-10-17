@@ -21,7 +21,7 @@ namespace base {
         const auto info = handler_->ParseLoginInfo(pkg);
 
         if (const auto pid = VerifyToken(info.pid, info.token); pid != 0) {
-            co_await handler_->OnPlayerLogin(conn, info);
+            handler_->OnPlayerLogin(conn, info);
         }
     }
 } // base

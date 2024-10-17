@@ -96,8 +96,7 @@ with open(os.path.join(GENERATED_DIR, 'Protocol.generated.h'), 'w', encoding='ut
  */\n\n''' % (current_time, platform.python_version(), VERSION))
 
     file.write('#pragma once\n\n')
-    file.write('#include <memory>\n')
-    file.write('#include <asio.hpp>\n\n')
+    file.write('#include <memory>\n\n')
 
     file.write('''namespace base {
 \tclass Package;
@@ -106,15 +105,14 @@ with open(os.path.join(GENERATED_DIR, 'Protocol.generated.h'), 'w', encoding='ut
 }\n
 ''')
 
-    file.write('namespace protocol {\n')
-    file.write('using asio::awaitable;\n\n')
+    file.write('namespace protocol {\n\n')
 
     for package in proto_data:
         file.write('\t// %s\n' % package['package'])
 
         for proto in package['list']:
             if proto['callback'] == 1:
-                file.write('\tawaitable<void> %s(const std::shared_ptr<base::Player> &plr, base::Package *pkg);\n' % proto['proto'])
+                file.write('\tvoid %s(const std::shared_ptr<base::Player> &plr, base::Package *pkg);\n' % proto['proto'])
 
         file.write('\n')
 

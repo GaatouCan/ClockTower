@@ -15,18 +15,18 @@ namespace base {
         virtual ~IConnectionHandler() = default;
 
         virtual void OnConnected(const ConnectionPointer &) {}
-        virtual awaitable<void> OnReadPackage(const ConnectionPointer &conn, IPackage *pkg) { co_return; }
-        virtual awaitable<void> OnWritePackage(const ConnectionPointer &) { co_return; }
+        virtual void OnReadPackage(const ConnectionPointer &conn, IPackage *pkg) {}
+        virtual void OnWritePackage(const ConnectionPointer &) {}
         virtual void OnClosed(const ConnectionPointer &) {}
     };
 
     template<PACKAGE_TYPE T>
     class TConnectionHandler : public IConnectionHandler {
     public:
-        awaitable<void> OnReadPackage(const ConnectionPointer &conn, IPackage *pkg) override {
-            co_await OnReadPackageT(conn, dynamic_cast<T *>(pkg));
+        void OnReadPackage(const ConnectionPointer &conn, IPackage *pkg) override {
+            OnReadPackageT(conn, dynamic_cast<T *>(pkg));
         }
 
-        virtual awaitable<void> OnReadPackageT(const ConnectionPointer &conn, T *pkg) { co_return; }
+        virtual void OnReadPackageT(const ConnectionPointer &conn, T *pkg) {}
     };
 }

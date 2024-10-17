@@ -9,6 +9,6 @@ namespace base {
     public:
         void OnConnected(const ConnectionPointer &) override;
         void OnClosed(const ConnectionPointer &) override;
-        awaitable<void> OnReadPackageT(const ConnectionPointer &conn, Package *pkg) override;
+        void OnReadPackageT(const ConnectionPointer &conn, Package *pkg) override;
     };
 } // base

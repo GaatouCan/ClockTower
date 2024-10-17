@@ -142,7 +142,7 @@ namespace base {
 
                 if (pkg->IsAvailable()) {
                     if (handler_ != nullptr) {
-                        co_await handler_->OnWritePackage(shared_from_this());
+                        handler_->OnWritePackage(shared_from_this());
                     }
                 } else
                     spdlog::error("{} - write failed", __func__);
@@ -172,7 +172,7 @@ namespace base {
                     deadline_ = std::chrono::steady_clock::now() + expireTime_;
 
                     if (handler_ != nullptr) {
-                        co_await handler_->OnReadPackage(shared_from_this(), pkg);
+                        handler_->OnReadPackage(shared_from_this(), pkg);
                     }
                 } else
                     spdlog::error("{} - read failed", __func__);

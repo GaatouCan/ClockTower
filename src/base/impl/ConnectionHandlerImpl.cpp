@@ -25,15 +25,15 @@ namespace base {
             plrMgr->OnPlayerLogout(pid);
     }
 
-    awaitable<void> ConnectionHandlerImpl::OnReadPackageT(const ConnectionPointer &conn, Package *pkg) {
+    void ConnectionHandlerImpl::OnReadPackageT(const ConnectionPointer &conn, Package *pkg) {
         if (!conn->GetContext().has_value()) {
             if (const auto sys = GetSystem<LoginSystem>(); sys != nullptr) {
-                co_await sys->OnLogin(conn, pkg);
+                sys->OnLogin(conn, pkg);
             } else
                 spdlog::error("{}: LoginSystem not found.", __func__);
         } else {
             if (const auto sys = GetSystem<ProtocolSystem>(); sys != nullptr) {
-                co_await sys->OnReadPackage(conn, pkg);
+                sys->OnReadPackage(conn, pkg);
             } else
                 spdlog::error("{} - ProtocolSystem not found.", __func__);
         }

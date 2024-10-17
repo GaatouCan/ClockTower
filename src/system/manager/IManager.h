@@ -6,7 +6,7 @@ namespace base {
     class IManager {
 
         asio::io_context &ctx_;
-        std::thread::id tid_;
+        ThreadID tid_;
 
     public:
         IManager() = delete;
@@ -14,8 +14,8 @@ namespace base {
         explicit IManager(asio::io_context &ctx);
         virtual ~IManager() = default;
 
-        void SetThreadID(std::thread::id tid);
-        [[nodiscard]] std::thread::id GetThreadID() const;
+        void SetThreadID(ThreadID tid);
+        [[nodiscard]] ThreadID GetThreadID() const;
         [[nodiscard]] bool IsSameThread() const;
 
         DISABLE_COPY_MOVE(IManager)

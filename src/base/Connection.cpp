@@ -55,19 +55,32 @@ namespace base {
         return *this;
     }
 
-    Connection & Connection::SetWatchdogTimeout(uint32_t sec) {
+    Connection & Connection::SetWatchdogTimeout(const uint32_t sec) {
         expireTime_ = std::chrono::seconds(sec);
         return *this;
     }
 
-    Connection & Connection::SetWriteTimeout(uint32_t sec) {
+    Connection & Connection::SetWriteTimeout(const uint32_t sec) {
         writeTimeout_ = std::chrono::seconds(sec);
         return *this;
     }
 
-    Connection & Connection::SetReadTimeout(uint32_t sec) {
+    Connection & Connection::SetReadTimeout(const uint32_t sec) {
         readTimeout_ = std::chrono::seconds(sec);
         return *this;
+    }
+
+    Connection & Connection::SetThreadID(const ThreadID tid) {
+        tid_ = tid;
+        return *this;
+    }
+
+    ThreadID Connection::GetThreadID() const {
+        return tid_;
+    }
+
+    bool Connection::IsSameThread() const {
+        return tid_ == std::this_thread::get_id();
     }
 
     IPackage * Connection::BuildPackage() const {

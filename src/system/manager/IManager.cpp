@@ -5,11 +5,11 @@ namespace base {
         : ctx_(ctx) {
     }
 
-    void IManager::SetThreadID(const std::thread::id tid) {
+    void IManager::SetThreadID(const ThreadID tid) {
         tid_ = tid;
     }
 
-    std::thread::id IManager::GetThreadID() const {
+    ThreadID IManager::GetThreadID() const {
         return tid_;
     }
 

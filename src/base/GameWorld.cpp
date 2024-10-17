@@ -13,7 +13,6 @@
 #include <spdlog/spdlog.h>
 
 namespace base {
-
     REGISTER_SYSTEM(ConfigSystem, 0)
     REGISTER_SYSTEM(ProtocolSystem, 1)
     REGISTER_SYSTEM(LoginSystem, 2)
@@ -25,18 +24,17 @@ namespace base {
           fullTimer_(ctx_),
           inited_(false),
           running_(false) {
-
     }
 
     GameWorld::~GameWorld() {
         Shutdown();
 
-        for (const auto sys : std::views::values(systemMap_)) {
+        for (const auto sys: std::views::values(systemMap_)) {
             delete sys;
         }
     }
 
-    GameWorld & GameWorld::Init() {
+    GameWorld &GameWorld::Init() {
         while (!initPriority_.empty()) {
             auto [priority, type] = initPriority_.top();
             initPriority_.pop();
@@ -56,13 +54,13 @@ namespace base {
 
         pool_.Start(config["server"]["work_thread"].as<size_t>());
 
-        threadId_ = std::this_thread::get_id();
+        tid_ = std::this_thread::get_id();
         inited_ = true;
 
         return *this;
     }
 
-    GameWorld & GameWorld::Run() {
+    GameWorld &GameWorld::Run() {
         running_ = true;
 
         asio::signal_set signals(ctx_, SIGINT, SIGTERM);
@@ -76,7 +74,7 @@ namespace base {
         return *this;
     }
 
-    GameWorld & GameWorld::Shutdown() {
+    GameWorld &GameWorld::Shutdown() {
         if (!inited_)
             return *this;
 
@@ -125,6 +123,7 @@ namespace base {
 
                     conn->SetCodec<PackageCodecImpl>()
                             .SetHandler<ConnectionHandlerImpl>()
+                            .SetThreadID(tid)
                             .SetWatchdogTimeout(30)
                             .SetWriteTimeout(5)
                             .SetReadTimeout(5)
@@ -146,7 +145,7 @@ namespace base {
     }
 
     void GameWorld::RemoveConnection(const std::string &key) {
-        if (std::this_thread::get_id() != threadId_) {
+        if (std::this_thread::get_id() != tid_) {
             co_spawn(ctx_, [this, &key]() mutable -> awaitable<void> {
                 connMap_.erase(key);
                 co_return;
@@ -156,15 +155,15 @@ namespace base {
         connMap_.erase(key);
     }
 
-    ContextNode & GameWorld::NextContextNode() {
+    ContextNode &GameWorld::NextContextNode() {
         return pool_.NextContextNode();
     }
 
-    asio::io_context & GameWorld::GetIOContext() {
+    asio::io_context &GameWorld::GetIOContext() {
         return ctx_;
     }
 
-    std::thread::id GameWorld::GetThreadID() const {
-        return threadId_;
+    ThreadID GameWorld::GetThreadID() const {
+        return tid_;
     }
 } // base

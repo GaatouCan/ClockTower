@@ -9,7 +9,7 @@
 #include <asio/experimental/awaitable_operators.hpp>
 
 namespace base {
-    using ConnectionPtr = std::shared_ptr<class Connection>;
+    using ConnectionPtr = std::shared_ptr<Connection>;
 
     using namespace std::literals::chrono_literals;
     using namespace asio::experimental::awaitable_operators;
@@ -35,6 +35,8 @@ namespace base {
         std::chrono::duration<uint32_t> writeTimeout_ = 10s;
         std::chrono::duration<uint32_t> readTimeout_ = 10s;
 
+        ThreadID tid_;
+
         uint32_t ctxNullCount_ = 0;
         std::any ctx_;
 
@@ -55,6 +57,10 @@ namespace base {
         Connection &SetWatchdogTimeout(uint32_t sec);
         Connection &SetWriteTimeout(uint32_t sec);
         Connection &SetReadTimeout(uint32_t sec);
+
+        Connection &SetThreadID(ThreadID tid);
+        [[nodiscard]] ThreadID GetThreadID() const;
+        [[nodiscard]] bool IsSameThread() const;
 
         template<typename T>
         requires std::derived_from<T, IPackageCodec>

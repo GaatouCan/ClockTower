@@ -16,7 +16,7 @@ namespace base {
         void LoadManager();
 
         template<MANAGER_TYPE T>
-        void CreateManager(asio::io_context &ctx, const std::thread::id &tid) {
+        void CreateManager(asio::io_context &ctx, const ThreadID tid) {
             const auto mgr = new T(ctx);
             mgr->SetThreadID(tid);
 

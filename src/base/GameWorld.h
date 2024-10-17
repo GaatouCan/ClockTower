@@ -41,7 +41,7 @@ namespace base {
         std::priority_queue<SystemPriority, std::vector<SystemPriority>, std::less<>> initPriority_;
         std::unordered_map<std::type_index, ISubSystem *> systemMap_;
 
-        std::thread::id threadId_;
+        ThreadID tid_;
 
         bool inited_;
         std::atomic_bool running_;
@@ -62,7 +62,7 @@ namespace base {
         ContextNode &NextContextNode();
 
         asio::io_context &GetIOContext();
-        std::thread::id GetThreadID() const;
+        ThreadID GetThreadID() const;
 
         template<SYSTEM_TYPE T>
         T *GetSystem() noexcept {

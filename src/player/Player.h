@@ -8,7 +8,7 @@ class Player : public ICharacter, public std::enable_shared_from_this<Player> {
     base::ConnectionPointer conn_;
     uint64_t id_;
 
-    std::thread::id threadId_;
+    ThreadID tid_;
 
 public:
     Player() = delete;
@@ -19,7 +19,7 @@ public:
     Player& SetPlayerId(uint64_t id);
     uint64_t GetPlayerID() const;
 
-    [[nodiscard]] std::thread::id GetThreadID() const;
+    [[nodiscard]] ThreadID GetThreadID() const;
     bool IsSameThread() const;
 
     template<typename FUNC, typename ... ARGS>

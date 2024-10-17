@@ -18,20 +18,25 @@ void PlayerManager::PushPlayer(const std::shared_ptr<Player>& plr) {
         RunInThread(&PlayerManager::PushPlayer, this, plr);
         return;
     }
+
+    std::unique_lock lock(blockMutex_);
     playerMap_[plr->GetPlayerID()] = plr;
 }
 
 std::shared_ptr<Player> PlayerManager::FindPlayer(const uint64_t pid) {
+    std::shared_lock lock(sharedMutex_);
     if (const auto it = playerMap_.find(pid); it != playerMap_.end()) {
         return it->second;
     }
     return nullptr;
 }
 
-void PlayerManager::RemovePlayer(const uint64_t pid) {
-    if (!IsSameThread()) {
-        RunInThread(&PlayerManager::RemovePlayer, this, pid);
-        return;
+std::shared_ptr<Player> PlayerManager::RemovePlayer(const uint64_t pid) {
+    std::unique_lock lock(blockMutex_);
+    if (const auto it = playerMap_.find(pid); it != playerMap_.end()) {
+        auto res = it->second;
+        playerMap_.erase(it);
+        return res;
     }
-    playerMap_.erase(pid);
+    return nullptr;
 }

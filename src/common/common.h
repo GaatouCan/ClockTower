@@ -31,3 +31,6 @@ using default_token = as_tuple_t<use_awaitable_t<> >;
 using TcpSocket = default_token::as_default_on_t<tcp::socket>;
 using SteadyTimer = default_token::as_default_on_t<asio::steady_timer>;
 using TcpAcceptor = default_token::as_default_on_t<tcp::acceptor>;
+
+#include <thread>
+using ThreadID = std::thread::id;

@@ -16,7 +16,7 @@ PROTO_LIST = [
 ]
 
 CALLBACK_EXCEPT = [
-    'CS_Login_Request'
+    'CS_LoginRequest'
 ]
 
 current_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())

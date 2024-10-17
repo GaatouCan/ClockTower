@@ -2,6 +2,8 @@
 #include "../GameWorld.h"
 #include "../../system/protocol/ProtocolSystem.h"
 #include "../../system/login/LoginSystem.h"
+#include "../../player/PlayerManager.h"
+#include "../../system/manager/ManagerSystem.h"
 
 #include <spdlog/spdlog.h>
 
@@ -12,6 +14,15 @@ namespace base {
 
     void ConnectionHandlerImpl::OnClosed(const ConnectionPointer &conn) {
         GetWorld().RemoveConnection(conn->GetKey());
+
+        if (!conn->GetContext().has_value())
+            return;
+
+        const auto pid = std::any_cast<uint64_t>(conn->GetContext().has_value());
+        conn->ResetContext();
+
+        if (const auto plrMgr = GetManager<PlayerManager>(); plrMgr != nullptr)
+            plrMgr->OnPlayerLogout(pid);
     }
 
     awaitable<void> ConnectionHandlerImpl::OnReadPackageT(const ConnectionPointer &conn, Package *pkg) {

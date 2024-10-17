@@ -17,6 +17,9 @@ public:
     explicit PlayerManager(asio::io_context &ctx);
     ~PlayerManager() override;
 
+    void OnPlayerLogin(const std::shared_ptr<base::Connection> &conn, uint64_t pid);
+    void OnPlayerLogout(uint64_t pid);
+
     std::shared_ptr<Player> EmplacePlayer(const std::shared_ptr<base::Connection> &conn, uint64_t pid);
     void PushPlayer(const std::shared_ptr<Player>& plr);
 

@@ -10,13 +10,13 @@ enum OperateType {
   USE_AVATAR_FRAME = 4;
 }
 
-message CS_Appearance_Request {
+message CS_AppearanceRequest {
   OperateType operate_type = 1;
   uint32 index = 2;
   int32 parameter = 3;
 }
 
-message SC_Appearance_Response {
+message SC_AppearanceResponse {
   message Avatar {
     uint32 index = 1;
     bool bActivated = 2;

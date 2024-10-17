@@ -7,6 +7,12 @@ PlayerManager::PlayerManager(asio::io_context &ctx)
 PlayerManager::~PlayerManager() {
 }
 
+void PlayerManager::OnPlayerLogin(const std::shared_ptr<base::Connection> &conn, uint64_t pid) {
+}
+
+void PlayerManager::OnPlayerLogout(uint64_t pid) {
+}
+
 std::shared_ptr<Player> PlayerManager::EmplacePlayer(const std::shared_ptr<base::Connection> &conn, const uint64_t pid) {
     const auto plr = CreatePlayer(conn, pid);
     PushPlayer(plr);

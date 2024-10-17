@@ -6,7 +6,7 @@
 namespace base {
 
     struct LoginInfo {
-        uint64_t pid;
+        uint64_t pid = 0;
         std::string token;
     };
 

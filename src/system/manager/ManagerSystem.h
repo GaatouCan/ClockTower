@@ -32,6 +32,9 @@ namespace base {
             return nullptr;
         }
 
+        [[nodiscard]] ThreadID GetThreadID() const;
+        [[nodiscard]] bool InManagerThread() const;
+
     private:
         std::unordered_map<std::type_index, IManager *> mgrMap_;
 

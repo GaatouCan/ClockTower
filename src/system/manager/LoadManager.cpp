@@ -8,4 +8,11 @@ namespace base {
         REGISTER_MANAGER(PlayerManager)
     }
 
+    ThreadID ManagerSystem::GetThreadID() const {
+        return tid_;
+    }
+
+    bool ManagerSystem::InManagerThread() const {
+        return tid_ == std::this_thread::get_id();
+    }
 }

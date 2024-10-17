@@ -54,4 +54,12 @@ namespace base {
             }
         }, detached);
     }
+
+    ThreadID ManagerSystem::GetThreadID() const {
+        return tid_;
+    }
+
+    bool ManagerSystem::InManagerThread() const {
+        return tid_ == std::this_thread::get_id();
+    }
 } // base

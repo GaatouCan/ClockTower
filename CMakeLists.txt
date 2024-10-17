@@ -69,6 +69,8 @@ execute_process(
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/protobuf
 )
 
+include_directories(${CMAKE_SOURCE_DIR}/struct)
+
 file(GLOB_RECURSE PROTOCOL
         ${CMAKE_SOURCE_DIR}/protobuf/Protocol.generated.h
         ${CMAKE_SOURCE_DIR}/protobuf/ProtoType.generated.h

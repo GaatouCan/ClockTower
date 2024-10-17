@@ -1,0 +1,27 @@
+CREATE TABLE `appearance`
+(
+    `pid` BIGINT(20) UNSIGNED NOT NULL COMMENT '玩家ID',
+    `avatar` INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '头像',
+    `avatar_frame` INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '头像框',
+    PRIMARY KEY (`pid`)
+) ENGINE = InnoDB CHARACTER SET = utf16 COMMENT '玩家外观';
+
+CREATE TABLE `avatar`
+(
+    `pid` BIGINT(20) UNSIGNED NOT NULL COMMENT '玩家ID',
+    `index` INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '索引',
+    `expired_time` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 COMMENT '过期时间',
+    `activated` TINYINT(4) NOT NULL DEFAULT 0 COMMENT '是否激活',
+    `in_used` TINYINT(4) NOT NULL DEFAULT 0 COMMENT '是否正在使用',
+    PRIMARY KEY (`pid`, `index`)
+) ENGINE = InnoDB CHARACTER SET = utf16 COMMENT '玩家头像';
+
+CREATE TABLE `avatar_frame`
+(
+    `pid` BIGINT(20) UNSIGNED NOT NULL COMMENT '玩家ID',
+    `index` INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '索引',
+    `expired_time` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 COMMENT '过期时间',
+    `activated` TINYINT(4) NOT NULL DEFAULT 0 COMMENT '是否激活',
+    `in_used` TINYINT(4) NOT NULL DEFAULT 0 COMMENT '是否正在使用',
+    PRIMARY KEY (`pid`, `index`)
+) ENGINE = InnoDB CHARACTER SET = utf16 COMMENT '玩家头像框';

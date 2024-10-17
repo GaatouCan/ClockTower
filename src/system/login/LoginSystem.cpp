@@ -5,10 +5,12 @@ namespace base {
     }
 
     bool LoginSystem::VerifyAddress(const asio::ip::address& addr) {
+        // TODO
         return true;
     }
 
     uint64_t LoginSystem::VerifyToken(uint64_t pid, const std::string &token) {
+        // TODO
         return pid;
     }
 

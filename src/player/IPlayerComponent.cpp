@@ -17,3 +17,9 @@ Player * IPlayerComponent::GetOwner() const {
         return module_->GetOwner();
     return nullptr;
 }
+
+void IPlayerComponent::OnLogin() {
+}
+
+void IPlayerComponent::OnLogout() {
+}

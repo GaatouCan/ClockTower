@@ -12,4 +12,7 @@ public:
 
     [[nodiscard]] ComponentModule *GetModule() const;
     [[nodiscard]] class Player *GetOwner() const;
+
+    void OnLogin();
+    void OnLogout();
 };

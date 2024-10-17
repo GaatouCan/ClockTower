@@ -34,6 +34,9 @@ public:
         return nullptr;
     }
 
+    void OnLogin();
+    void OnLogout();
+
 private:
     std::unordered_map<std::type_index, IPlayerComponent *> componentMap_;
 };

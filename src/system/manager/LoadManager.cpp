@@ -5,7 +5,7 @@
 
 namespace base {
     void ManagerSystem::LoadManager() {
-        REGISTER_MANAGER(true, PlayerManager)
+        REGISTER_MANAGER(PlayerManager)
     }
 
 }

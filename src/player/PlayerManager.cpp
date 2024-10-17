@@ -7,10 +7,21 @@ PlayerManager::PlayerManager(asio::io_context &ctx)
 PlayerManager::~PlayerManager() {
 }
 
-void PlayerManager::OnPlayerLogin(const std::shared_ptr<base::Connection> &conn, uint64_t pid) {
+void PlayerManager::OnPlayerLogin(const std::shared_ptr<base::Connection> &conn, const uint64_t pid) {
+    if (const auto old = RemovePlayer(pid); old != nullptr) {
+        old->GetConnection()->ResetContext();
+        old->GetConnection()->Disconnect();
+        old->OnLogout();
+    }
+
+    const auto plr = EmplacePlayer(conn, pid);
+    plr->OnLogin();
 }
 
-void PlayerManager::OnPlayerLogout(uint64_t pid) {
+void PlayerManager::OnPlayerLogout(const uint64_t pid) {
+    if (const auto plr = RemovePlayer(pid); plr != nullptr) {
+        plr->OnLogout();
+    }
 }
 
 std::shared_ptr<Player> PlayerManager::EmplacePlayer(const std::shared_ptr<base::Connection> &conn, const uint64_t pid) {

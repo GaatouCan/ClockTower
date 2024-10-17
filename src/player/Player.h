@@ -3,7 +3,7 @@
 #include "../base/ICharacter.h"
 #include "../base/Connection.h"
 
-class Player : public ICharacter, public std::enable_shared_from_this<Player> {
+class Player final : public ICharacter, public std::enable_shared_from_this<Player> {
 
     base::ConnectionPointer conn_;
     uint64_t id_;
@@ -19,6 +19,8 @@ public:
     Player& SetPlayerId(uint64_t id);
     uint64_t GetPlayerID() const;
 
+    base::ConnectionPointer GetConnection() const;
+
     [[nodiscard]] ThreadID GetThreadID() const;
     bool IsSameThread() const;
 
@@ -29,6 +31,9 @@ public:
             co_return;
         }, detached);
     }
+
+    void OnLogin();
+    void OnLogout();
 };
 
 std::shared_ptr<Player> CreatePlayer(const base::ConnectionPointer&, uint64_t);

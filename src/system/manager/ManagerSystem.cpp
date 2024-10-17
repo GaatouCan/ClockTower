@@ -1,7 +1,55 @@
 #include "ManagerSystem.h"
 
+#include <spdlog/spdlog.h>
+
 namespace base {
+    ManagerSystem::ManagerSystem()
+        : timer_(ctx_) {
+    }
+
+    ManagerSystem::~ManagerSystem() {
+        if (mgrThread_.joinable())
+            mgrThread_.join();
+
+        timer_.cancel();
+
+        if (!ctx_.stopped())
+            ctx_.stop();
+
+        for (const auto mgr: std::views::values(mgrMap_))
+            delete mgr;
+    }
+
     void ManagerSystem::Init() {
         LoadManager();
+
+        mgrThread_ = std::thread([this] {
+            tid_ = std::this_thread::get_id();
+            asio::signal_set signals(ctx_, SIGINT, SIGTERM);
+            signals.async_wait([&](auto, auto) {
+                ctx_.stop();
+            });
+
+            for (const auto mgr: std::views::values(mgrMap_))
+                mgr->SetThreadID(tid_);
+
+            ctx_.run();
+        });
+
+        co_spawn(ctx_, [this]() mutable -> awaitable<void> {
+            try {
+                TimePoint point = std::chrono::steady_clock::now();
+                while (!ctx_.stopped()) {
+                    point += std::chrono::seconds(1);
+                    timer_.expires_at(point);
+                    co_await timer_.async_wait();
+
+                    for (const auto mgr: std::views::values(mgrMap_))
+                        mgr->Tick(point);
+                }
+            } catch (std::exception &e) {
+                spdlog::warn("{}", e.what());
+            }
+        }, detached);
     }
 } // base

@@ -11,16 +11,16 @@ namespace base {
     class ManagerSystem final : public ISubSystem {
         SUB_SYSTEM_BODY(ManagerSystem)
 
+        ManagerSystem();
+        ~ManagerSystem() override;
+
         void Init() override;
 
         void LoadManager();
 
         template<MANAGER_TYPE T>
-        void CreateManager(asio::io_context &ctx, const ThreadID tid) {
-            const auto mgr = new T(ctx);
-            mgr->SetThreadID(tid);
-
-            mgrMap_[typeid(T)] = mgr;
+        void CreateManager(asio::io_context &ctx) {
+            mgrMap_[typeid(T)] = new T(ctx);
         }
 
     public:
@@ -34,18 +34,16 @@ namespace base {
 
     private:
         std::unordered_map<std::type_index, IManager *> mgrMap_;
+
+        asio::io_context ctx_;
+        SteadyTimer timer_;
+        std::thread mgrThread_;
+        ThreadID tid_;
     };
 } // base
 
-#define REGISTER_MANAGER(useMainThread, mgr) \
-    { \
-        if (useMainThread) { \
-            CreateManager<mgr>(GetWorld().GetIOContext(), GetWorld().GetThreadID()); \
-        } else { \
-            auto& [pool, ctx, tid] = GetWorld().NextContextNode();\
-            CreateManager<mgr>(ctx, tid); \
-        } \
-    }
+#define REGISTER_MANAGER(mgr) \
+    CreateManager<mgr>(ctx_);
 
 template<base::MANAGER_TYPE T>
 T *GetManager() {

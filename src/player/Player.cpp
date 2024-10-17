@@ -4,7 +4,8 @@
 
 Player::Player(base::ConnectionPointer conn)
     : conn_(std::move(conn)),
-      id_(0) {
+      id_(0),
+      module_(this) {
 }
 
 Player::~Player() {
@@ -32,6 +33,7 @@ bool Player::IsSameThread() const {
 }
 
 void Player::OnLogin() {
+    module_.OnLogin();
 }
 
 void Player::OnLogout() {
@@ -39,6 +41,8 @@ void Player::OnLogout() {
         RunInThread(&Player::OnLogin, this);
         return;
     }
+
+    module_.OnLogout();
 }
 
 std::shared_ptr<Player> CreatePlayer(const base::ConnectionPointer &conn, const uint64_t pid) {

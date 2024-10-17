@@ -2,11 +2,14 @@
 
 #include "../base/ICharacter.h"
 #include "../base/Connection.h"
+#include "ComponentModule.h"
 
 class Player final : public ICharacter, public std::enable_shared_from_this<Player> {
 
     base::ConnectionPointer conn_;
     uint64_t id_;
+
+    ComponentModule module_;
 
 public:
     Player() = delete;

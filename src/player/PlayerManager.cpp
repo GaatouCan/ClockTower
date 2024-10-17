@@ -5,6 +5,7 @@ PlayerManager::PlayerManager(asio::io_context &ctx)
 }
 
 PlayerManager::~PlayerManager() {
+    playerMap_.clear();
 }
 
 void PlayerManager::OnPlayerLogin(const std::shared_ptr<base::Connection> &conn, const uint64_t pid) {

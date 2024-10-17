@@ -11,3 +11,6 @@ public:
     virtual void Write(mysqlx::Schema &schema) = 0;
     virtual void Remove(mysqlx::Schema &schema) = 0;
 };
+
+template <typename T>
+concept DBTABLE_TYPE = std::derived_from<T, IDBTable>;

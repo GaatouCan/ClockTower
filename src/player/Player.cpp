@@ -45,6 +45,13 @@ void Player::OnLogout() {
     module_.OnLogout();
 }
 
+void Player::StopTimer(const uint64_t timerID) {
+    if (const auto iter = timerMap_.find(timerID); iter != timerMap_.end()) {
+        iter->second.Stop();
+        timerMap_.erase(iter);
+    }
+}
+
 std::shared_ptr<Player> CreatePlayer(const base::ConnectionPointer &conn, const uint64_t pid) {
     auto plr = std::make_shared<Player>(conn);
     plr->SetPlayerId(pid);

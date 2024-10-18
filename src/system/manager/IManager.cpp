@@ -23,4 +23,11 @@ namespace base {
     asio::io_context & IManager::GetIOContext() const {
         return ctx_;
     }
+
+    void IManager::StopTimer(const uint64_t timerID) {
+        if (const auto iter = timerMap_.find(timerID); iter != timerMap_.end()) {
+            iter->second.Stop();
+            timerMap_.erase(iter);
+        }
+    }
 } // base

@@ -1,12 +1,16 @@
 #pragma once
 
 #include "../../common/common.h"
+#include "../../base/RepeatedTimer.h"
+#include "../../common/utils.h"
 
 namespace base {
     class IManager {
 
         asio::io_context &ctx_;
         ThreadID tid_;
+
+        std::unordered_map<uint64_t, RepeatedTimer> timerMap_;
 
     public:
         IManager() = delete;
@@ -31,6 +35,24 @@ namespace base {
                 co_return;
             }, detached);
         }
+
+        template<typename FUNC, typename... ARGS>
+        uint64_t SetTimer(const std::chrono::duration<uint32_t> expire, const bool repeat, FUNC &&func, ARGS &&... args) {
+            const uint64_t timerID = CurrentTimeCount();
+            if (auto [iter, res] = timerMap_.insert_or_assign(timerID, ctx_); res) {
+                iter->second
+                        .SetTimerID(timerID)
+                        .SetExpireTime(expire)
+                        .SetLoop(repeat)
+                        .SetCallback(std::forward<FUNC>(func), std::forward<ARGS>(args)...);
+
+                iter->second.Start();
+                return timerID;
+            } else
+                return 0;
+        }
+
+        void StopTimer(uint64_t timerID);
     };
 
     template<typename T>

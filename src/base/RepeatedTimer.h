@@ -25,6 +25,8 @@ namespace base {
 
         explicit RepeatedTimer(asio::io_context& ctx);
 
+        DISABLE_COPY_MOVE(RepeatedTimer)
+
         ~RepeatedTimer();
 
         RepeatedTimer& SetTimerID(TimerID id);

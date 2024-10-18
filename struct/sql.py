@@ -140,23 +140,27 @@ for file_name, table_list in table_list.items():
         file.write(' */\n\n')
 
         file.write('#pragma once\n\n')
-        file.write('#include "../../src/base/system/database/DBTable.h"\n\n')
-        file.write('#include <format>\n\n')
+        file.write('#include "../../src/system/database/IDBTable.h"\n\n')
 
         file.write('namespace orm {\n\n')
 
         for table in table_list:
 
-            file.write('\tclass UDBTable_%s final : public base::IDBTable {\n' % to_upper_camel_case(table['name']))
+            file.write('\tclass DBTable_%s final : public IDBTable {\n' % to_upper_camel_case(table['name']))
             file.write('\tpublic:\n')
 
-            construct_str_1 = ''
-            construct_str_2 = ''
+            construct_str = ''
+            init_str = ''
 
             select_str = ''
+            bind_expr = ''
+            where_expr = ''
 
-            replace_str_1 = ''
-            replace_str_2 = ''
+            insert_field_str = ''
+            insert_value_str = ''
+
+            # replace_str_1 = ''
+            # replace_str_2 = ''
 
             for field in table['field'].values():
                 file.write("\t\t%s %s" % (code_type_map[field['type']], field['name']))
@@ -170,36 +174,48 @@ for file_name, table_list in table_list.items():
                 file.write(";\n")
 
                 if 'int' in code_type_map[field['type']]:
-                    construct_str_1 = construct_str_1 + 'const ' + code_type_map[field['type']] + ' ' + field['name'] + ", "
+                    construct_str = construct_str + 'const ' + code_type_map[field['type']] + ' ' + field['name'] + ", "
                 else:
-                    construct_str_1 = construct_str_1 + 'const ' + code_type_map[field['type']] + ' ' + field['name'] + ", "
-                construct_str_2 = construct_str_2 + field['name'] + '(' + field['name'] + "), \n\t\t\t  "
+                    construct_str = construct_str + 'const ' + code_type_map[field['type']] + ' ' + field['name'] + ", "
+                
+                init_str = init_str + field['name'] + '(' + field['name'] + "), \n\t\t\t  "
+                insert_field_str = insert_field_str + '\"' + field['name'] + '\", '
+                insert_value_str = insert_value_str + field['name'] + ', '
 
                 if "key" in field and field["key"]:
                     select_str = select_str + field["name"] + ' = :' + field["name"] + ' AND '
+                    bind_expr = bind_expr + '.bind(\"' + field["name"] + '\", ' + field["name"] + ')'   
 
-                replace_str_1 = replace_str_1 + field['name'] + ", "
-                replace_str_2 = replace_str_2 + "{}, "
+                # replace_str_1 = replace_str_1 + field['name'] + ", "
+                # replace_str_2 = replace_str_2 + "{}, "
 
-            if len(construct_str_1) > 2:
-                construct_str_1 = construct_str_1[:-2]
+            if len(construct_str) > 2:
+                construct_str = construct_str[:-2]
 
-            if len(construct_str_2) > 2:
-                construct_str_2 = construct_str_2[:-8]
+            if len(init_str) > 2:
+                init_str = init_str[:-8]
 
             if len(select_str) > 5:
                 select_str = select_str[:-5]
 
-            if len(replace_str_1) > 2:
-                replace_str_1 = replace_str_1[:-2]
+            if len(insert_field_str) > 2:
+                insert_field_str = insert_field_str[:-2]
 
-            if len(replace_str_2) > 2:
-                replace_str_2 = replace_str_2[:-2]    
+            if len(insert_value_str) > 2:
+                insert_value_str = insert_value_str[:-2]
+
+            where_expr = '.where(\"' + select_str + '\")' + bind_expr
+
+            # if len(replace_str_1) > 2:
+            #     replace_str_1 = replace_str_1[:-2]
+
+            # if len(replace_str_2) > 2:
+            #     replace_str_2 = replace_str_2[:-2]    
 
 
-            file.write('\n\t\tUDBTable_%s() = default;\n\n' % to_upper_camel_case(table['name']))
-            file.write('\t\tUDBTable_%s(%s)\n\t\t\t: %s {} \n\n' % (to_upper_camel_case(table['name']), construct_str_1, construct_str_2))
-            file.write('\t\t~UDBTable_%s() override = default;\n\n' % to_upper_camel_case(table['name']))
+            file.write('\n\t\tDBTable_%s() = default;\n\n' % to_upper_camel_case(table['name']))
+            file.write('\t\tDBTable_%s(%s)\n\t\t\t: %s {} \n\n' % (to_upper_camel_case(table['name']), construct_str, init_str))
+            file.write('\t\t~DBTable_%s() override = default;\n\n' % to_upper_camel_case(table['name']))
 
             # Query
             file.write('\t\tvoid Query(mysqlx::Schema &schema) override {\n')
@@ -208,13 +224,13 @@ for file_name, table_list in table_list.items():
             file.write('\t\t\tif (!table.existsInDatabase())\n')
             file.write('\t\t\t\treturn;\n\n')
 
-            file.write('\t\t\tmysqlx::RowResult result = table\n')
-            file.write('\t\t\t\t.select()\n')
+            file.write('\t\t\tmysqlx::RowResult result = table.select()\n')
+            file.write('\t\t\t\t%s\n' % where_expr)
 
-            file.write('\t\t\t\t.where(\"%s\")\n' % select_str)
-            for field in table['field'].values():
-                if "key" in field and field["key"]:
-                    file.write('\t\t\t\t.bind(\"%s\", %s)\n' % (field["name"], field["name"]))
+            # file.write('\t\t\t\t.where(\"%s\")\n' % select_str)
+            # for field in table['field'].values():
+            #     if "key" in field and field["key"]:
+            #         file.write('\t\t\t\t.bind(\"%s\", %s)\n' % (field["name"], field["name"]))
 
             file.write('\t\t\t\t.execute();\n\n')        
 
@@ -244,9 +260,31 @@ for file_name, table_list in table_list.items():
             file.write('\t\t}\n\n')
 
             # Write
-            file.write('\t\tvoid Write(mysqlx::Session &session) override {\n')
-            file.write('\t\t\tconst auto str = std::format("REPLACE INTO %s (%s) VALUES (%s)", %s);\n' % (table['name'], replace_str_1, replace_str_2, replace_str_1))
-            file.write('\t\t\tsession.sql(str).execute();\n')
+            file.write('\t\tvoid Write(mysqlx::Schema &schema) override {\n')
+            file.write('\t\t\tmysqlx::Table table = schema.getTable("%s");\n' % table['name'])
+            file.write('\t\t\tif (!table.existsInDatabase())\n')
+            file.write('\t\t\t\treturn;\n\n')
+
+            file.write('\t\t\tmysqlx::RowResult result = table.select()\n')
+            file.write('\t\t\t\t%s\n' % where_expr)
+            file.write('\t\t\t\t.execute();\n\n')
+
+            file.write("\t\t\tif (const mysqlx::Row row = result.fetchOne(); !row.isNull()) {\n")
+
+            file.write("\t\t\t\ttable.update()\n")
+            for field in table['field'].values():
+                if "key" not in field or not field["key"]:
+                    file.write('\t\t\t\t\t.set(\"%s\", %s)\n' % (field["name"], field["name"]))
+            
+            file.write('\t\t\t\t\t%s\n' % where_expr)
+            file.write('\t\t\t\t\t.execute();\n') 
+
+            file.write("\t\t\t} else {\n")
+            file.write("\t\t\t\ttable.insert(%s)\n" % insert_field_str)
+            file.write("\t\t\t\t\t.values(%s)\n" % insert_value_str)
+            file.write('\t\t\t\t\t.execute();\n') 
+
+            file.write("\t\t\t}\n")
             file.write('\t\t}\n\n')
 
             # Delete
@@ -257,11 +295,7 @@ for file_name, table_list in table_list.items():
             file.write('\t\t\t\treturn;\n\n')
 
             file.write('\t\t\ttable.remove()\n')
-            file.write('\t\t\t\t.where(\"%s\")\n' % select_str)
-            for field in table['field'].values():
-                if "key" in field and field["key"]:
-                    file.write('\t\t\t\t.bind(\"%s\", %s)\n' % (field["name"], field["name"]))
-
+            file.write('\t\t\t\t%s\n' % where_expr)
             file.write('\t\t\t\t.execute();\n\n')
 
             file.write('\t\t}\n')

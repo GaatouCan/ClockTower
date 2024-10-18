@@ -69,7 +69,7 @@ execute_process(
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/protobuf
 )
 
-include_directories(${CMAKE_SOURCE_DIR}/struct)
+#include_directories(${CMAKE_SOURCE_DIR}/struct)
 
 file(GLOB_RECURSE PROTOCOL
         ${CMAKE_SOURCE_DIR}/protobuf/Protocol.generated.h
@@ -77,12 +77,14 @@ file(GLOB_RECURSE PROTOCOL
         ${CMAKE_SOURCE_DIR}/protobuf/Protocol.generated.cpp
 )
 
+file(GLOB_RECURSE ORM_DIR ${CMAKE_SOURCE_DIR}/struct/orm/*.h)
+
 file(GLOB_RECURSE SOURCE_DIR
         ${CMAKE_SOURCE_DIR}/src/*.h
         ${CMAKE_SOURCE_DIR}/src/*.cpp
 )
 
-add_executable(server src/server.cpp ${SOURCE_DIR} ${PROTOCOL})
+add_executable(server src/server.cpp ${SOURCE_DIR} ${PROTOCOL} ${ORM_DIR})
 
 target_link_libraries(server PRIVATE spdlog::spdlog)
 target_link_libraries(server PRIVATE asio::asio)

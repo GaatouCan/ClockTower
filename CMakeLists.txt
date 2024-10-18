@@ -77,7 +77,10 @@ file(GLOB_RECURSE PROTOCOL
         ${CMAKE_SOURCE_DIR}/protobuf/Protocol.generated.cpp
 )
 
-file(GLOB_RECURSE ORM_DIR ${CMAKE_SOURCE_DIR}/struct/orm/*.h)
+file(GLOB_RECURSE ORM_DIR
+        ${CMAKE_SOURCE_DIR}/struct/orm/*.h
+        ${CMAKE_SOURCE_DIR}/struct/orm/*.cpp
+)
 
 file(GLOB_RECURSE SOURCE_DIR
         ${CMAKE_SOURCE_DIR}/src/*.h

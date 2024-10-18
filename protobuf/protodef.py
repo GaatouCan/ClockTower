@@ -1,5 +1,5 @@
 import os
-import time
+import datetime
 import platform
 
 PROTO_DIR = 'def'
@@ -19,7 +19,7 @@ CALLBACK_EXCEPT = [
     'CS_LoginRequest'
 ]
 
-current_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 VERSION = '0.1'
 
 proto_data = []

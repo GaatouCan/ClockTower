@@ -1,26 +1,34 @@
-#pragma once
+﻿#pragma once
 
 #include <concepts>
 
 namespace base {
+
+    /**
+     * 抽象数据包基类
+     */
     class IPackage {
     public:
         virtual ~IPackage() = default;
 
+        /**
+         * 获取数据包ID
+         * @return uint32_t
+         */
         [[nodiscard]] virtual uint32_t GetID() const { return 0; }
 
         /**
-         * Reset all content in package
+         * 清空数据包内所有数据
          */
         virtual void Reset() = 0;
 
         /**
-         * Make package unavailable
+         * 使数据包变为失效状态
          */
         virtual void Invalid() = 0;
 
         /**
-         * Judge whether the package is valid
+         * 判断数据包是否可用
          * @return bool
          */
         [[nodiscard]] virtual bool IsAvailable() const = 0;

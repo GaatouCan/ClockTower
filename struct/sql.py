@@ -287,14 +287,9 @@ for file_name, table_list in sql_list.items():
             file.write('\t\tmysqlx::RowResult result = table.select()\n')
             file.write('\t\t\t%s\n' % where_expr)
 
-            file.write('\t\t\t.execute();\n\n')        
+            file.write('\t\t\t.execute();\n\n')
 
-            # file.write("\t\tif (mysqlx::Row row = result.fetchOne(); !row.isNull()) {\n")
-            # file.write("\t\t\tRead(row);\n")
-            # file.write("\t\t}\n")
-
-            file.write('\t\treturn result;')
-           
+            file.write('\t\treturn result;\n')
             file.write('\t}\n\n')
 
             # 读取函数

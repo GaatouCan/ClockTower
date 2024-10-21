@@ -294,7 +294,7 @@ for file_name, table_list in sql_list.items():
             # Query(mysqlx::Schema &schema)
             file.write('\tmysqlx::RowResult DBTable_%s::Query(mysqlx::Schema &schema) {\n' % to_upper_camel_case(table['name']))
             
-            file.write('\t\tmysqlx::Table table = schema.getTable("%s");\n' % table['name'])
+            file.write('\t\tmysqlx::Table table = schema.getTable(GetTableName());\n')
             file.write('\t\tif (!table.existsInDatabase())\n')
             file.write('\t\t\treturn {};\n\n')
 
@@ -344,15 +344,16 @@ for file_name, table_list in sql_list.items():
             file.write("\t\t}\n")
             file.write('\t}\n\n')
 
-            # 写函数
+            # 写函数重载
             file.write('\tvoid DBTable_%s::Write(mysqlx::Schema &schema) {\n' % to_upper_camel_case(table['name']))
-            file.write('\t\tmysqlx::Table table = schema.getTable("%s");\n' % table['name'])
+            file.write('\t\tmysqlx::Table table = schema.getTable(GetTableName());\n')
             file.write('\t\tif (!table.existsInDatabase())\n')
             file.write('\t\t\treturn;\n\n')
 
             file.write('\t\tWrite(table);\n')
             file.write('\t}\n\n')
 
+            # 删除函数实验
             file.write('\tvoid DBTable_%s::Remove(mysqlx::Table &table) {\n' % to_upper_camel_case(table['name']))
             file.write('\t\ttable.remove()\n')
             file.write('\t\t\t%s\n' % where_expr)
@@ -360,10 +361,10 @@ for file_name, table_list in sql_list.items():
 
             file.write('\t}\n\n')
 
-            # 删除函数
+            # 删除函数重载
             file.write('\tvoid DBTable_%s::Remove(mysqlx::Schema &schema) {\n' % to_upper_camel_case(table['name']))
 
-            file.write('\t\tmysqlx::Table table = schema.getTable("%s");\n' % table['name'])
+            file.write('\t\tmysqlx::Table table = schema.getTable(GetTableName());\n')
             file.write('\t\tif (!table.existsInDatabase())\n')
             file.write('\t\t\treturn;\n\n')
 

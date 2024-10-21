@@ -35,6 +35,12 @@ namespace base {
 
         void PushTask(DBTask task);
 
+        /**
+         * 添加数据库读写任务和调用回调
+         * @tparam Callback 无参无返回可调用类型
+         * @param task 数据库任务
+         * @param cb 回调闭包
+         */
         template<typename Callback>
         void PushTask(DBTask task, Callback && cb) {
             PushTask([task = std::move(task), cb = std::forward<Callback>(cb)](mysqlx::Schema &schema) {

@@ -6,7 +6,7 @@ ComponentModule::ComponentModule(Player *plr)
 }
 
 ComponentModule::~ComponentModule() {
-    for (const auto comp : std::views::values(componentMap_)) {
+    for (const auto& [comp, serialize] : std::views::values(componentMap_)) {
         delete comp;
     }
 }
@@ -16,13 +16,13 @@ Player * ComponentModule::GetOwner() const {
 }
 
 void ComponentModule::OnLogin() {
-    for (const auto comp : std::views::values(componentMap_)) {
+    for (const auto& [comp, serialize] : std::views::values(componentMap_)) {
         comp->OnLogin();
     }
 }
 
 void ComponentModule::OnLogout() {
-    for (const auto comp : std::views::values(componentMap_)) {
+    for (const auto& [comp, serialize] : std::views::values(componentMap_)) {
         comp->OnLogout();
     }
 }

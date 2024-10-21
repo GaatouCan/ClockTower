@@ -33,6 +33,32 @@ namespace base {
          */
         void SyncSelect(const std::string &tableName, const std::string &where, const std::function<void(mysqlx::Row)> &cb);
 
+        void PushTask(DBTask task);
+
+        template<typename Callback>
+        void PushTask(DBTask task, Callback && cb) {
+            PushTask([task = std::move(task), cb = std::forward<Callback>(cb)](mysqlx::Schema &schema) {
+                std::invoke(task, schema);
+                std::move(cb)();
+            });
+        };
+
+        template<asio::completion_token_for<void()> Token>
+        auto AsyncPushTask(DBTask task, Token && token) {
+            auto init = [](asio::completion_handler_for<void()> auto handler, DBTask func) {
+                auto work = asio::make_work_guard(handler);
+
+                PushTask(std::move(func), [handler = std::move(handler), work = std::move(work)]() mutable {
+                    auto alloc = asio::get_associated_allocator(handler, asio::recycling_allocator<void>());
+                    asio::dispatch(work.get_executor(), asio::bind_allocator(alloc, [handler = std::move(handler)]() mutable {
+                        std::move(handler)();
+                    }));
+                });
+            };
+
+            return asio::async_initiate<Token, void()>(init, token, std::move(task));
+        }
+
     private:
         std::vector<DBSystemNode> nodeVec_;
         std::atomic_size_t nextNodeIdx_ = 0;

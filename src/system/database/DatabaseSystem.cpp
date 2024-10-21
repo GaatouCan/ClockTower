@@ -75,4 +75,10 @@ namespace base {
             cb(row);
         }
     }
+
+    void DatabaseSystem::PushTask(DBTask task) {
+        const auto &[th, sess, queue, tid] = nodeVec_[nextNodeIdx_++];
+        queue->PushBack(std::move(task));
+        nextNodeIdx_ = nextNodeIdx_ % nodeVec_.size();
+    }
 } // base

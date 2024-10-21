@@ -24,6 +24,9 @@ namespace base {
                         }
                     }
                 }
+
+                node.queue->Clear();
+                node.sess->close();
             });
             node.sess = std::make_unique<mysqlx::Session>(
                 cfg["database"]["mysql"]["host"].as<std::string>(),
@@ -43,9 +46,7 @@ namespace base {
         }
 
         for (const auto &[th, sess, queue, tid] : nodeVec_) {
-            sess->close();
             queue->Quit();
-            queue->Clear();
         }
     }
 

@@ -11,7 +11,7 @@ namespace base {
         nodeVec_ = std::vector<DBSystemNode>(cfg["database"]["pool"].as<uint64_t>());
 
         for (auto & node : nodeVec_) {
-            node.th = std::make_unique<std::thread>([this, &node, &schemaName]() {
+            node.th = std::make_unique<std::thread>([this, &node, &schemaName] {
                 node.tid = std::this_thread::get_id();
                 while (node.queue->IsRunning()) {
                     node.queue->Wait();

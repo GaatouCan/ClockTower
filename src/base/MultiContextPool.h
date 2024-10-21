@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../common/common.h"
 #include "PackagePool.h"
@@ -35,4 +35,4 @@ namespace base {
 
         ContextNode &NextContextNode();
     };
-} // base
+} // bas

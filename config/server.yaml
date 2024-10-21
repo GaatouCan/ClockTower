@@ -15,9 +15,7 @@ package:
     collect_scale: 0.7
 
 database:
-  pool:
-    min_num: 24
-    max_num: 120
+  pool: 2
   mysql:
     host: localhost
     port: 33060

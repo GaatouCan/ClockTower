@@ -5,17 +5,60 @@
 
 namespace base {
     void DatabaseSystem::Init() {
+        const auto &cfg = GetServerConfig();
+        const auto schemaName = cfg["database"]["mysql"]["schema"].as<std::string>();
+
+        nodeVec_ = std::vector<DBSystemNode>(cfg["database"]["pool"].as<uint64_t>());
+
+        for (auto & node : nodeVec_) {
+            node.th = std::make_unique<std::thread>([this, &node, &schemaName]() {
+                node.tid = std::this_thread::get_id();
+                while (node.queue->IsRunning()) {
+                    node.queue->Wait();
+                    if (!node.queue->IsRunning())
+                        break;
+
+                    if (auto task = node.queue->PopFront()) {
+                        if (auto schema = node.sess->getSchema(schemaName); schema.existsInDatabase()) {
+                            std::invoke(task, schema);
+                        }
+                    }
+                }
+            });
+            node.sess = std::make_unique<mysqlx::Session>(
+                cfg["database"]["mysql"]["host"].as<std::string>(),
+                cfg["database"]["mysql"]["port"].as<uint16_t>(),
+                cfg["database"]["mysql"]["user"].as<std::string>(),
+                cfg["database"]["mysql"]["passwd"].as<std::string>()
+            );
+            node.queue = std::make_unique<TSDeque<DBTask>>();
+        }
+    }
+
+    DatabaseSystem::~DatabaseSystem() {
+        for (const auto &[th, sess, queue, tid] : nodeVec_) {
+            if (th->joinable()) {
+                th->join();
+            }
+        }
+
+        for (const auto &[th, sess, queue, tid] : nodeVec_) {
+            sess->close();
+            queue->Quit();
+            queue->Clear();
+        }
     }
 
     void DatabaseSystem::SyncSelect(const std::string &tableName, const std::string &where, const std::function<void(mysqlx::Row)> &cb) {
         if (nodeVec_.empty()) {
             spdlog::error("{} - {}", __func__, __LINE__);
+            return;
         }
 
-        auto &[th, tid, sess, queue] = nodeVec_.front();
+        const auto &[th, sess, queue, tid] = nodeVec_.front();
         const auto &cfg = GetServerConfig();
 
-        auto schema = sess.getSchema(cfg["database"]["mysql"]["schema"].as<std::string>());
+        auto schema = sess->getSchema(cfg["database"]["mysql"]["schema"].as<std::string>());
         if (!schema.existsInDatabase()) {
             spdlog::error("{} - schema not exists", __func__);
             return;

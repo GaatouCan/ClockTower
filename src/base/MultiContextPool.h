@@ -4,13 +4,19 @@
 #include "PackagePool.h"
 
 namespace base {
-
+    /**
+     * 每个IO线程的数据节点
+     */
     struct ContextNode {
         PackagePool pool;
         asio::io_context ctx;
         ThreadID tid;
     };
 
+    /**
+     * 多线程池
+     * 每个线程单独一个io_context和一个数据包池
+     */
     class MultiContextPool final {
 
         std::vector<ContextNode> nodeVec_;

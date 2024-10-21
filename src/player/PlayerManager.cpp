@@ -8,6 +8,10 @@ PlayerManager::~PlayerManager() {
     playerMap_.clear();
 }
 
+void PlayerManager::Init() {
+
+}
+
 void PlayerManager::OnPlayerLogin(const std::shared_ptr<base::Connection> &conn, const uint64_t pid) {
     if (const auto old = RemovePlayer(pid); old != nullptr) {
         old->GetConnection()->ResetContext();

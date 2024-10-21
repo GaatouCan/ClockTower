@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../common/common.h"
 #include "MultiContextPool.h"
@@ -100,9 +100,9 @@ namespace base {
 } // base
 
 /**
- * Register Sub System before Game World initialized
- * @param sys SubSystem type
- * @param priority Low value first
+ * 在GameWorld初始化之前注册子系统
+ * @param sys 子系统类型
+ * @param priority 值越低约先初始化
  */
 #define REGISTER_SYSTEM(sys, priority) \
     static base::GameWorld::TSystemRegister<sys> g_##sys##_register(priority);

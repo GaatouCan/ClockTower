@@ -196,10 +196,14 @@ for file_name, table_list in sql_list.items():
             file.write('\n\t\tDBTable_%s(\n%s\n\t\t);\n\n' % (to_upper_camel_case(table['name']), construct_str))
 
             # 纯虚函数重写
-            file.write('\t\tmysqlx::RowResult Query(mysqlx::Schema &schema) override;\n')
-            file.write('\t\tvoid Read(mysqlx::Row &row) override;\n')
-            file.write('\t\tvoid Write(mysqlx::Schema &schema) override;\n')
-            file.write('\t\tvoid Remove(mysqlx::Schema &schema) override;\n')
+            file.write('\t\tstd::string GetTableName() override;\n\n')
+            file.write('\t\tmysqlx::RowResult Query(mysqlx::Table &table) override;\n')
+            file.write('\t\tmysqlx::RowResult Query(mysqlx::Schema &schema) override;\n\n')
+            file.write('\t\tvoid Read(mysqlx::Row &row) override;\n\n')
+            file.write('\t\tvoid Write(mysqlx::Table &table) override;\n')
+            file.write('\t\tvoid Write(mysqlx::Schema &schema) override;\n\n')
+            file.write('\t\tvoid Remove(mysqlx::Table &table) override;\n')
+            file.write('\t\tvoid Remove(mysqlx::Schema &schema) override;\n\n')
 
             file.write('\t}; // DBTable_%s\n\n' % to_upper_camel_case(table['name']))
         
@@ -277,19 +281,24 @@ for file_name, table_list in sql_list.items():
             # 含参构造函数
             file.write('\tDBTable_%s::DBTable_%s(%s)\n\t\t: %s {\n\t}\n\n' % (to_upper_camel_case(table['name']), to_upper_camel_case(table['name']), construct_str, init_str))
 
+            file.write('\tstd::string DBTable_%s::GetTableName() {\n' % to_upper_camel_case(table['name']))
+            file.write('\t\treturn "%s";\n\t}\n\n' % table['name'])
+
             # 查找函数实现
+            file.write('\tmysqlx::RowResult DBTable_%s::Query(mysqlx::Table &table) {\n' % to_upper_camel_case(table['name']))
+            file.write('\t\treturn table.select()\n')
+            file.write('\t\t\t%s\n' % where_expr)
+            file.write('\t\t\t.execute();\n')
+            file.write('\t}\n\n')
+            
+            # Query(mysqlx::Schema &schema)
             file.write('\tmysqlx::RowResult DBTable_%s::Query(mysqlx::Schema &schema) {\n' % to_upper_camel_case(table['name']))
             
             file.write('\t\tmysqlx::Table table = schema.getTable("%s");\n' % table['name'])
             file.write('\t\tif (!table.existsInDatabase())\n')
             file.write('\t\t\treturn {};\n\n')
 
-            file.write('\t\tmysqlx::RowResult result = table.select()\n')
-            file.write('\t\t\t%s\n' % where_expr)
-
-            file.write('\t\t\t.execute();\n\n')
-
-            file.write('\t\treturn result;\n')
+            file.write('\t\treturn Query(table);\n')
             file.write('\t}\n\n')
 
             # 读取函数
@@ -312,12 +321,8 @@ for file_name, table_list in sql_list.items():
             file.write('\t}\n\n')
 
             # 写函数
-            file.write('\tvoid DBTable_%s::Write(mysqlx::Schema &schema) {\n' % to_upper_camel_case(table['name']))
-            file.write('\t\tmysqlx::Table table = schema.getTable("%s");\n' % table['name'])
-            file.write('\t\tif (!table.existsInDatabase())\n')
-            file.write('\t\t\treturn;\n\n')
-
-            file.write('\t\tmysqlx::RowResult result = Query(schema);\n\n')
+            file.write('\tvoid DBTable_%s::Write(mysqlx::Table &table) {\n' % to_upper_camel_case(table['name']))
+            file.write('\t\tmysqlx::RowResult result = Query(table);\n\n')
 
             # 如果已存在相同键 则调用update()
             file.write("\t\tif (const mysqlx::Row row = result.fetchOne(); !row.isNull()) {\n")
@@ -339,6 +344,22 @@ for file_name, table_list in sql_list.items():
             file.write("\t\t}\n")
             file.write('\t}\n\n')
 
+            # 写函数
+            file.write('\tvoid DBTable_%s::Write(mysqlx::Schema &schema) {\n' % to_upper_camel_case(table['name']))
+            file.write('\t\tmysqlx::Table table = schema.getTable("%s");\n' % table['name'])
+            file.write('\t\tif (!table.existsInDatabase())\n')
+            file.write('\t\t\treturn;\n\n')
+
+            file.write('\t\tWrite(table);\n')
+            file.write('\t}\n\n')
+
+            file.write('\tvoid DBTable_%s::Remove(mysqlx::Table &table) {\n' % to_upper_camel_case(table['name']))
+            file.write('\t\ttable.remove()\n')
+            file.write('\t\t\t%s\n' % where_expr)
+            file.write('\t\t\t.execute();\n')
+
+            file.write('\t}\n\n')
+
             # 删除函数
             file.write('\tvoid DBTable_%s::Remove(mysqlx::Schema &schema) {\n' % to_upper_camel_case(table['name']))
 
@@ -346,9 +367,7 @@ for file_name, table_list in sql_list.items():
             file.write('\t\tif (!table.existsInDatabase())\n')
             file.write('\t\t\treturn;\n\n')
 
-            file.write('\t\ttable.remove()\n')
-            file.write('\t\t\t%s\n' % where_expr)
-            file.write('\t\t\t.execute();\n')
+            file.write('\t\tRemove(table);\n')
 
             file.write('\t}\n\n')
         

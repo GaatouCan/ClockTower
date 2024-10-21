@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <asio/awaitable.hpp>
+#include <spdlog/spdlog.h>
 
 #include "IPackage.h"
 
@@ -24,7 +25,11 @@ namespace base {
     class TConnectionHandler : public IConnectionHandler {
     public:
         void OnReadPackage(const ConnectionPointer &conn, IPackage *pkg) override {
-            OnReadPackageT(conn, dynamic_cast<T *>(pkg));
+            try {
+                OnReadPackageT(conn, dynamic_cast<T *>(pkg));
+            } catch (std::bad_cast &e) {
+                spdlog::warn("{} - {}", __func__, e.what());
+            }
         }
 
         virtual void OnReadPackageT(const ConnectionPointer &conn, T *pkg) {}

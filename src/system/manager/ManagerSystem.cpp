@@ -36,6 +36,10 @@ namespace base {
             ctx_.run();
         });
 
+        for (const auto mgr: std::views::values(mgrMap_)) {
+            mgr->Init();
+        }
+
         co_spawn(ctx_, [this]() mutable -> awaitable<void> {
             try {
                 TimePoint point = std::chrono::steady_clock::now();

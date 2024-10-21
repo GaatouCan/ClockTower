@@ -95,3 +95,7 @@ target_link_libraries(server PRIVATE nlohmann_json::nlohmann_json)
 target_link_libraries(server PRIVATE protobuf::libprotobuf)
 target_link_libraries(server PRIVATE yaml-cpp::yaml-cpp)
 target_link_libraries(server PRIVATE mysql::concpp)
+
+add_executable(demo main.cpp)
+target_link_libraries(demo PRIVATE asio::asio)
+target_link_libraries(demo PRIVATE spdlog::spdlog)

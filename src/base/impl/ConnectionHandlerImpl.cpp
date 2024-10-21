@@ -5,8 +5,6 @@
 #include "../../player/PlayerManager.h"
 #include "../../system/manager/ManagerSystem.h"
 
-#include <spdlog/spdlog.h>
-
 namespace base {
     void ConnectionHandlerImpl::OnConnected(const ConnectionPointer &conn) {
 

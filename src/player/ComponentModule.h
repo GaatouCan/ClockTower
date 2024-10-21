@@ -10,7 +10,7 @@ class ComponentModule final {
 
     class Player *owner_;
 
-    using SerializeHandler = std::function<void(IPlayerComponent *, mysqlx::Schema &)>;
+    using SerializeHandler = std::function<void(IPlayerComponent *, mysqlx::Table &)>;
     using DeserializeHandler = std::function<void(IPlayerComponent *, mysqlx::RowResult)>;
 
     struct SerializeNode {
@@ -54,14 +54,23 @@ public:
     template<typename T>
     requires std::derived_from<T, IPlayerComponent>
     void RegisterSerializer(const std::string &table, const SerializeHandler &handler) {
+        if (!componentMap_[typeid(T)].serializers.contains(table)) {
+            componentMap_[typeid(T)].serializers[table] = SerializeNode{};
+        }
         componentMap_[typeid(T)].serializers[table].serializer = handler;
     }
 
     template<typename T>
     requires std::derived_from<T, IPlayerComponent>
     void RegisterDeserializer(const std::string &table, const DeserializeHandler &handler) {
+        if (!componentMap_[typeid(T)].serializers.contains(table)) {
+            componentMap_[typeid(T)].serializers[table] = SerializeNode{};
+        }
         componentMap_[typeid(T)].serializers[table].deserializer = handler;
     }
+
+    void Serialize(mysqlx::Schema &schema);
+    void Deserialize(mysqlx::Schema &schema);
 
     void OnLogin();
     void OnLogout();

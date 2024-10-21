@@ -15,6 +15,27 @@ Player * ComponentModule::GetOwner() const {
     return owner_;
 }
 
+void ComponentModule::Serialize(mysqlx::Schema &schema) {
+    for (const auto& [comp, serialize] : std::views::values(componentMap_)) {
+        for (const auto& [tableName, node] : serialize) {
+            if (mysqlx::Table table = schema.getTable(tableName); table.existsInDatabase()) {
+                node.serializer(comp, table);
+            }
+        }
+    }
+}
+
+void ComponentModule::Deserialize(mysqlx::Schema &schema) {
+    for (const auto& [comp, serialize] : std::views::values(componentMap_)) {
+        for (const auto& [tableName, node] : serialize) {
+            if (mysqlx::Table table = schema.getTable(tableName); table.existsInDatabase()) {
+                mysqlx::RowResult result = table.select().where("pid = :pid").bind("pid", GetOwner()->GetPlayerID()).execute();
+                node.deserializer(comp, std::move(result));
+            }
+        }
+    }
+}
+
 void ComponentModule::OnLogin() {
     for (const auto& [comp, serialize] : std::views::values(componentMap_)) {
         comp->OnLogin();

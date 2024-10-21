@@ -21,5 +21,11 @@ namespace base {
     class DatabaseSystem final : public ISubSystem {
         SUB_SYSTEM_BODY(DatabaseSystem)
         void Init() override;
+
+    public:
+        void SyncSelect(const std::string &tableName, const std::string &where, const std::function<void(mysqlx::Row)> &cb);
+
+    private:
+        std::vector<DBSystemNode> nodeVec_;
     };
 } // base

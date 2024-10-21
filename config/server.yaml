@@ -23,4 +23,4 @@ database:
     port: 33060
     user: root
     passwd: 12345678
-    database: ClockTower
+    schema: ClockTower

@@ -14,7 +14,7 @@ void PlayerManager::Init() {
 
 }
 
-void PlayerManager::OnPlayerLogin(const std::shared_ptr<base::Connection> &conn, const uint64_t pid) {
+awaitable<void> PlayerManager::OnPlayerLogin(const std::shared_ptr<base::Connection> &conn, const uint64_t pid) {
     if (const auto old = RemovePlayer(pid); old != nullptr) {
         old->GetConnection()->ResetContext();
         old->GetConnection()->Disconnect();
@@ -26,7 +26,7 @@ void PlayerManager::OnPlayerLogin(const std::shared_ptr<base::Connection> &conn,
     const auto sys = GetSystem<base::DatabaseSystem>();
     if (sys == nullptr) {
         spdlog::error("{} - Failed to get DatabaseSystem", __func__);
-        return;
+        co_return;
     }
 
     sys->PushTask([plr](mysqlx::Schema &schema) {

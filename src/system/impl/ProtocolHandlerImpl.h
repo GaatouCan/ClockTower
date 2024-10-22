@@ -7,6 +7,6 @@
 namespace base {
     class ProtocolHandlerImpl final : public TProtocolHandler<ProtoFunctor> {
     public:
-        void Execute(const std::shared_ptr<Connection> &, IPackage *) override;
+        awaitable<void> Execute(const std::shared_ptr<Connection> &, IPackage *) override;
     };
 } // base

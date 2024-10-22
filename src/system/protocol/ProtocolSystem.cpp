@@ -8,9 +8,9 @@ namespace base {
         RegisterProtocol();
     }
 
-    void ProtocolSystem::OnReadPackage(const std::shared_ptr<Connection> &conn, IPackage *pkg) const {
+    awaitable<void> ProtocolSystem::OnReadPackage(const std::shared_ptr<Connection> &conn, IPackage *pkg) const {
         if (handler_ != nullptr) {
-            handler_->Execute(conn, pkg);
+            co_await handler_->Execute(conn, pkg);
         }
     }
 } // base

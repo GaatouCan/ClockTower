@@ -8,9 +8,9 @@
 
 
 namespace base {
-    void LoginHandlerImpl::OnPlayerLogin(const std::shared_ptr<Connection> &conn, const LoginInfo &info) {
+    awaitable<void> LoginHandlerImpl::OnPlayerLogin(const std::shared_ptr<Connection> &conn, const LoginInfo &info) {
         if (const auto plrMgr = GetManager<PlayerManager>(); plrMgr != nullptr) {
-            plrMgr->OnPlayerLogin(conn, info.pid);
+            co_await plrMgr->OnPlayerLogin(conn, info.pid);
         } else
             spdlog::info("{} - PlayerManager not found", __func__);
     }

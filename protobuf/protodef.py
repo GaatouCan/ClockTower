@@ -2,6 +2,7 @@ import os
 import datetime
 import platform
 
+
 PROTO_DIR = 'def'
 GENERATED_DIR = '.'
 
@@ -96,6 +97,7 @@ with open(os.path.join(GENERATED_DIR, 'Protocol.generated.h'), 'w', encoding='ut
  */\n\n''' % (current_time, platform.python_version(), VERSION))
 
     file.write('#pragma once\n\n')
+    file.write('#include <asio.hpp>\n')
     file.write('#include <memory>\n\n')
 
     file.write('''namespace base {
@@ -106,13 +108,14 @@ with open(os.path.join(GENERATED_DIR, 'Protocol.generated.h'), 'w', encoding='ut
 ''')
 
     file.write('namespace protocol {\n\n')
+    file.write('\t using asio::awaitable;\n\n')
 
     for package in proto_data:
         file.write('\t// %s\n' % package['package'])
 
         for proto in package['list']:
             if proto['callback'] == 1:
-                file.write('\tvoid %s(const std::shared_ptr<base::Player> &plr, base::Package *pkg);\n' % proto['proto'])
+                file.write('\tawaitable<void> %s(const std::shared_ptr<base::Player> &plr, base::Package *pkg);\n' % proto['proto'])
 
         file.write('\n')
 

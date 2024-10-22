@@ -6,15 +6,15 @@
 #include <spdlog/spdlog.h>
 
 namespace base {
-    void ProtocolHandlerImpl::Execute(const std::shared_ptr<Connection> &conn, IPackage *pkg) {
+    awaitable<void> ProtocolHandlerImpl::Execute(const std::shared_ptr<Connection> &conn, IPackage *pkg) {
         if (!pkg->IsAvailable()) {
             spdlog::warn("{} - Package unavailable", __func__);
-            return;
+            co_return;
         }
 
         if (pkg->GetID() >= static_cast<uint32_t>(ProtoType::PROTO_TYPE_MAX)) {
             spdlog::warn("{} - Protocol type out of range", __func__);
-            return;
+            co_return;
         }
 
         const auto type = static_cast<ProtoType>(pkg->GetID());
@@ -22,19 +22,19 @@ namespace base {
         auto func = Find(type);
         if (!func) {
             spdlog::warn("{} - Protocol type not found", __func__);
-            return;
+            co_return;
         }
 
         const auto plrMgr = GetManager<PlayerManager>();
         if (plrMgr == nullptr) {
             spdlog::warn("{} - PlayerManager not found", __func__);
-            return;
+            co_return;
         }
 
         const auto pid = std::any_cast<uint64_t>(conn->GetContext());
         if (const auto plr = plrMgr->FindPlayer(pid); plr != nullptr) {
             assert(plr->GetConnection() == conn);
-            std::invoke(func, plr, dynamic_cast<Package *>(pkg));
+            co_await std::invoke(func, plr, dynamic_cast<Package *>(pkg));
         }
     }
 } // base

@@ -114,5 +114,5 @@ inline base::GameWorld &GetWorld() {
 
 template<base::SYSTEM_TYPE T>
 T *GetSystem() {
-    return  GetWorld().GetSystem<T>();
+    return GetWorld().GetSystem<T>();
 }

@@ -23,24 +23,30 @@ void PlayerManager::OnPlayerLogin(const std::shared_ptr<base::Connection> &conn,
 
     const auto plr = EmplacePlayer(conn, pid);
 
-    co_spawn(plr->GetConnection()->GetSocket().get_executor(), [plr]() mutable -> awaitable<void> {
-        const auto sys = GetSystem<base::DatabaseSystem>();
-        if (sys == nullptr)
-            co_return;
+    const auto sys = GetSystem<base::DatabaseSystem>();
+    if (sys == nullptr) {
+        spdlog::error("{} - Failed to get DatabaseSystem", __func__);
+        return;
+    }
 
-        sys->AsyncPushTask([plr](mysqlx::Schema &schema) {
-            plr->GetComponentModule().Deserialize(schema);
-        }, asio::use_awaitable);
+    sys->PushTask([plr](mysqlx::Schema &schema) {
+        plr->GetComponentModule().Deserialize(schema);
         plr->OnLogin();
-
-    }, detached);
-
-    // plr->OnLogin();
+    });
 }
 
 void PlayerManager::OnPlayerLogout(const uint64_t pid) {
     if (const auto plr = RemovePlayer(pid); plr != nullptr) {
-        plr->OnLogout();
+        const auto sys = GetSystem<base::DatabaseSystem>();
+        if (sys == nullptr) {
+            spdlog::error("{} - Failed to get DatabaseSystem", __func__);
+            return;
+        }
+
+        sys->PushTask([plr](mysqlx::Schema &schema) {
+            plr->GetComponentModule().Serialize(schema);
+            plr->OnLogout();
+        });
     }
 }
 

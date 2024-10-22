@@ -37,6 +37,10 @@ ComponentModule & Player::GetComponentModule() {
 }
 
 void Player::OnLogin() {
+    if (!IsSameThread()) {
+        RunInThread(&Player::OnLogin, this);
+        return;
+    }
     module_.OnLogin();
 }
 

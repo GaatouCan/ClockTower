@@ -102,11 +102,11 @@ with open(os.path.join(GENERATED_DIR, 'Protocol.generated.h'), 'w', encoding='ut
 
     file.write('''namespace base {
 \tclass Package;
-\tclass Player;
 \tusing ConnectionPointer = std::shared_ptr<class Connection>;
 }\n
 ''')
 
+    file.write('class Player;\n\n')
     file.write('namespace protocol {\n\n')
     file.write('\t using asio::awaitable;\n\n')
 
@@ -115,7 +115,7 @@ with open(os.path.join(GENERATED_DIR, 'Protocol.generated.h'), 'w', encoding='ut
 
         for proto in package['list']:
             if proto['callback'] == 1:
-                file.write('\tawaitable<void> %s(const std::shared_ptr<base::Player> &plr, base::Package *pkg);\n' % proto['proto'])
+                file.write('\tawaitable<void> %s(const std::shared_ptr<Player> &plr, base::Package *pkg);\n' % proto['proto'])
 
         file.write('\n')
 

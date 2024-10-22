@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../system/database/Serializer.h"
-#include "../system/database/Deserializer.h"
-#include "../player/IPlayerComponent.h"
+#include "../../system/database/Serializer.h"
+#include "../../system/database/Deserializer.h"
+#include "../../player/IPlayerComponent.h"
 #include "../../struct/orm/appearance.orm.h"
 
 class AppearanceCT final : public IPlayerComponent {

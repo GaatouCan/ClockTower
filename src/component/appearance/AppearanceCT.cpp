@@ -1,10 +1,11 @@
 #include "AppearanceCT.h"
 
-#include "../player/ComponentModule.h"
-#include "../common/utils.h"
+#include "../../base/impl/Package.h"
+#include "../../player/ComponentModule.h"
+#include "../../player/Player.h"
+#include "../../common/utils.h"
 #include "../../protobuf/ProtoType.generated.h"
 #include "../../protobuf/Protocol.generated.h"
-#include "../player/Player.h"
 
 #include <ranges>
 #include <utility>
@@ -82,6 +83,21 @@ void AppearanceCT::SendInfo() const {
     GetOwner()->SendPackage(SC_AppearanceResponse, res);
 }
 
-awaitable<void> protocol::CS_AppearanceRequest(const std::shared_ptr<base::Player> &plr, base::Package *pkg) {
-    co_return;
+awaitable<void> protocol::CS_AppearanceRequest(const std::shared_ptr<Player> &plr, base::Package *pkg) {
+    if (plr == nullptr)
+        co_return;
+
+    Appearance::CS_AppearanceRequest req;
+    req.ParseFromString(pkg->GetData());
+
+    auto ct = plr->GetComponentModule().GetComponent<AppearanceCT>();
+    if (ct == nullptr)
+        co_return;
+
+    switch (req.operate_type()) {
+        case Appearance::SEND_INFO: {
+            ct->SendInfo();
+        } break;
+        default: break;
+    }
 }

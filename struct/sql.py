@@ -192,11 +192,16 @@ for file_name, table_list in sql_list.items():
             if len(construct_str) > 6:
                 construct_str = construct_str[:-6]
 
+            file.write('\n\t\tDBTable_%s() = default;\n\n' % to_upper_camel_case(table['name']))
+
             # 含参构造函数
-            file.write('\n\t\tDBTable_%s(\n%s\n\t\t);\n\n' % (to_upper_camel_case(table['name']), construct_str))
+            file.write('\t\tDBTable_%s(\n%s\n\t\t);\n\n' % (to_upper_camel_case(table['name']), construct_str))
 
             # 纯虚函数重写
-            file.write('\t\tstd::string GetTableName() override;\n\n')
+            file.write('\t\t[[nodiscard]] constexpr const char* GetTableName() const override {\n')
+            file.write('\t\t\treturn "%s";\n' % table['name'])
+            file.write('\t\t}\n\n')
+            
             file.write('\t\tmysqlx::RowResult Query(mysqlx::Table &table) override;\n')
             file.write('\t\tmysqlx::RowResult Query(mysqlx::Schema &schema) override;\n\n')
             file.write('\t\tvoid Read(mysqlx::Row &row) override;\n\n')
@@ -281,8 +286,8 @@ for file_name, table_list in sql_list.items():
             # 含参构造函数
             file.write('\tDBTable_%s::DBTable_%s(%s)\n\t\t: %s {\n\t}\n\n' % (to_upper_camel_case(table['name']), to_upper_camel_case(table['name']), construct_str, init_str))
 
-            file.write('\tstd::string DBTable_%s::GetTableName() {\n' % to_upper_camel_case(table['name']))
-            file.write('\t\treturn "%s";\n\t}\n\n' % table['name'])
+            # file.write('\tstd::string DBTable_%s::GetTableName() {\n' % to_upper_camel_case(table['name']))
+            # file.write('\t\treturn "%s";\n\t}\n\n' % table['name'])
 
             # 查找函数实现
             file.write('\tmysqlx::RowResult DBTable_%s::Query(mysqlx::Table &table) {\n' % to_upper_camel_case(table['name']))

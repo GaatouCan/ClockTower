@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../system/database/Serializer.h"
+#include "../system/database/Deserializer.h"
 #include "../player/IPlayerComponent.h"
 #include "../../struct/orm/appearance.orm.h"
 
@@ -11,5 +13,8 @@ class AppearanceCT final : public IPlayerComponent {
 
 public:
     explicit AppearanceCT(ComponentModule *module);
+
+    void Serialize_Appearance(base::Serializer &s);
+    void Deserialize_Appearance(base::Deserializer &ds);
 };
 

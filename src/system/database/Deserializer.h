@@ -3,7 +3,6 @@
 #include <mysqlx/xdevapi.h>
 
 #include "IDBTable.h"
-#include "../../common/common.h"
 
 namespace base {
     class Deserializer final {

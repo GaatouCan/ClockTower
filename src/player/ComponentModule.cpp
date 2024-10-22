@@ -1,8 +1,11 @@
 #include "ComponentModule.h"
 #include "Player.h"
 
+#include "../component/AppearanceCT.h"
+
 ComponentModule::ComponentModule(Player *plr)
     : owner_(plr){
+    CreateComponent<AppearanceCT>();
 }
 
 ComponentModule::~ComponentModule() {
@@ -19,7 +22,9 @@ void ComponentModule::Serialize(mysqlx::Schema &schema) {
     for (const auto& [comp, serialize] : std::views::values(componentMap_)) {
         for (const auto& [tableName, node] : serialize) {
             if (mysqlx::Table table = schema.getTable(tableName); table.existsInDatabase()) {
-                node.serializer(comp, table);
+                if (node.serializer) {
+                    node.serializer(comp, std::move(table));
+                }
             }
         }
     }
@@ -30,7 +35,9 @@ void ComponentModule::Deserialize(mysqlx::Schema &schema) {
         for (const auto& [tableName, node] : serialize) {
             if (mysqlx::Table table = schema.getTable(tableName); table.existsInDatabase()) {
                 mysqlx::RowResult result = table.select().where("pid = :pid").bind("pid", GetOwner()->GetPlayerID()).execute();
-                node.deserializer(comp, std::move(result));
+                if (node.deserializer) {
+                    node.deserializer(comp, std::move(result));
+                }
             }
         }
     }

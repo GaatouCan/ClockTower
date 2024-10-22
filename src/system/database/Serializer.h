@@ -5,13 +5,16 @@
 
 #include <mysqlx/xdevapi.h>
 
+#include <utility>
+
 namespace base {
+
     class Serializer final {
-        mysqlx::Schema &schema_;
+        mysqlx::Table table_;
 
     public:
-        explicit Serializer(mysqlx::Schema &schema)
-            : schema_(schema) {
+        explicit Serializer(mysqlx::Table table)
+            : table_(std::move(table)) {
         }
 
         DISABLE_COPY_MOVE(Serializer)
@@ -22,8 +25,8 @@ namespace base {
             Serialize(table);
         }
 
-        void Serialize(IDBTable *table) const {
-            table->Write(schema_);
+        void Serialize(IDBTable *table) {
+            table->Write(table_);
         }
     };
 }

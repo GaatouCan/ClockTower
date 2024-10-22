@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <unordered_map>
 #include <typeindex>
@@ -10,7 +10,7 @@ class ComponentModule final {
 
     class Player *owner_;
 
-    using SerializeHandler = std::function<void(IPlayerComponent *, mysqlx::Table &)>;
+    using SerializeHandler = std::function<void(IPlayerComponent *, mysqlx::Table)>;
     using DeserializeHandler = std::function<void(IPlayerComponent *, mysqlx::RowResult)>;
 
     struct SerializeNode {
@@ -19,7 +19,7 @@ class ComponentModule final {
     };
 
     struct ComponentNode {
-        IPlayerComponent * comp;
+        IPlayerComponent * comp = nullptr;
         std::unordered_map<std::string, SerializeNode> serializers;
     };
 
@@ -36,10 +36,10 @@ public:
     template<typename T>
     requires std::derived_from<T, IPlayerComponent>
     T *CreateComponent() {
-        componentMap_.insert_or_assign(typeid(T), {});
-        auto res = new T(this);
-        componentMap_[typeid(T)].comp = res;
-        return res;
+        componentMap_.insert_or_assign(typeid(T),  ComponentNode{});
+        auto comp = new T(this);
+        componentMap_[typeid(T)].comp = comp;
+        return comp;
     }
 
     template<typename T>
@@ -75,3 +75,28 @@ public:
     void OnLogin();
     void OnLogout();
 };
+
+/**
+ * 注册组件序列化和反序列化调用
+ * @param comp 组件类型
+ * @param tb 数据库表名
+ */
+#define SERIALIZE_COMPONENT(comp, tb) \
+{ \
+    GetModule()->RegisterSerializer<comp>(PascalToUnderline(#tb), [](IPlayerComponent *ct, mysqlx::Table table) { \
+        try { \
+            base::Serializer serializer(std::move(table)); \
+            dynamic_cast<comp *>(ct)->Serialize_##tb(serializer); \
+        } catch (std::bad_cast &e) { \
+            spdlog::error("{} - {} Serializer: {}", #comp, #tb, e.what()); \
+        } \
+    }); \
+    GetModule()->RegisterDeserializer<comp>(PascalToUnderline(#tb), [](IPlayerComponent *ct, mysqlx::RowResult res) { \
+        try { \
+            base::Deserializer deserializer(std::move(res)); \
+            dynamic_cast<comp *>(ct)->Deserialize_##tb(deserializer); \
+        } catch (std::bad_cast &e) { \
+            spdlog::error("{} - {} deserializer: {}", #comp, #tb, e.what()); \
+        } \
+    }); \
+}

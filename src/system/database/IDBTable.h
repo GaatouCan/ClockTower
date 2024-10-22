@@ -6,7 +6,7 @@ class IDBTable {
 public:
     virtual ~IDBTable() = default;
 
-    virtual std::string GetTableName() = 0;
+    [[nodiscard]] virtual const char*  GetTableName() const = 0;
 
     virtual mysqlx::RowResult Query(mysqlx::Table &table) = 0;
     virtual mysqlx::RowResult Query(mysqlx::Schema &schema) = 0;

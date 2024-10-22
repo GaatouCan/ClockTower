@@ -22,5 +22,7 @@ public:
 
     void Serialize_AvatarFrame(base::Serializer &s);
     void Deserialize_AvatarFrame(base::Deserializer &ds);
+
+    void SendInfo() const;
 };
 

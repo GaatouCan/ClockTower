@@ -1,6 +1,8 @@
 #include "Player.h"
+#include "../base/impl/Package.h"
 
 #include <utility>
+
 
 Player::Player(base::ConnectionPointer conn)
     : conn_(std::move(conn)),
@@ -58,6 +60,26 @@ void Player::StopTimer(const uint64_t timerID) {
         iter->second.Stop();
         timerMap_.erase(iter);
     }
+}
+
+base::IPackage * Player::BuildPackage() const {
+    return conn_->BuildPackage();
+}
+
+void Player::Send(base::IPackage *pkg) const {
+    conn_->Send(pkg);
+}
+
+void Player::Send(const uint32_t id, const std::string_view data) const {
+    const auto pkg = dynamic_cast<base::Package *>(conn_->BuildPackage());
+    pkg->SetPackageID(id).SetData(data);
+    Send(pkg);
+}
+
+void Player::Send(const uint32_t id, const std::stringstream &ss) const {
+    const auto pkg = dynamic_cast<base::Package *>(conn_->BuildPackage());
+    pkg->SetPackageID(id).SetData(ss.str());
+    Send(pkg);
 }
 
 std::shared_ptr<Player> CreatePlayer(const base::ConnectionPointer &conn, const uint64_t pid) {

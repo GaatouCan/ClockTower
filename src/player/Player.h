@@ -60,6 +60,15 @@ public:
     }
 
     void StopTimer(uint64_t timerID);
+
+    base::IPackage *BuildPackage() const;
+    void Send(base::IPackage *pkg) const;
+
+    void Send(uint32_t id, std::string_view data) const;
+    void Send(uint32_t id, const std::stringstream &ss) const;
 };
 
 std::shared_ptr<Player> CreatePlayer(const base::ConnectionPointer &, uint64_t);
+
+#define SendPackage(proto, data) \
+    Send(static_cast<uint32_t>(protocol::ProtoType::proto), data.SerializeAsString())

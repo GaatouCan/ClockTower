@@ -11,7 +11,7 @@ if not os.path.exists(GENERATED_DIR):
 
 PROTO_LIST = [
     'login',
-    # 'appearance',
+    'appearance',
     # 'chat'
 ]
 

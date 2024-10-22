@@ -42,19 +42,19 @@ namespace base {
          * @param cb 回调闭包
          */
         template<typename Callback>
-        void PushTaskAndCallback(DBTask task, Callback&& cb) {
-            // PushTask([task = std::move(task), cb = std::forward<Callback>(cb)](mysqlx::Schema &schema) mutable {
-            //     std::invoke(task, schema);
-            //     std::move(cb)();
-            // });
+        void PushTask(DBTask task, Callback cb) {
+            PushTask([task = std::move(task), cb = std::move(cb)](mysqlx::Schema &schema) mutable {
+                std::invoke(task, schema);
+                std::move(cb)();
+            });
         };
 
         template<asio::completion_token_for<void()> Token>
         auto AsyncPushTask(DBTask task, Token && token) {
-            auto init = [this](asio::completion_handler_for<void()> auto handler, DBTask func) {
+            auto init = [this](asio::completion_handler_for<void()> auto handler, DBTask func) mutable {
                 auto work = asio::make_work_guard(handler);
 
-                this->PushTaskAndCallback(std::move(func), [handler = std::move(handler), work = std::move(work)]() mutable {
+                this->PushTask(std::move(func), [handler = std::move(handler), work = std::move(work)]() mutable {
                     auto alloc = asio::get_associated_allocator(handler, asio::recycling_allocator<void>());
                     asio::dispatch(work.get_executor(), asio::bind_allocator(alloc, [handler = std::move(handler)]() mutable {
                         std::move(handler)();

@@ -34,7 +34,7 @@ auto async_func(int a, CompletionToken &&token) {
 }
 
 asio::awaitable<void> test() {
-    co_await async_func(11, asio::deferred);
+    co_await async_func(11, asio::use_awaitable);
     spdlog::info("async completed");
     std::stringstream ss;
     ss << std::this_thread::get_id();

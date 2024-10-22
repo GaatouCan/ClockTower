@@ -18,10 +18,11 @@ namespace base {
                     if (!node.queue->IsRunning())
                         break;
 
-                    if (auto task = node.queue->PopFront()) {
+                    if (const auto wrapper = node.queue->PopFront(); wrapper != nullptr) {
                         if (auto schema = node.sess->getSchema(schemaName); schema.existsInDatabase()) {
-                            std::invoke(task, schema);
+                            wrapper->Execute(schema);
                         }
+                        delete wrapper;
                     }
                 }
 
@@ -34,7 +35,7 @@ namespace base {
                 cfg["database"]["mysql"]["user"].as<std::string>(),
                 cfg["database"]["mysql"]["passwd"].as<std::string>()
             );
-            node.queue = std::make_unique<TSDeque<DBTask>>();
+            node.queue = std::make_unique<TSDeque<IDBCallbackWrapper *>>();
         }
     }
 
@@ -77,8 +78,8 @@ namespace base {
     }
 
     void DatabaseSystem::PushTask(const DBTask &task) {
-        const auto &[th, sess, queue, tid] = nodeVec_[nextNodeIdx_++];
-        queue->PushBack(task);
-        nextNodeIdx_ = nextNodeIdx_ % nodeVec_.size();
+        // const auto &[th, sess, queue, tid] = nodeVec_[nextNodeIdx_++];
+        // queue->PushBack(task);
+        // nextNodeIdx_ = nextNodeIdx_ % nodeVec_.size();
     }
 } // base

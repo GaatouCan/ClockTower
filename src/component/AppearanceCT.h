@@ -16,5 +16,11 @@ public:
 
     void Serialize_Appearance(base::Serializer &s);
     void Deserialize_Appearance(base::Deserializer &ds);
+
+    void Serialize_Avatar(base::Serializer &s);
+    void Deserialize_Avatar(base::Deserializer &ds);
+
+    void Serialize_AvatarFrame(base::Serializer &s);
+    void Deserialize_AvatarFrame(base::Deserializer &ds);
 };
 

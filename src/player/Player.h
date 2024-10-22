@@ -38,6 +38,8 @@ public:
         }, detached);
     }
 
+    ComponentModule &GetComponentModule();
+
     void OnLogin();
     void OnLogout();
 

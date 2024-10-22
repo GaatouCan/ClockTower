@@ -32,6 +32,10 @@ bool Player::IsSameThread() const {
     return std::this_thread::get_id() == GetThreadID();
 }
 
+ComponentModule & Player::GetComponentModule() {
+    return module_;
+}
+
 void Player::OnLogin() {
     module_.OnLogin();
 }

@@ -1,4 +1,6 @@
 #include "PlayerManager.h"
+#include "../base/GameWorld.h"
+#include "../system/database/DatabaseSystem.h"
 
 PlayerManager::PlayerManager(asio::io_context &ctx)
     : IManager(ctx) {
@@ -20,7 +22,20 @@ void PlayerManager::OnPlayerLogin(const std::shared_ptr<base::Connection> &conn,
     }
 
     const auto plr = EmplacePlayer(conn, pid);
-    plr->OnLogin();
+
+    co_spawn(plr->GetConnection()->GetSocket().get_executor(), [plr]() mutable -> awaitable<void> {
+        const auto sys = GetSystem<base::DatabaseSystem>();
+        if (sys == nullptr)
+            co_return;
+
+        sys->AsyncPushTask([plr](mysqlx::Schema &schema) {
+            plr->GetComponentModule().Deserialize(schema);
+        }, asio::use_awaitable);
+        plr->OnLogin();
+
+    }, detached);
+
+    // plr->OnLogin();
 }
 
 void PlayerManager::OnPlayerLogout(const uint64_t pid) {

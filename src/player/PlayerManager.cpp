@@ -29,10 +29,10 @@ awaitable<void> PlayerManager::OnPlayerLogin(const std::shared_ptr<base::Connect
         co_return;
     }
 
-    sys->PushTask([plr](mysqlx::Schema &schema) {
+    co_await sys->AsyncPushTask([plr](mysqlx::Schema &schema) {
         plr->GetComponentModule().Deserialize(schema);
-        plr->OnLogin();
-    });
+    }, asio::use_awaitable);
+    plr->OnLogin();
 }
 
 void PlayerManager::OnPlayerLogout(const uint64_t pid) {

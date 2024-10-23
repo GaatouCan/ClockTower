@@ -18,13 +18,6 @@ namespace base {
         explicit IManager(asio::io_context &ctx);
         virtual ~IManager() = default;
 
-        /**
-         * 初始化时在主线程被调用；
-         * 用于初始化Mgr数据；
-         * 可以阻塞(如内部直接执行SQL同步操作)
-         */
-        virtual void Init() = 0;
-
         void SetThreadID(ThreadID tid);
         [[nodiscard]] ThreadID GetThreadID() const;
         [[nodiscard]] bool IsSameThread() const;

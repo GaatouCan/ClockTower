@@ -12,7 +12,6 @@
 #include <spdlog/spdlog.h>
 
 #include <appearance.pb.h>
-#include <appearance.pb.cc>
 
 AppearanceCT::AppearanceCT(ComponentModule *module)
     : IPlayerComponent(module) {

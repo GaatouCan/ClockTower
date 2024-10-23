@@ -3,7 +3,7 @@
 #include "../../player/PlayerManager.h"
 #include "../manager/ManagerSystem.h"
 
-#include <login.pb.cc>
+#include <login.pb.h>
 #include <spdlog/spdlog.h>
 
 

@@ -82,6 +82,9 @@ void Player::Send(const uint32_t id, const std::stringstream &ss) const {
     Send(pkg);
 }
 
+void Player::SyncCache(CacheNode *node) {
+}
+
 std::shared_ptr<Player> CreatePlayer(const base::ConnectionPointer &conn, const uint64_t pid) {
     auto plr = std::make_shared<Player>(conn);
     plr->SetPlayerId(pid);

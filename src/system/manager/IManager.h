@@ -4,6 +4,8 @@
 #include "../../base/RepeatedTimer.h"
 #include "../../common/utils.h"
 
+#include <spdlog/spdlog.h>
+
 namespace base {
     class IManager {
 
@@ -31,7 +33,11 @@ namespace base {
         template<typename FUNC, typename ... ARGS>
         void RunInThread(FUNC &&func, ARGS &&... args) {
             co_spawn(ctx_, [func = std::forward<FUNC>(func), ...args = std::forward<ARGS>(args)]() -> awaitable<void> {
-                std::invoke(func, args...);
+                try {
+                    std::invoke(func, args...);
+                } catch (std::exception &e) {
+                    spdlog::error("IManager::RunInThread: {}", e.what());
+                }
                 co_return;
             }, detached);
         }

@@ -8,6 +8,8 @@
 #include "../base/RepeatedTimer.h"
 #include "../common/utils.h"
 
+#include <spdlog/spdlog.h>
+
 class Player final : public ICharacter, public std::enable_shared_from_this<Player> {
 
     base::ConnectionPointer conn_;
@@ -39,7 +41,11 @@ public:
     template<typename FUNC, typename... ARGS>
     void RunInThread(FUNC &&func, ARGS &&... args) {
         co_spawn(conn_->GetSocket().get_executor(), [func = std::forward<FUNC>(func), ...args = std::forward<ARGS>(args)]() -> awaitable<void> {
-            std::invoke(func, args...);
+            try {
+                std::invoke(func, args...);
+            } catch (std::exception &e) {
+                spdlog::error("Player::RunInThread: {}", e.what());
+            }
             co_return;
         }, detached);
     }

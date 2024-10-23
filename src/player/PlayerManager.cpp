@@ -39,9 +39,9 @@ void PlayerManager::OnPlayerLogout(const uint64_t pid) {
             return;
         }
 
+        plr->OnLogout();
         sys->PushTask([plr](mysqlx::Schema &schema) {
             plr->GetComponentModule().Serialize(schema);
-            plr->OnLogout();
         });
     }
 }

@@ -83,6 +83,7 @@ void Player::Send(const uint32_t id, const std::stringstream &ss) const {
 }
 
 void Player::SyncCache(CacheNode *node) {
+    module_.SyncCache(node);
 }
 
 std::shared_ptr<Player> CreatePlayer(const base::ConnectionPointer &conn, const uint64_t pid) {

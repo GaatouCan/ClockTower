@@ -54,3 +54,9 @@ void ComponentModule::OnLogout() {
         comp->OnLogout();
     }
 }
+
+void ComponentModule::SyncCache(CacheNode *node) {
+    for (const auto& [comp, serialize] : std::views::values(componentMap_)) {
+        comp->SyncCache(node);
+    }
+}

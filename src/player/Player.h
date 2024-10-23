@@ -1,6 +1,5 @@
 #pragma once
 
-#include "CacheNode.h"
 #include "../base/ICharacter.h"
 #include "../base/Connection.h"
 #include "ComponentModule.h"
@@ -68,7 +67,7 @@ public:
     void Send(uint32_t id, std::string_view data) const;
     void Send(uint32_t id, const std::stringstream &ss) const;
 
-    void SyncCache(CacheNode *node);
+    void SyncCache(struct CacheNode *node);
 };
 
 std::shared_ptr<Player> CreatePlayer(const base::ConnectionPointer &, uint64_t);

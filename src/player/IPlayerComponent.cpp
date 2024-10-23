@@ -23,3 +23,6 @@ void IPlayerComponent::OnLogin() {
 
 void IPlayerComponent::OnLogout() {
 }
+
+void IPlayerComponent::SyncCache(CacheNode *node) {
+}

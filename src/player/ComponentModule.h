@@ -74,6 +74,8 @@ public:
 
     void OnLogin();
     void OnLogout();
+
+    void SyncCache(CacheNode *node);
 };
 
 /**

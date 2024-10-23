@@ -15,4 +15,6 @@ public:
 
     void OnLogin();
     void OnLogout();
+
+    void SyncCache(struct CacheNode *node);
 };

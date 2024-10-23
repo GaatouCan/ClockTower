@@ -1,9 +1,9 @@
 #include "AppearanceCT.h"
 
-#include "../../base/impl/Package.h"
-#include "../../player/ComponentModule.h"
-#include "../../player/Player.h"
-#include "../../common/utils.h"
+#include "../../../base/impl/Package.h"
+#include "../../../player/ComponentModule.h"
+#include "../../../player/Player.h"
+#include "../../../common/utils.h"
 #include "../../protobuf/ProtoType.generated.h"
 #include "../../protobuf/Protocol.generated.h"
 
@@ -90,7 +90,7 @@ awaitable<void> protocol::CS_AppearanceRequest(const std::shared_ptr<Player> &pl
     Appearance::CS_AppearanceRequest req;
     req.ParseFromString(pkg->GetData());
 
-    auto ct = plr->GetComponentModule().GetComponent<AppearanceCT>();
+    const auto ct = plr->GetComponentModule().GetComponent<AppearanceCT>();
     if (ct == nullptr)
         co_return;
 

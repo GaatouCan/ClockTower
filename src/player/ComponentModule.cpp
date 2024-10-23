@@ -1,7 +1,7 @@
 #include "ComponentModule.h"
 #include "Player.h"
 
-#include "../component/appearance/AppearanceCT.h"
+#include "../world/component/appearance/AppearanceCT.h"
 
 ComponentModule::ComponentModule(Player *plr)
     : owner_(plr){

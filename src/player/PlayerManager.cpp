@@ -11,10 +11,21 @@ PlayerManager::~PlayerManager() {
 }
 
 awaitable<void> PlayerManager::OnPlayerLogin(const std::shared_ptr<base::Connection> &conn, const uint64_t pid) {
-    if (const auto old = RemovePlayer(pid); old != nullptr) {
-        old->GetConnection()->ResetContext();
-        old->GetConnection()->Disconnect();
-        old->OnLogout();
+    if (const auto plr = FindPlayer(pid); plr != nullptr) {
+
+        // 首先断开旧连接
+        plr->GetConnection()->ResetContext();
+        plr->GetConnection()->Disconnect();
+
+        // 如果已经是登录状态则重新绑定TCP链接即可
+        if (plr->IsLogin()) {
+            plr->SetConnection(conn);
+            plr->OnLogin();
+            co_return;
+        }
+
+        // 否则直接删掉该对象并执行下面登录逻辑
+        RemovePlayer(pid);
     }
 
     const auto plr = EmplacePlayer(conn, pid);

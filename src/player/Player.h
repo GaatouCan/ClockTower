@@ -3,15 +3,20 @@
 #include "../base/ICharacter.h"
 #include "../base/Connection.h"
 #include "ComponentModule.h"
+#include "../system/login/PlatformInfo.h"
 
 #include "../base/RepeatedTimer.h"
 #include "../common/utils.h"
 
 class Player final : public ICharacter, public std::enable_shared_from_this<Player> {
+
     base::ConnectionPointer conn_;
     uint64_t id_;
 
     ComponentModule module_;
+
+    TimePoint loginTime_;
+    base::PlatformInfo platform_;
 
     std::unordered_map<uint64_t, base::RepeatedTimer> timerMap_;
 
@@ -25,6 +30,7 @@ public:
     uint64_t GetPlayerID() const;
 
     base::ConnectionPointer GetConnection() const;
+    void SetConnection(const base::ConnectionPointer &conn);
 
     [[nodiscard]] ThreadID GetThreadID() const;
 
@@ -42,6 +48,8 @@ public:
 
     void OnLogin();
     void OnLogout();
+
+    bool IsLogin() const;
 
     template<typename FUNC, typename... ARGS>
     uint64_t SetTimer(const std::chrono::duration<uint32_t> expire, const bool repeat, FUNC &&func, ARGS &&... args) {

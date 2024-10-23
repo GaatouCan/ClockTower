@@ -26,6 +26,10 @@ base::ConnectionPointer Player::GetConnection() const {
     return conn_;
 }
 
+void Player::SetConnection(const base::ConnectionPointer &conn) {
+    conn_ = conn;
+}
+
 ThreadID Player::GetThreadID() const {
     return conn_->GetThreadID();
 }
@@ -43,6 +47,7 @@ void Player::OnLogin() {
         RunInThread(&Player::OnLogin, this);
         return;
     }
+    loginTime_ = std::chrono::steady_clock::now();
     module_.OnLogin();
 }
 
@@ -53,6 +58,10 @@ void Player::OnLogout() {
     }
 
     module_.OnLogout();
+}
+
+bool Player::IsLogin() const {
+    return loginTime_.time_since_epoch().count() > 0;
 }
 
 void Player::StopTimer(const uint64_t timerID) {

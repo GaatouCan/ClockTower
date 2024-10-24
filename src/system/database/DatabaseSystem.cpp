@@ -22,7 +22,7 @@ namespace base {
 
             node.th = std::make_unique<std::thread>([this, &node, &schemaName] {
                 node.tid = std::this_thread::get_id();
-                spdlog::info("Thread ID {} - Begin handle database task", ThreadIdToInt(node.tid));
+                spdlog::info("\tThread ID {} - Begin handle database task", ThreadIdToInt(node.tid));
                 while (node.queue->IsRunning()) {
                     node.queue->Wait();
                     if (!node.queue->IsRunning())

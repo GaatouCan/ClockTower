@@ -19,5 +19,5 @@ public:
     void OnTick(TimePoint now) override;
 
     void SyncCache(CacheNode node);
-    std::optional<CacheNode> FindCacheNode(uint64_t pid) const;
+    awaitable<std::optional<CacheNode>> FindCacheNode(uint64_t pid) const;
 };

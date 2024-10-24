@@ -1,8 +1,14 @@
 #include <spdlog/spdlog.h>
+
 #include "base/GameWorld.h"
+#include "system/config/ConfigSystem.h"
 
 auto main(int argc, char *argv[]) -> int {
     spdlog::info("Hello World!");
+
+    if (const auto sys = GetSystem<base::ConfigSystem>(); sys != nullptr) {
+        sys->SetYAMLPath("../../config");
+    }
 
     GetWorld().Init();
     GetWorld().Run();

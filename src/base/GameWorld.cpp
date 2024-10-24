@@ -103,6 +103,8 @@ namespace base {
                 throw std::runtime_error("Failed to get login system");
             }
 
+            spdlog::info("Wait For Client Connect - port: {}", config["server"]["port"].as<uint16_t>());
+
             while (running_) {
                 // PackagePool and io_context in per sub thread
                 auto &[pool, ctx, tid] = pool_.NextContextNode();

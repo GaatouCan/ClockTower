@@ -7,7 +7,6 @@
 #include <thread>
 #include <vector>
 
-
 namespace base {
 
     struct DBSystemNode {

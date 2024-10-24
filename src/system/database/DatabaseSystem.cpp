@@ -1,5 +1,6 @@
 #include "DatabaseSystem.h"
 #include "../config/ConfigSystem.h"
+#include "../../common/utils.h"
 
 #include <spdlog/spdlog.h>
 
@@ -11,8 +12,17 @@ namespace base {
         nodeVec_ = std::vector<DBSystemNode>(cfg["database"]["pool"].as<uint64_t>());
 
         for (auto & node : nodeVec_) {
+            node.sess = std::make_unique<mysqlx::Session>(
+                cfg["database"]["mysql"]["host"].as<std::string>(),
+                cfg["database"]["mysql"]["port"].as<uint16_t>(),
+                cfg["database"]["mysql"]["user"].as<std::string>(),
+                cfg["database"]["mysql"]["passwd"].as<std::string>()
+            );
+            node.queue = std::make_unique<TSDeque<IDBCallbackWrapper *>>();
+
             node.th = std::make_unique<std::thread>([this, &node, &schemaName] {
                 node.tid = std::this_thread::get_id();
+                spdlog::info("Thread ID {} - Begin handle database task", ThreadIdToInt(node.tid));
                 while (node.queue->IsRunning()) {
                     node.queue->Wait();
                     if (!node.queue->IsRunning())
@@ -29,13 +39,6 @@ namespace base {
                 node.queue->Clear();
                 node.sess->close();
             });
-            node.sess = std::make_unique<mysqlx::Session>(
-                cfg["database"]["mysql"]["host"].as<std::string>(),
-                cfg["database"]["mysql"]["port"].as<uint16_t>(),
-                cfg["database"]["mysql"]["user"].as<std::string>(),
-                cfg["database"]["mysql"]["passwd"].as<std::string>()
-            );
-            node.queue = std::make_unique<TSDeque<IDBCallbackWrapper *>>();
         }
     }
 

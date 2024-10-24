@@ -79,7 +79,7 @@ namespace base {
         }
 
         void Clear() {
-            std::unique_lock lock(sharedMutex_);
+            std::unique_lock lock(blockMutex_);
             deque_.clear();
         }
 
@@ -102,6 +102,6 @@ namespace base {
         mutable std::shared_mutex sharedMutex_;
         std::mutex blockMutex_;
         std::condition_variable condVar_;
-        std::atomic<bool> quit_{false};
+        std::atomic_bool quit_{false};
     };
 }

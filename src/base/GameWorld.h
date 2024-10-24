@@ -38,7 +38,7 @@ namespace base {
             }
         };
 
-        std::priority_queue<SystemPriority, std::vector<SystemPriority>, std::less<>> initPriority_;
+        std::priority_queue<SystemPriority, std::vector<SystemPriority>, std::greater<>> initPriority_;
         std::unordered_map<std::type_index, ISubSystem *> systemMap_;
 
         ThreadID tid_;

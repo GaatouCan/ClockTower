@@ -8,7 +8,7 @@
 
 class PlayerCache final : public base::IManager {
 
-    std::unordered_map<uint64_t, CacheNode *> cacheMap_;
+    std::unordered_map<uint64_t, CacheNode> cacheMap_;
     std::mutex blockMutex_;
     mutable std::shared_mutex sharedMutex_;
 
@@ -18,6 +18,6 @@ public:
 
     void OnTick(TimePoint now) override;
 
-    void SyncCache(CacheNode *node);
-    const CacheNode *FindCacheNode(uint64_t pid) const;
+    void SyncCache(CacheNode node);
+    std::optional<CacheNode> FindCacheNode(uint64_t pid) const;
 };

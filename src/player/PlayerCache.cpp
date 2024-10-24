@@ -1,10 +1,13 @@
 #include "PlayerCache.h"
 
+#include <ranges>
+
 PlayerCache::PlayerCache(asio::io_context &ctx) : IManager(ctx) {
 }
 
 PlayerCache::~PlayerCache() {
-
+    for (const auto node : std::views::values(cacheMap_))
+        delete node;
 }
 
 void PlayerCache::OnTick(TimePoint now) {

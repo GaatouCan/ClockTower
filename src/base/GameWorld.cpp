@@ -116,6 +116,7 @@ namespace base {
         try {
             acceptor_.open(tcp::v4());
             acceptor_.bind({tcp::v4(), config["server"]["port"].as<uint16_t>()});
+            acceptor_.listen();
 
             const auto loginSys = GetSystem<LoginSystem>();
             if (loginSys == nullptr) {

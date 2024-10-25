@@ -100,6 +100,9 @@ namespace base {
     }
 
     void PackagePool::Expanse() {
+        if (useCount_ == 0)
+            return;
+
         if (std::floor(queue_.size() / useCount_) >= expanseRate)
             return;
 
@@ -110,7 +113,7 @@ namespace base {
     }
 
     void PackagePool::Collect() {
-        if (queue_.size() <= minCapacity || std::floor(queue_.size() / useCount_) < collectRate)
+        if (queue_.size() <= minCapacity || std::floor(queue_.size() / (useCount_ == 0 ? 1 : useCount_)) < collectRate)
             return;
 
         const auto num = static_cast<size_t>(std::ceil(static_cast<float>(queue_.size()) * collectScale));

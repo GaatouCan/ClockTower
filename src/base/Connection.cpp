@@ -35,7 +35,7 @@ namespace base {
                 handler_->OnClosed(shared_from_this());
         }
 
-        while (output_.IsEmpty()) {
+        while (!output_.IsEmpty()) {
             pool_.Recycle(output_.PopFront());
         }
     }
@@ -144,10 +144,12 @@ namespace base {
                     if (handler_ != nullptr) {
                         co_await handler_->OnWritePackage(shared_from_this());
                     }
-                } else
+                    pool_.Recycle(pkg);
+                } else {
                     spdlog::error("{} - write failed", __func__);
-
-                pool_.Recycle(pkg);
+                    pool_.Recycle(pkg);
+                    Disconnect();
+                }
             }
         } catch (std::exception &e) {
             spdlog::error("{} : {}", __func__, e.what());
@@ -168,14 +170,16 @@ namespace base {
 
                 co_await codec_->Decode(socket_, pkg);
 
-                if (!pkg->IsAvailable()) {
+                if (pkg->IsAvailable()) {
                     deadline_ = std::chrono::steady_clock::now() + expireTime_;
 
                     if (handler_ != nullptr) {
                         co_await handler_->OnReadPackage(shared_from_this(), pkg);
                     }
-                } else
+                } else {
                     spdlog::error("{} - read failed", __func__);
+                    Disconnect();
+                }
 
                 pool_.Recycle(pkg);
             }

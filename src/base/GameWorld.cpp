@@ -168,7 +168,7 @@ namespace base {
 
     void GameWorld::RemoveConnection(const std::string &key) {
         if (std::this_thread::get_id() != tid_) {
-            co_spawn(ctx_, [this, &key]() mutable -> awaitable<void> {
+            co_spawn(ctx_, [this, key]() mutable -> awaitable<void> {
                 connMap_.erase(key);
                 co_return;
             }, detached);

@@ -48,6 +48,7 @@ namespace base {
         if (pkg->header_.size == 0)
             co_return;
 
+        pkg->data_.resize(pkg->header_.size);
         if (auto [ec, len] = co_await async_read(socket, asio::buffer(pkg->data_)); ec) {
             spdlog::warn("{} - Read package data failed: {}", __func__, ec.message());
             pkg->Invalid();

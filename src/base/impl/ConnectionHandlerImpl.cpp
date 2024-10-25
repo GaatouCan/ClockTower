@@ -24,6 +24,7 @@ namespace base {
     }
 
     awaitable<void> ConnectionHandlerImpl::OnReadPackageT(const ConnectionPointer &conn, Package *pkg) {
+        spdlog::debug("{} Recv package", __func__);
         if (!conn->GetContext().has_value()) {
             if (const auto sys = GetSystem<LoginSystem>(); sys != nullptr) {
                 co_await sys->OnLogin(conn, pkg);

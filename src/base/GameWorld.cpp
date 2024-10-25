@@ -131,15 +131,15 @@ namespace base {
 
                 if (auto [ec, socket] = co_await acceptor_.async_accept(ctx); socket.is_open()) {
                     const auto addr = socket.remote_endpoint().address();
-                    spdlog::debug("New connection from: {}", addr.to_string());
+                    spdlog::info("New connection from: {}", addr.to_string());
 
                     if (!loginSys->VerifyAddress(socket.remote_endpoint().address())) {
-                        spdlog::debug("Rejected connection from: {}", addr.to_string());
+                        spdlog::warn("Rejected connection from: {}", addr.to_string());
                         continue;
                     }
 
                     const auto conn = std::make_shared<Connection>(std::move(socket), pool);
-                    spdlog::debug("Accept connection from: {}", addr.to_string());
+                    spdlog::info("Accept connection from: {}", addr.to_string());
 
                     const std::string key = fmt::format("{} - {}", addr.to_string(), CurrentTimeCount());
 

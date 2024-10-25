@@ -1,7 +1,12 @@
 #include "LoginSystem.h"
 
+#include <spdlog/spdlog.h>
+
+#include "../impl/LoginHandlerImpl.h"
+
 namespace base {
     void LoginSystem::Init() {
+        handler_ = std::make_unique<LoginHandlerImpl>();
     }
 
     bool LoginSystem::VerifyAddress(const asio::ip::address& addr) {
@@ -19,9 +24,10 @@ namespace base {
             co_return;
 
         const auto info = handler_->ParseLoginInfo(pkg);
+        spdlog::debug("{} - PlayerID: {}, Token: {}",__func__, info.pid, info.token);
 
         if (const auto pid = VerifyToken(info.pid, info.token); pid != 0) {
-            handler_->OnPlayerLogin(conn, info);
+            co_await handler_->OnPlayerLogin(conn, info);
         }
     }
 } // base

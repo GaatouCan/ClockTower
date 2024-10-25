@@ -23,7 +23,7 @@ namespace base {
             try {
                 co_await (self->ReadPackage() || self->Watchdog());
             } catch (std::exception &e) {
-                spdlog::error("Connection::connect() - {}", e.what());
+                spdlog::warn("Connection::connect() - {}", e.what());
             }
         }, detached);
     }
@@ -119,18 +119,18 @@ namespace base {
             } while (deadline_ > now && ctxNullCount_ < NULL_CONTEXT_MAX_COUNT);
 
             if (socket_.is_open()) {
-                spdlog::error("Watchdog timer timeout {}", socket_.remote_endpoint().address().to_string());
+                spdlog::warn("Watchdog timer timeout {}", socket_.remote_endpoint().address().to_string());
                 Disconnect();
             }
         } catch (std::exception &e) {
-            spdlog::error("{} : {}", __func__, e.what());
+            spdlog::error("{} - {}", __func__, e.what());
         }
     }
 
     awaitable<void> Connection::WritePackage() {
         try {
             if (codec_ == nullptr) {
-                spdlog::error("{} - codec undefined", __func__);
+                spdlog::critical("{} - codec undefined", __func__);
                 Disconnect();
                 co_return;
             }
@@ -146,7 +146,7 @@ namespace base {
                     }
                     pool_.Recycle(pkg);
                 } else {
-                    spdlog::error("{} - write failed", __func__);
+                    spdlog::warn("{} - write failed", __func__);
                     pool_.Recycle(pkg);
                     Disconnect();
                 }
@@ -177,7 +177,7 @@ namespace base {
                         co_await handler_->OnReadPackage(shared_from_this(), pkg);
                     }
                 } else {
-                    spdlog::error("{} - read failed", __func__);
+                    spdlog::warn("{} - read failed", __func__);
                     Disconnect();
                 }
 

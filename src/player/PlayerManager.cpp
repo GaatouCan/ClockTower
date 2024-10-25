@@ -29,6 +29,7 @@ awaitable<void> PlayerManager::OnPlayerLogin(const std::shared_ptr<base::Connect
     }
 
     const auto plr = EmplacePlayer(conn, pid);
+    spdlog::info("{} New Player Request: {}", __func__, pid);
 
     if (const auto sys = GetSystem<base::DatabaseSystem>(); sys != nullptr) {
         co_await sys->AsyncPushTask([plr](mysqlx::Schema &schema) {

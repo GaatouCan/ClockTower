@@ -1,7 +1,9 @@
 #include "Player.h"
 #include "../base/impl/Package.h"
+#include "../../protobuf/ProtoType.generated.h"
 
 #include <utility>
+#include <login.pb.h>
 
 
 Player::Player(base::ConnectionPointer conn)
@@ -47,8 +49,17 @@ void Player::OnLogin() {
         RunInThread(&Player::OnLogin, this);
         return;
     }
+    spdlog::info("Player::OnLogin {}", GetPlayerID());
+
     loginTime_ = std::chrono::steady_clock::now();
     module_.OnLogin();
+
+    Login::SC_LoginResponse response;
+    response.set_result(true);
+    response.set_progress(100);
+    response.set_describe("Component Load Completed");
+
+    SendPackage(SC_LoginResponse, response);
 }
 
 void Player::OnLogout() {

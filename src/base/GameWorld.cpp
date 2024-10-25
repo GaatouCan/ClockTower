@@ -1,4 +1,4 @@
-#include "GameWorld.h"
+﻿#include "GameWorld.h"
 
 #include "../common/utils.h"
 #include "impl/PackageCodecImpl.h"
@@ -29,11 +29,27 @@ namespace base {
     GameWorld::~GameWorld() {
         Shutdown();
 
-        for (const auto sys: std::views::values(systemMap_)) {
-            delete sys;
+        while (!destPriority_.empty()) {
+            auto [priority, type] = destPriority_.top();
+            destPriority_.pop();
+
+            const auto iter = systemMap_.find(type);
+            if (iter == systemMap_.end())
+                continue;
+
+            delete iter->second;
+            spdlog::info("{} Destroyed", type.name());
+
+            systemMap_.erase(iter);
         }
 
-        spdlog::info("Game World destroyed");
+        // 正常情况下map应该是空了 但以防万一还是再遍历一次
+        for (const auto [type, sys]: systemMap_) {
+            delete sys;
+            spdlog::info("{} Destroyed.", type.name());
+        }
+
+        spdlog::info("Game World Destroyed.");
     }
 
     GameWorld &GameWorld::Init() {
@@ -46,7 +62,7 @@ namespace base {
                 continue;
 
             iter->second->Init();
-            spdlog::info("{} initialized.", iter->second->GetSystemName());
+            spdlog::info("{} Initialized.", iter->second->GetSystemName());
         }
 
         const auto &config = GetServerConfig();
@@ -83,7 +99,7 @@ namespace base {
         if (!running_)
             return *this;
 
-        spdlog::info("Server shutting down...");
+        spdlog::info("Server Shutting Down...");
         running_ = false;
 
         if (!ctx_.stopped())

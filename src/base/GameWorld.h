@@ -39,6 +39,7 @@ namespace base {
         };
 
         std::priority_queue<SystemPriority, std::vector<SystemPriority>, std::greater<>> initPriority_;
+        std::priority_queue<SystemPriority, std::vector<SystemPriority>, std::less<>> destPriority_;
         std::unordered_map<std::type_index, ISubSystem *> systemMap_;
 
         ThreadID tid_;
@@ -90,6 +91,7 @@ namespace base {
 
             systemMap_.insert_or_assign(typeid(T), res);
             initPriority_.push({priority, typeid(T)});
+            destPriority_.push({priority, typeid(T)});
 
             return res;
         }

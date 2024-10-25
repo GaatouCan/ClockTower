@@ -46,7 +46,8 @@ namespace base {
 } // base
 
 #define REGISTER_MANAGER(mgr) \
-    CreateManager<mgr>(ctx_);
+    CreateManager<mgr>(ctx_); \
+    spdlog::info("\tLoading {}", #mgr);
 
 template<base::MANAGER_TYPE T>
 T *GetManager() {

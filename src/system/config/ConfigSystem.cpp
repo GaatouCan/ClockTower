@@ -6,12 +6,12 @@
 
 namespace base {
     void ConfigSystem::Init() {
-        spdlog::info("Using configuration file: {}", YAMLPath_ + SERVER_CONFIG_FILE);
+        spdlog::info("Using Configuration File: {}", YAMLPath_ + SERVER_CONFIG_FILE);
 
         config_ = YAML::LoadFile(YAMLPath_ + SERVER_CONFIG_FILE);
 
         assert(!config_.IsNull());
-        spdlog::info("Checking configuration file");
+        spdlog::info("Checking Configuration File");
 
         assert(!config_["server"].IsNull());
         assert(!config_["server"]["port"].IsNull());

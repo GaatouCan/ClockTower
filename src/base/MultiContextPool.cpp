@@ -31,7 +31,7 @@ namespace base {
                 node.ctx.run();
             });
         }
-        spdlog::info("MultiContextPool started with {} thread", num);
+        spdlog::info("MultiContextPool Started With {} Thread(s)", num);
     }
 
     ContextNode &MultiContextPool::NextContextNode() {

@@ -72,7 +72,7 @@ namespace base {
         if (!cfg["package"]["pool"]["collect_scale"].IsNull())
             SetCollectScale(cfg["package"]["pool"]["collect_scale"].as<float>());
 
-        spdlog::info("Package pool config set.");
+        spdlog::info("Package Pool Config Loaded.");
     }
 
     void PackagePool::SetDefaultCapacity(const size_t capacity) {

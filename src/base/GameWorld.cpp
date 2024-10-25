@@ -16,7 +16,7 @@ namespace base {
     REGISTER_SYSTEM(ConfigSystem, 0)
     REGISTER_SYSTEM(ProtocolSystem, 1)
     REGISTER_SYSTEM(LoginSystem, 2)
-    REGISTER_SYSTEM(DatabaseSystem, 9)
+    // REGISTER_SYSTEM(DatabaseSystem, 9)
     REGISTER_SYSTEM(ManagerSystem, 10)
 
     GameWorld::GameWorld()
@@ -32,6 +32,8 @@ namespace base {
         for (const auto sys: std::views::values(systemMap_)) {
             delete sys;
         }
+
+        spdlog::info("Game World destroyed");
     }
 
     GameWorld &GameWorld::Init() {
@@ -81,6 +83,7 @@ namespace base {
         if (!running_)
             return *this;
 
+        spdlog::info("Server shutting down...");
         running_ = false;
 
         if (!ctx_.stopped())

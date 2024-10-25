@@ -43,6 +43,7 @@ awaitable<void> PlayerManager::OnPlayerLogin(const std::shared_ptr<base::Connect
 }
 
 void PlayerManager::OnPlayerLogout(const uint64_t pid) {
+    spdlog::info("{} - Player Logout: {}", __func__, pid);
     if (const auto plr = RemovePlayer(pid); plr != nullptr) {
         plr->OnLogout();
 

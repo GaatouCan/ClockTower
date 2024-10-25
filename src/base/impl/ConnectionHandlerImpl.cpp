@@ -16,7 +16,7 @@ namespace base {
         if (!conn->GetContext().has_value())
             return;
 
-        const auto pid = std::any_cast<uint64_t>(conn->GetContext().has_value());
+        const auto pid = std::any_cast<uint64_t>(conn->GetContext());
         conn->ResetContext();
 
         if (const auto plrMgr = GetManager<PlayerManager>(); plrMgr != nullptr)

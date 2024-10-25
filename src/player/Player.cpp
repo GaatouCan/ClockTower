@@ -69,6 +69,7 @@ void Player::OnLogout() {
     }
 
     module_.OnLogout();
+    spdlog::info("Player::OnLogout {}", GetPlayerID());
 }
 
 bool Player::IsLogin() const {

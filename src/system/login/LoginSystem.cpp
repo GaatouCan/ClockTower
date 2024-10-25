@@ -2,6 +2,7 @@
 
 #include <spdlog/spdlog.h>
 
+#include "../../base/Connection.h"
 #include "../impl/LoginHandlerImpl.h"
 
 namespace base {
@@ -27,6 +28,7 @@ namespace base {
         spdlog::debug("{} - PlayerID: {}, Token: {}",__func__, info.pid, info.token);
 
         if (const auto pid = VerifyToken(info.pid, info.token); pid != 0) {
+            conn->SetContext(std::make_any<uint64_t>(pid));
             co_await handler_->OnPlayerLogin(conn, info);
         }
     }

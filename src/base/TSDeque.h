@@ -2,6 +2,7 @@
 
 #include <deque>
 #include <condition_variable>
+#include <shared_mutex>
 #include <atomic>
 
 namespace base {
@@ -68,12 +69,12 @@ namespace base {
         }
 
         bool IsEmpty() const {
-            std::scoped_lock lock(mutex_);
+            std::shared_lock lock(sharedMutex_);
             return deque_.empty();
         }
 
         size_t Size() const {
-            std::scoped_lock lock(mutex_);
+            std::shared_lock lock(sharedMutex_);
             return deque_.size();
         }
 
@@ -98,7 +99,8 @@ namespace base {
 
     private:
         std::deque<T> deque_;
-        mutable std::mutex mutex_;
+        std::mutex mutex_;
+        mutable std::shared_mutex sharedMutex_;
         std::mutex blocking_;
         std::condition_variable condVar_;
         std::atomic_bool quit_{false};

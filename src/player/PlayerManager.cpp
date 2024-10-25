@@ -67,7 +67,7 @@ void PlayerManager::PushPlayer(const std::shared_ptr<Player>& plr) {
         return;
     }
 
-    std::unique_lock lock(blockMutex_);
+    std::scoped_lock lock(mutex_);
     playerMap_[plr->GetPlayerID()] = plr;
 }
 
@@ -80,7 +80,7 @@ std::shared_ptr<Player> PlayerManager::FindPlayer(const uint64_t pid) {
 }
 
 std::shared_ptr<Player> PlayerManager::RemovePlayer(const uint64_t pid) {
-    std::unique_lock lock(blockMutex_);
+    std::scoped_lock lock(mutex_);
     if (const auto it = playerMap_.find(pid); it != playerMap_.end()) {
         auto res = it->second;
         playerMap_.erase(it);

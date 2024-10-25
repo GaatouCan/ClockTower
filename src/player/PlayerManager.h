@@ -10,7 +10,7 @@
 class PlayerManager final : public base::IManager {
 
     std::unordered_map<uint64_t, std::shared_ptr<Player>> playerMap_;
-    std::mutex blockMutex_;
+    std::mutex mutex_;
     std::shared_mutex sharedMutex_;
 
 public:

@@ -27,13 +27,19 @@ namespace base {
         if (!conn->GetContext().has_value()) {
             if (const auto sys = GetSystem<LoginSystem>(); sys != nullptr) {
                 co_await sys->OnLogin(conn, pkg);
-            } else
+            } else {
                 spdlog::error("{}: LoginSystem not found.", __func__);
+                GetWorld().Shutdown();
+                exit(-1);
+            }
         } else {
             if (const auto sys = GetSystem<ProtocolSystem>(); sys != nullptr) {
                 co_await sys->OnReadPackage(conn, pkg);
-            } else
+            } else {
                 spdlog::error("{} - ProtocolSystem not found.", __func__);
+                GetWorld().Shutdown();
+                exit(-1);
+            }
         }
     }
 } // base

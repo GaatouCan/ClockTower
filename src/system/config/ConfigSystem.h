@@ -36,8 +36,11 @@ namespace base {
 
 inline const YAML::Node &GetServerConfig() {
     const auto sys = GetSystem<base::ConfigSystem>();
-    if (sys == nullptr)
-        throw std::runtime_error("Config System not found");
+    if (sys == nullptr) {
+        spdlog::warn("{} - Fail to found ConfigSystem", __func__);
+        GetWorld().Shutdown();
+        exit(-1);
+    }
 
     return sys->GetConfig();
 }

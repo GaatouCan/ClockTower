@@ -30,30 +30,28 @@ awaitable<void> PlayerManager::OnPlayerLogin(const std::shared_ptr<base::Connect
 
     const auto plr = EmplacePlayer(conn, pid);
 
-    const auto sys = GetSystem<base::DatabaseSystem>();
-    if (sys == nullptr) {
-        spdlog::error("{} - Failed to get DatabaseSystem", __func__);
-        co_return;
+    if (const auto sys = GetSystem<base::DatabaseSystem>(); sys != nullptr) {
+        co_await sys->AsyncPushTask([plr](mysqlx::Schema &schema) {
+        plr->GetComponentModule().Deserialize(schema);
+        }, asio::use_awaitable);
+    } else {
+        spdlog::warn("{} - Failed to found DatabaseSystem.", __func__);
     }
 
-    co_await sys->AsyncPushTask([plr](mysqlx::Schema &schema) {
-        plr->GetComponentModule().Deserialize(schema);
-    }, asio::use_awaitable);
     plr->OnLogin();
 }
 
 void PlayerManager::OnPlayerLogout(const uint64_t pid) {
     if (const auto plr = RemovePlayer(pid); plr != nullptr) {
-        const auto sys = GetSystem<base::DatabaseSystem>();
-        if (sys == nullptr) {
-            spdlog::error("{} - Failed to get DatabaseSystem", __func__);
-            return;
-        }
-
         plr->OnLogout();
-        sys->PushTask([plr](mysqlx::Schema &schema) {
+
+        if (const auto sys = GetSystem<base::DatabaseSystem>(); sys != nullptr) {
+            sys->PushTask([plr](mysqlx::Schema &schema) {
             plr->GetComponentModule().Serialize(schema);
-        });
+            });
+        } else {
+            spdlog::warn("{} - Failed to get DatabaseSystem", __func__);
+        }
     }
 }
 

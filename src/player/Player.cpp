@@ -49,7 +49,7 @@ void Player::OnLogin() {
         RunInThread(&Player::OnLogin, this);
         return;
     }
-    spdlog::info("Player::OnLogin {}", GetPlayerID());
+    spdlog::info("{} - Player[{}] login succeed.", __func__, GetPlayerID());
 
     loginTime_ = std::chrono::steady_clock::now();
     module_.OnLogin();
@@ -69,7 +69,7 @@ void Player::OnLogout() {
     }
 
     module_.OnLogout();
-    spdlog::info("Player::OnLogout {}", GetPlayerID());
+    spdlog::info("{} - Player[{}] logout.", __func__, GetPlayerID());
 }
 
 bool Player::IsLogin() const {

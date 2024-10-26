@@ -53,7 +53,7 @@ template<base::MANAGER_TYPE T>
 T *GetManager() {
     const auto sys = GetSystem<base::ManagerSystem>();
     if (sys == nullptr) {
-        spdlog::error("{} - Failed to found ManagerSystem.", __func__);
+        spdlog::critical("{} - Failed to found ManagerSystem.", __func__);
         GetWorld().Shutdown();
         exit(-1);
     }

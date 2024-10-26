@@ -29,14 +29,14 @@ awaitable<void> PlayerManager::OnPlayerLogin(const std::shared_ptr<base::Connect
     }
 
     const auto plr = EmplacePlayer(conn, pid);
-    spdlog::info("{} New Player Request: {}", __func__, pid);
+    spdlog::info("{} - New player login: {}", __func__, pid);
 
     if (const auto sys = GetSystem<base::DatabaseSystem>(); sys != nullptr) {
         co_await sys->AsyncPushTask([plr](mysqlx::Schema &schema) {
         plr->GetComponentModule().Deserialize(schema);
         }, asio::use_awaitable);
     } else {
-        spdlog::warn("{} - Failed to found DatabaseSystem.", __func__);
+        spdlog::error("{} - Failed to found DatabaseSystem.", __func__);
     }
 
     plr->OnLogin();
@@ -52,7 +52,7 @@ void PlayerManager::OnPlayerLogout(const uint64_t pid) {
             plr->GetComponentModule().Serialize(schema);
             });
         } else {
-            spdlog::warn("{} - Failed to get DatabaseSystem", __func__);
+            spdlog::error("{} - Failed to get DatabaseSystem", __func__);
         }
     }
 }

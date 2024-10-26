@@ -21,15 +21,18 @@ namespace base {
 
         if (const auto plrMgr = GetManager<PlayerManager>(); plrMgr != nullptr)
             plrMgr->OnPlayerLogout(pid);
+        else
+            spdlog::error("{} - Fail to Found PlayerManager", __func__);
     }
 
     awaitable<void> ConnectionHandlerImpl::OnReadPackageT(const ConnectionPointer &conn, Package *pkg) {
-        spdlog::debug("Receive Package: {}", pkg->GetID());
+        spdlog::trace("{} Receive Package[{}] From {}", __func__, pkg->GetID(), conn->RemoteAddress().to_string());
+
         if (!conn->GetContext().has_value()) {
             if (const auto sys = GetSystem<LoginSystem>(); sys != nullptr) {
                 co_await sys->OnLogin(conn, pkg);
             } else {
-                spdlog::error("{}: LoginSystem not found.", __func__);
+                spdlog::critical("{}: LoginSystem not found.", __func__);
                 GetWorld().Shutdown();
                 exit(-1);
             }
@@ -37,7 +40,7 @@ namespace base {
             if (const auto sys = GetSystem<ProtocolSystem>(); sys != nullptr) {
                 co_await sys->OnReadPackage(conn, pkg);
             } else {
-                spdlog::error("{} - ProtocolSystem not found.", __func__);
+                spdlog::critical("{} - ProtocolSystem not found.", __func__);
                 GetWorld().Shutdown();
                 exit(-1);
             }

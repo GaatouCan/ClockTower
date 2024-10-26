@@ -12,7 +12,7 @@ namespace base {
         if (const auto plrMgr = GetManager<PlayerManager>(); plrMgr != nullptr) {
             co_await plrMgr->OnPlayerLogin(conn, info.pid);
         } else
-            spdlog::info("{} - PlayerManager not found", __func__);
+            spdlog::warn("{} - PlayerManager not found", __func__);
     }
 
     LoginInfo LoginHandlerImpl::ParseLoginInfoT(Package *pkg) {

@@ -1,4 +1,4 @@
-#include "PackagePool.h"
+﻿#include "PackagePool.h"
 #include "../common/utils.h"
 
 #include <spdlog/spdlog.h>
@@ -72,7 +72,7 @@ namespace base {
         if (!cfg["package"]["pool"]["collect_scale"].IsNull())
             SetCollectScale(cfg["package"]["pool"]["collect_scale"].as<float>());
 
-        spdlog::info("Package Pool Config Loaded.");
+        spdlog::info("Package pool configuration loaded.");
     }
 
     void PackagePool::SetDefaultCapacity(const size_t capacity) {
@@ -107,16 +107,27 @@ namespace base {
             return;
 
         const auto num = static_cast<size_t>(std::ceil(static_cast<float>(useCount_) * expanseScale));
-        for (size_t i = 0; i < num; i++) {
+        spdlog::trace("{} - Pool rest: {}, current using: {}, expand number: {}.", __func__, queue_.size(), useCount_, num);
+
+        for (size_t i = 0; i < num; i++)
             queue_.emplace(CreatePackage());
-        }
     }
 
     void PackagePool::Collect() {
+        const auto now = std::chrono::steady_clock::now();
+
+        // 不要太频繁
+        if (now - collectTime_ < std::chrono::seconds(3))
+            return;
+
         if (queue_.size() <= minCapacity || std::floor(queue_.size() / (useCount_ == 0 ? 1 : useCount_)) < collectRate)
             return;
 
+        collectTime_ = now;
+
         const auto num = static_cast<size_t>(std::ceil(static_cast<float>(queue_.size()) * collectScale));
+        spdlog::trace("{} - Pool rest: {}, current using: {}, collect number: {}.", __func__, queue_.size(), useCount_, num);
+
         for (size_t i = 0; i < num && queue_.size() > minCapacity; i++) {
             const auto pkg = queue_.front();
             queue_.pop();

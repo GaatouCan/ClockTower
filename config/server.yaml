@@ -8,7 +8,7 @@ package:
   method: Protobuf
   pool:
     default_capacity: 64
-    minimum_capacity: 16
+    minimum_capacity: 64
     expanse_rate: 0.3
     expanse_scale: 0.7
     collect_rate: 1.0

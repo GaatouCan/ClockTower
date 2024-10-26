@@ -38,18 +38,17 @@ namespace base {
                 continue;
 
             delete iter->second;
-            spdlog::info("{} Destroyed", type.name());
+            spdlog::info("{} destroyed", type.name());
 
             systemMap_.erase(iter);
         }
 
         // 正常情况下map应该是空了 但以防万一还是再遍历一次
-        for (const auto [type, sys]: systemMap_) {
+        for (const auto sys: std::views::values(systemMap_)) {
             delete sys;
-            spdlog::info("{} Destroyed.", type.name());
         }
 
-        spdlog::info("Game World Destroyed.");
+        spdlog::info("Game world destroyed.");
     }
 
     GameWorld &GameWorld::Init() {
@@ -62,7 +61,7 @@ namespace base {
                 continue;
 
             iter->second->Init();
-            spdlog::info("{} Initialized.", iter->second->GetSystemName());
+            spdlog::info("{} initialized.", iter->second->GetSystemName());
         }
 
         const auto &config = GetServerConfig();
@@ -99,7 +98,7 @@ namespace base {
         if (!running_)
             return *this;
 
-        spdlog::info("Server Shutting Down...");
+        spdlog::info("Server shutting down...");
         running_ = false;
 
         if (!ctx_.stopped())
@@ -123,7 +122,7 @@ namespace base {
                 throw std::runtime_error("Failed to get login system");
             }
 
-            spdlog::info("Wait For Client Connect - port: {}", config["server"]["port"].as<uint16_t>());
+            spdlog::info("Waiting for client to connect - server port: {}", config["server"]["port"].as<uint16_t>());
 
             while (running_) {
                 // PackagePool and io_context in per sub thread

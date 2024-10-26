@@ -1,6 +1,8 @@
 #include "Connection.h"
+#include "../common/utils.h"
 
 #include <spdlog/spdlog.h>
+
 
 namespace base {
     Connection::Connection(TcpSocket socket, PackagePool &pool)
@@ -16,6 +18,7 @@ namespace base {
     void Connection::ConnectToClient() {
         deadline_ = std::chrono::steady_clock::now() + expireTime_;
 
+        spdlog::trace("{} - Connection from {} run in thread: {}", __func__, RemoteAddress().to_string(), ThreadIdToInt(tid_));
         if (handler_ != nullptr)
             handler_->OnConnected(shared_from_this());
 
@@ -119,7 +122,7 @@ namespace base {
             } while (deadline_ > now && ctxNullCount_ < NULL_CONTEXT_MAX_COUNT);
 
             if (socket_.is_open()) {
-                spdlog::warn("Watchdog timer timeout {}", socket_.remote_endpoint().address().to_string());
+                spdlog::warn("Watchdog Timer Timeout {}", socket_.remote_endpoint().address().to_string());
                 Disconnect();
             }
         } catch (std::exception &e) {
@@ -177,13 +180,15 @@ namespace base {
                         co_await handler_->OnReadPackage(shared_from_this(), pkg);
                     }
                 } else {
-                    spdlog::warn("{} - read failed", __func__);
+                    // 客户端主动端开连接也会导致这里警告 可无视
+                    spdlog::warn("{} - Read failed", __func__);
                     Disconnect();
                 }
 
                 pool_.Recycle(pkg);
             }
         } catch (std::exception &e) {
+            // 客户端主动端开连接也会导致这里报错 根据报错内容可选择性无视
             spdlog::error("{} : {}", __func__, e.what());
             Disconnect();
         }

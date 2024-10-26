@@ -26,7 +26,10 @@ namespace base {
     }
 
     awaitable<void> ConnectionHandlerImpl::OnReadPackageT(const ConnectionPointer &conn, Package *pkg) {
-        spdlog::trace("{} - Receive Package[{}] From {}.", __func__, pkg->GetID(), conn->RemoteAddress().to_string());
+        spdlog::trace("{} - Receive Package[{}] From {}.",
+            __func__,
+            ProtoTypeToString(static_cast<ProtoType>(pkg->GetID())),
+            conn->RemoteAddress().to_string());
 
         if (!conn->GetContext().has_value()) {
             if (const auto sys = GetSystem<LoginSystem>(); sys != nullptr) {

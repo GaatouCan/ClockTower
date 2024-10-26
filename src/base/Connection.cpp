@@ -5,6 +5,11 @@
 
 
 namespace base {
+
+    std::chrono::duration<uint32_t> Connection::expireTime      = CONNECTION_EXPIRE_SECONDS;
+    std::chrono::duration<uint32_t> Connection::writeTimeout    = CONNECTION_WRITE_TIMEOUT;
+    std::chrono::duration<uint32_t> Connection::readTimeout     = CONNECTION_READ_TIMEOUT;
+
     Connection::Connection(TcpSocket socket, PackagePool &pool)
         : socket_(std::move(socket)),
           pool_(pool),
@@ -16,7 +21,7 @@ namespace base {
     }
 
     void Connection::ConnectToClient() {
-        deadline_ = std::chrono::steady_clock::now() + expireTime_;
+        deadline_ = std::chrono::steady_clock::now() + expireTime;
 
         spdlog::trace("{} - Connection from {} run in thread: {}", __func__, RemoteAddress().to_string(), ThreadIdToInt(tid_));
         if (handler_ != nullptr)
@@ -58,19 +63,16 @@ namespace base {
         return *this;
     }
 
-    Connection & Connection::SetWatchdogTimeout(const uint32_t sec) {
-        expireTime_ = std::chrono::seconds(sec);
-        return *this;
+    void Connection::SetWatchdogTimeout(const uint32_t sec) {
+        expireTime = std::chrono::seconds(sec);
     }
 
-    Connection & Connection::SetWriteTimeout(const uint32_t sec) {
-        writeTimeout_ = std::chrono::seconds(sec);
-        return *this;
+    void Connection::SetWriteTimeout(const uint32_t sec) {
+        writeTimeout = std::chrono::seconds(sec);
     }
 
-    Connection & Connection::SetReadTimeout(const uint32_t sec) {
-        readTimeout_ = std::chrono::seconds(sec);
-        return *this;
+    void Connection::SetReadTimeout(const uint32_t sec) {
+        readTimeout = std::chrono::seconds(sec);
     }
 
     Connection & Connection::SetThreadID(const ThreadID tid) {
@@ -174,7 +176,7 @@ namespace base {
                 co_await codec_->Decode(socket_, pkg);
 
                 if (pkg->IsAvailable()) {
-                    deadline_ = std::chrono::steady_clock::now() + expireTime_;
+                    deadline_ = std::chrono::steady_clock::now() + expireTime;
 
                     if (handler_ != nullptr) {
                         co_await handler_->OnReadPackage(shared_from_this(), pkg);

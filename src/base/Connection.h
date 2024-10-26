@@ -14,6 +14,10 @@ namespace base {
     using namespace std::literals::chrono_literals;
     using namespace asio::experimental::awaitable_operators;
 
+    constexpr static auto CONNECTION_EXPIRE_SECONDS = 30s;
+    constexpr static auto CONNECTION_WRITE_TIMEOUT = 10s;
+    constexpr static auto CONNECTION_READ_TIMEOUT = 10s;
+
     constexpr static int NULL_CONTEXT_MAX_COUNT = 3;
 
     class Connection final : public std::enable_shared_from_this<Connection> {
@@ -31,9 +35,9 @@ namespace base {
         SteadyTimer watchdogTimer_;
         TimePoint deadline_;
 
-        std::chrono::duration<uint32_t> expireTime_ = 30s;
-        std::chrono::duration<uint32_t> writeTimeout_ = 10s;
-        std::chrono::duration<uint32_t> readTimeout_ = 10s;
+        static std::chrono::duration<uint32_t> expireTime;
+        static std::chrono::duration<uint32_t> writeTimeout;
+        static std::chrono::duration<uint32_t> readTimeout;
 
         ThreadID tid_;
 
@@ -54,9 +58,9 @@ namespace base {
 
         Connection &SetKey(const std::string &key);
 
-        Connection &SetWatchdogTimeout(uint32_t sec);
-        Connection &SetWriteTimeout(uint32_t sec);
-        Connection &SetReadTimeout(uint32_t sec);
+        static void SetWatchdogTimeout(uint32_t sec);
+        static void SetWriteTimeout(uint32_t sec);
+        static void SetReadTimeout(uint32_t sec);
 
         Connection &SetThreadID(ThreadID tid);
         [[nodiscard]] ThreadID GetThreadID() const;

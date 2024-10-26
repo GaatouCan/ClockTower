@@ -145,9 +145,6 @@ namespace base {
                     conn->SetCodec<PackageCodecImpl>()
                             .SetHandler<ConnectionHandlerImpl>()
                             .SetThreadID(tid)
-                            .SetWatchdogTimeout(30)
-                            .SetWriteTimeout(5)
-                            .SetReadTimeout(5)
                             .SetKey(key)
                             .ConnectToClient();
 

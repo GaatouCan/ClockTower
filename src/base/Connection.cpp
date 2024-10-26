@@ -1,4 +1,4 @@
-#include "Connection.h"
+﻿#include "Connection.h"
 #include "../common/utils.h"
 
 #include <spdlog/spdlog.h>
@@ -180,7 +180,6 @@ namespace base {
                         co_await handler_->OnReadPackage(shared_from_this(), pkg);
                     }
                 } else {
-                    // 客户端主动端开连接也会导致这里警告 可无视
                     spdlog::warn("{} - Read failed", __func__);
                     Disconnect();
                 }
@@ -188,7 +187,6 @@ namespace base {
                 pool_.Recycle(pkg);
             }
         } catch (std::exception &e) {
-            // 客户端主动端开连接也会导致这里报错 根据报错内容可选择性无视
             spdlog::error("{} : {}", __func__, e.what());
             Disconnect();
         }
@@ -199,4 +197,4 @@ namespace base {
         timer.expires_after(expire);
         co_await timer.async_wait();
     }
-} // base
+} // bas

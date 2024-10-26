@@ -1,0 +1,21 @@
+{
+    "only_xlsx": false,
+    "protobuf": {
+        "dir": "protobuf/def",
+        "gen": "protobuf",
+        "def": [
+            "login",
+            "appearance",
+            "chat"
+        ],
+        "except": ["CS_LoginRequest"]
+    },
+    "sql": {
+        "sql": "struct/sql",
+        "gen": "struct/orm"
+    },
+    "xlsx": {
+        "xlsx": "config/xlsx",
+        "json": "config/json"
+    }
+}

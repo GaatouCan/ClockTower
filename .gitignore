@@ -1,3 +1,8 @@
 /protobuf/lib/
 /protobuf/gen/
 /struct/struct.json
+/struct/orm/
+/protobuf/Protocol.generated.cpp
+/protobuf/Protocol.generated.h
+/protobuf/ProtoType.generated.h
+/config/json/

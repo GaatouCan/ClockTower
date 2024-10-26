@@ -65,13 +65,8 @@ include_directories(${PROTOBUF_GENERATED_DIR})
 link_directories(${PROTOBUF_LIBRARY_DIR}/Debug)
 
 execute_process(
-        COMMAND ${Python3_EXECUTABLE} "./protodef.py"
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/protobuf
-)
-
-execute_process(
-        COMMAND ${Python3_EXECUTABLE} "./sql.py"
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/struct
+        COMMAND ./PreBuildTool.exe "--config=build.json"
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
 
 #include_directories(${CMAKE_SOURCE_DIR}/struct)

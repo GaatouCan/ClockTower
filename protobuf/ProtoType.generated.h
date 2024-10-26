@@ -22,4 +22,16 @@ namespace protocol {
 
 		PROTO_TYPE_MAX,
 	}; // ProtoType
+
+	constexpr const char* ProtoTypeToString(const ProtoType value) {
+		switch (value) {
+			case ProtoType::CS_LoginRequest: return "CS_LoginRequest";
+			case ProtoType::SC_LoginResponse: return "SC_LoginResponse";
+			case ProtoType::SC_OverrideLoginResponse: return "SC_OverrideLoginResponse";
+			case ProtoType::CS_AppearanceRequest: return "CS_AppearanceRequest";
+			case ProtoType::SC_AppearanceResponse: return "SC_AppearanceResponse";
+			default: return "UNDEFINED";
+		} // switch
+	}
+
 } // protocol

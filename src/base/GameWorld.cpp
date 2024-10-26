@@ -38,7 +38,7 @@ namespace base {
                 continue;
 
             delete iter->second;
-            spdlog::info("{} destroyed", type.name());
+            spdlog::info("{} destroyed.", type.name());
 
             systemMap_.erase(iter);
         }

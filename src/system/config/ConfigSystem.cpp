@@ -6,12 +6,12 @@
 
 namespace base {
     void ConfigSystem::Init() {
-        spdlog::info("Using configuration file: {}", YAMLPath_ + SERVER_CONFIG_FILE);
+        spdlog::info("Using configuration file: {}.", YAMLPath_ + SERVER_CONFIG_FILE);
 
         config_ = YAML::LoadFile(YAMLPath_ + SERVER_CONFIG_FILE);
 
         assert(!config_.IsNull());
-        spdlog::info("Checking configuration file");
+        spdlog::info("Checking configuration file.");
 
         assert(!config_["server"].IsNull());
         assert(!config_["server"]["port"].IsNull());
@@ -31,7 +31,7 @@ namespace base {
                 filepath = StringReplace(filepath, '\\', '.');
 
                 configMap_[filepath] = nlohmann::json::parse(fs);
-                spdlog::info("\tloaded {}", filepath);
+                spdlog::info("\tloaded {}.", filepath);
             }
         });
     }

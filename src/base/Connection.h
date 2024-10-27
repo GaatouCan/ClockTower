@@ -35,14 +35,14 @@ namespace base {
         SteadyTimer watchdogTimer_;
         TimePoint deadline_;
 
-        static std::chrono::duration<uint32_t> expireTime;
-        static std::chrono::duration<uint32_t> writeTimeout;
-        static std::chrono::duration<uint32_t> readTimeout;
-
         ThreadID tid_;
 
         uint32_t ctxNullCount_ = 0;
         std::any ctx_;
+
+        static std::chrono::duration<uint32_t> expireTime;
+        static std::chrono::duration<uint32_t> writeTimeout;
+        static std::chrono::duration<uint32_t> readTimeout;
 
     public:
         Connection() = delete;

@@ -57,6 +57,7 @@ namespace base {
         std::mutex eventMutex_;
 
         std::map<Event, std::map<void *, EventListener>> listenerMap_;
+        std::map<void *, EventListener> curListener_;
         std::mutex listenerMutex_;
 
         std::atomic_bool handling_;

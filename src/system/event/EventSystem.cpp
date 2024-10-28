@@ -1,4 +1,4 @@
-#include "EventSystem.h"
+﻿#include "EventSystem.h"
 
 #include "../../base/GameWorld.h"
 
@@ -13,13 +13,27 @@ namespace base {
         }
 
         handling_ = true;
-
         while (!curQueue_->empty()) {
             auto [event, param] = curQueue_->front();
             curQueue_->pop();
 
-            // TODO: handle event
+            curListener_.clear();
+
+            // 拷贝一份map 减少锁的范围 可以在调用事件处理函数时修改注册map
+            {
+                std::scoped_lock lock(listenerMutex_);
+                if (const auto iter = listenerMap_.find(event); iter != listenerMap_.end()) {
+                    curListener_ = iter->second;
+                }
+            }
+
+            for (const auto& listener : std::views::values(curListener_)) {
+                std::invoke(listener, param);
+            }
+
+            delete param;
         }
+        handling_ = false;
 
         co_return;
     }

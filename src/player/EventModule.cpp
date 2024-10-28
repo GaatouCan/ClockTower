@@ -6,7 +6,13 @@ EventModule::EventModule(Player *plr)
 }
 
 EventModule::~EventModule() {
+    listenerMap_.clear();
+    while (!queue_->empty()) {
+        auto &[event, param] = queue_->front();
+        queue_->pop();
 
+        delete param;
+    }
 }
 
 Player * EventModule::GetOwner() const {

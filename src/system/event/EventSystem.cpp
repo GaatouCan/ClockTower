@@ -3,6 +3,16 @@
 #include "../../base/GameWorld.h"
 
 namespace base {
+    EventSystem::~EventSystem() {
+        listenerMap_.clear();
+
+        while (!queue_->empty()) {
+            auto &[event, param] = queue_->front();
+            queue_->pop();
+            delete param;
+        }
+    }
+
     void EventSystem::Init() {
     }
 

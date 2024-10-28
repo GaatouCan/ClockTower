@@ -16,6 +16,8 @@ namespace base {
     class EventSystem final : public ISubSystem {
         SUB_SYSTEM_BODY(EventSystem)
 
+        ~EventSystem() override;
+
         void Init() override;
         awaitable<void> HandleEvent();
 

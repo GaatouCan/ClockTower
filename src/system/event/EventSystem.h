@@ -9,6 +9,7 @@
 #include <queue>
 #include <mutex>
 #include <map>
+#include <spdlog/spdlog.h>
 
 
 namespace base {
@@ -26,7 +27,13 @@ namespace base {
         template<typename TARGET, typename CALLABLE>
         void RegisterListener(const Event event, void *ptr, void *target, CALLABLE && func) {
             const EventListener listener = [target, func = std::forward<CALLABLE>(func)](IEventParam *param) {
-                std::invoke(func, static_cast<TARGET *>(target), param);
+                try {
+                    if (target != nullptr) {
+                        std::invoke(func, static_cast<TARGET *>(target), param);
+                    }
+                } catch (std::exception &e) {
+                    spdlog::warn("Event Listener - {}", e.what());
+                }
             };
             RegisterListener(event, ptr, listener);
         }

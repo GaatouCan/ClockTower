@@ -2,14 +2,23 @@
 
 #include "../base/ICharacter.h"
 #include "../base/Connection.h"
-#include "ComponentModule.h"
-#include "EventModule.h"
-#include "../system/login/PlatformInfo.h"
-
 #include "../base/RepeatedTimer.h"
+#include "../system/login/PlatformInfo.h"
+#include "../system/event/IEventParam.h"
 #include "../common/utils.h"
 
+#include "ComponentModule.h"
+#include "EventModule.h"
+
 #include <spdlog/spdlog.h>
+
+struct EP_PlayerLogin final : base::IEventParam {
+    uint64_t pid;
+};
+
+struct EP_PlayerLogout final : base::IEventParam {
+    uint64_t pid;
+};
 
 class Player final : public ICharacter, public std::enable_shared_from_this<Player> {
 

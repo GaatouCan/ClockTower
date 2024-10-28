@@ -1,5 +1,7 @@
 #include "Player.h"
+#include "../base/GameWorld.h"
 #include "../base/impl/Package.h"
+#include "../system/event/EventSystem.h"
 #include "../../protobuf/ProtoType.generated.h"
 
 #include <utility>
@@ -65,6 +67,12 @@ void Player::OnLogin() {
     response.set_describe("Component Load Completed");
 
     SendPackage(SC_LoginResponse, response);
+
+    if (const auto sys = GetSystem<base::EventSystem>(); sys != nullptr) {
+        const auto param = new EP_PlayerLogin;
+        param->pid = id_;
+        sys->Dispatch(Event::PLAYER_LOGIN, param);
+    }
 }
 
 void Player::OnLogout() {
@@ -73,13 +81,16 @@ void Player::OnLogout() {
         return;
     }
 
-    // for (auto &timer : std::views::values(timerMap_)) {
-    //     timer.Stop();
-    // }
     timerMap_.clear();
 
     componentModule_.OnLogout();
     spdlog::info("{} - Player[{}] logout.", __func__, GetPlayerID());
+
+    if (const auto sys = GetSystem<base::EventSystem>(); sys != nullptr) {
+        const auto param = new EP_PlayerLogout;
+        param->pid = id_;
+        sys->Dispatch(Event::PLAYER_LOGOUT, param);
+    }
 }
 
 bool Player::IsLogin() const {

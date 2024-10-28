@@ -9,7 +9,7 @@
 Player::Player(base::ConnectionPointer conn)
     : conn_(std::move(conn)),
       id_(0),
-      module_(this) {
+      componentModule_(this) {
 }
 
 Player::~Player() {
@@ -41,7 +41,7 @@ bool Player::IsSameThread() const {
 }
 
 ComponentModule & Player::GetComponentModule() {
-    return module_;
+    return componentModule_;
 }
 
 void Player::OnLogin() {
@@ -52,7 +52,7 @@ void Player::OnLogin() {
     spdlog::info("{} - Player[{}] login succeed.", __func__, GetPlayerID());
 
     loginTime_ = std::chrono::steady_clock::now();
-    module_.OnLogin();
+    componentModule_.OnLogin();
 
     Login::SC_LoginResponse response;
     response.set_result(true);
@@ -73,7 +73,7 @@ void Player::OnLogout() {
     // }
     timerMap_.clear();
 
-    module_.OnLogout();
+    componentModule_.OnLogout();
     spdlog::info("{} - Player[{}] logout.", __func__, GetPlayerID());
 }
 
@@ -109,7 +109,7 @@ void Player::Send(const uint32_t id, const std::stringstream &ss) const {
 }
 
 void Player::SyncCache(CacheNode *node) {
-    module_.SyncCache(node);
+    componentModule_.SyncCache(node);
 }
 
 std::shared_ptr<Player> CreatePlayer(const base::ConnectionPointer &conn, const uint64_t pid) {

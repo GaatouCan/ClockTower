@@ -22,7 +22,7 @@ namespace base {
 
         MultiContextPool pool_;
 
-        std::unordered_map<std::string, ConnectionPointer> connMap_;
+        std::map<std::string, ConnectionPointer> connMap_;
         SteadyTimer fullTimer_;
 
         struct SystemPriority {

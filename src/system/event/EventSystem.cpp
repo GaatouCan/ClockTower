@@ -34,4 +34,15 @@ namespace base {
             co_spawn(GetWorld().GetIOContext(),  HandleEvent(), detached);
         }
     }
+
+    void EventSystem::RegisterListener(const Event event, void *ptr, const EventListener &listener) {
+        if (ptr == nullptr)
+            return;
+
+        std::scoped_lock lock(listenerMutex_);
+        if (!listenerMap_.contains(event))
+            listenerMap_[event] = std::map<void *, EventListener>();
+
+        listenerMap_[event][ptr] = listener;
+    }
 } // base

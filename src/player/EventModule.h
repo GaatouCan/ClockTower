@@ -36,6 +36,8 @@ public:
 
     [[nodiscard]] Player *GetOwner() const;
 
+    [[nodiscard]] bool IsQueueEmpty() const;
+
     template<typename TARGET, typename CALLABLE>
         void RegisterListenerT(const Event event, void *ptr, void *target, CALLABLE && func) {
         if (event == Event::UNAVAILABLE || ptr == nullptr || target == nullptr)

@@ -9,6 +9,7 @@
 #include "../system/manager/ManagerSystem.h"
 #include "../system/database/DatabaseSystem.h"
 #include "../system/login/LoginSystem.h"
+#include "../system/event/EventSystem.h"
 
 #include <spdlog/spdlog.h>
 
@@ -18,6 +19,7 @@ namespace base {
     REGISTER_SYSTEM(LoginSystem, 2)
     // REGISTER_SYSTEM(DatabaseSystem, 9)
     REGISTER_SYSTEM(ManagerSystem, 10)
+    REGISTER_SYSTEM(EventSystem, 11)
 
     GameWorld::GameWorld()
         : acceptor_(ctx_),

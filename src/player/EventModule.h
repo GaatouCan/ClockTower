@@ -9,6 +9,7 @@
 #include <shared_mutex>
 #include <map>
 #include <spdlog/spdlog.h>
+#include <asio.hpp>
 
 
 class EventModule final {
@@ -57,4 +58,9 @@ public:
     void RegisterListener(Event event, void *ptr, const EventListener &listener);
 
     void RemoveListener(Event event, void *ptr);
+
+    void Dispatch(Event event, base::IEventParam *parma);
+
+private:
+    asio::awaitable<void> HandleEvent();
 };

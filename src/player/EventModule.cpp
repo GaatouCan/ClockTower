@@ -44,3 +44,50 @@ void EventModule::RemoveListener(const Event event, void *ptr) {
         }
     }
 }
+
+void EventModule::Dispatch(Event event, base::IEventParam *parma) {
+    const bool empty = IsQueueEmpty();
+
+    {
+        std::scoped_lock lock(eventMutex_);
+        queue_->emplace(event, parma);
+    }
+
+    if (empty)
+        co_spawn(owner_->GetConnection()->GetSocket().get_executor(), HandleEvent(), detached);
+}
+
+awaitable<void> EventModule::HandleEvent() {
+    while (!IsQueueEmpty()) {
+        EventNode node;
+
+        {
+            std::scoped_lock lock(eventMutex_);
+            node = queue_->front();
+            queue_->pop();
+        }
+
+        if (node.event == Event::UNAVAILABLE) {
+            delete node.param;
+            continue;
+        }
+
+        curListener_.clear();
+
+        // 拷贝一份map 减少锁的范围 可以在调用事件处理函数时修改注册map
+        {
+            std::scoped_lock lock(listenerMutex_);
+            if (const auto iter = listenerMap_.find(node.event); iter != listenerMap_.end()) {
+                curListener_ = iter->second;
+            }
+        }
+
+        for (const auto& listener : std::views::values(curListener_)) {
+            std::invoke(listener, node.param);
+        }
+
+        delete node.param;
+    }
+
+    co_return;
+}

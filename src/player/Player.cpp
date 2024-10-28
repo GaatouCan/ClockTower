@@ -9,7 +9,8 @@
 Player::Player(base::ConnectionPointer conn)
     : conn_(std::move(conn)),
       id_(0),
-      componentModule_(this) {
+      componentModule_(this),
+      eventModule_(this) {
 }
 
 Player::~Player() {
@@ -40,8 +41,12 @@ bool Player::IsSameThread() const {
     return std::this_thread::get_id() == GetThreadID();
 }
 
-ComponentModule & Player::GetComponentModule() {
+ComponentModule &Player::GetComponentModule() {
     return componentModule_;
+}
+
+EventModule &Player::GetEventModule() {
+    return eventModule_;
 }
 
 void Player::OnLogin() {
@@ -88,7 +93,7 @@ void Player::StopTimer(const uint64_t timerID) {
     }
 }
 
-base::IPackage * Player::BuildPackage() const {
+base::IPackage *Player::BuildPackage() const {
     return conn_->BuildPackage();
 }
 

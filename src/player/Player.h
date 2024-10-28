@@ -3,6 +3,7 @@
 #include "../base/ICharacter.h"
 #include "../base/Connection.h"
 #include "ComponentModule.h"
+#include "EventModule.h"
 #include "../system/login/PlatformInfo.h"
 
 #include "../base/RepeatedTimer.h"
@@ -16,6 +17,7 @@ class Player final : public ICharacter, public std::enable_shared_from_this<Play
     uint64_t id_;
 
     ComponentModule componentModule_;
+    EventModule eventModule_;
 
     TimePoint loginTime_;
     base::PlatformInfo platform_;
@@ -51,6 +53,7 @@ public:
     }
 
     ComponentModule &GetComponentModule();
+    EventModule &GetEventModule();
 
     void OnLogin();
     void OnLogout();

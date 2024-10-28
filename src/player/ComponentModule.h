@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include <unordered_map>
 #include <typeindex>
 #include <mysqlx/xdevapi.h>
 

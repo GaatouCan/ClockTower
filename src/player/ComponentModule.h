@@ -20,10 +20,10 @@ class ComponentModule final {
 
     struct ComponentNode {
         IPlayerComponent * comp = nullptr;
-        std::unordered_map<std::string, SerializeNode> serializers;
+        std::map<std::string, SerializeNode> serializers;
     };
 
-    std::unordered_map<std::type_index, ComponentNode> componentMap_;
+    std::map<std::type_index, ComponentNode> componentMap_;
 
 public:
     ComponentModule() = delete;

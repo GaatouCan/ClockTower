@@ -26,6 +26,9 @@ namespace base {
 
         template<typename TARGET, typename CALLABLE>
         void RegisterListener(const Event event, void *ptr, void *target, CALLABLE && func) {
+            if (event == Event::UNAVAILABLE || ptr == nullptr || target == nullptr)
+                return;
+
             const EventListener listener = [target, func = std::forward<CALLABLE>(func)](IEventParam *param) {
                 try {
                     if (target != nullptr) {
@@ -39,6 +42,8 @@ namespace base {
         }
 
         void RegisterListener(Event event, void *ptr, const EventListener &listener);
+
+        void RemoveListener(Event event, void *ptr);
 
     private:
 

@@ -68,6 +68,9 @@ namespace base {
     }
 
     RepeatedTimer & RepeatedTimer::Stop() {
+        if (!running_)
+            return *this;
+
         running_ = false;
         timer_.cancel();
         return *this;

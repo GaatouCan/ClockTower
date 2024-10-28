@@ -2,5 +2,5 @@
 
 
 enum class Event {
-
+    UNAVAILABLE,
 };

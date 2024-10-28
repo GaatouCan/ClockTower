@@ -68,6 +68,11 @@ void Player::OnLogout() {
         return;
     }
 
+    // for (auto &timer : std::views::values(timerMap_)) {
+    //     timer.Stop();
+    // }
+    timerMap_.clear();
+
     module_.OnLogout();
     spdlog::info("{} - Player[{}] logout.", __func__, GetPlayerID());
 }

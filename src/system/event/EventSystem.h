@@ -5,7 +5,6 @@
 #include "../../common/event.h"
 
 #include <memory>
-#include <atomic>
 #include <queue>
 #include <mutex>
 #include <shared_mutex>
@@ -19,8 +18,6 @@ namespace base {
 
         void Init() override;
         awaitable<void> HandleEvent();
-
-        using EventListener = std::function<void(IEventParam *)>;
 
     public:
         [[nodiscard]] bool IsQueueEmpty() const;

@@ -8,6 +8,7 @@
 #include <atomic>
 #include <queue>
 #include <mutex>
+#include <shared_mutex>
 #include <map>
 #include <spdlog/spdlog.h>
 
@@ -22,14 +23,16 @@ namespace base {
         using EventListener = std::function<void(IEventParam *)>;
 
     public:
+        [[nodiscard]] bool IsQueueEmpty() const;
+
         void Dispatch(Event event, IEventParam *parma);
 
         template<typename TARGET, typename CALLABLE>
-        void RegisterListener(const Event event, void *ptr, void *target, CALLABLE && func) {
+        void RegisterListenerT(const Event event, void *ptr, void *target, CALLABLE && func) {
             if (event == Event::UNAVAILABLE || ptr == nullptr || target == nullptr)
                 return;
 
-            const EventListener listener = [target, func = std::forward<CALLABLE>(func)](IEventParam *param) {
+            this->RegisterListener(event, ptr, [target, func = std::forward<CALLABLE>(func)](IEventParam *param) {
                 try {
                     if (target != nullptr) {
                         std::invoke(func, static_cast<TARGET *>(target), param);
@@ -37,8 +40,7 @@ namespace base {
                 } catch (std::exception &e) {
                     spdlog::warn("Event Listener - {}", e.what());
                 }
-            };
-            RegisterListener(event, ptr, listener);
+            });
         }
 
         void RegisterListener(Event event, void *ptr, const EventListener &listener);
@@ -48,18 +50,16 @@ namespace base {
     private:
 
         struct EventNode {
-            Event event;
-            IEventParam *param;
+            Event event = Event::UNAVAILABLE;
+            IEventParam *param = nullptr;
         };
 
-        std::unique_ptr<std::queue<EventNode>> curQueue_;
-        std::unique_ptr<std::queue<EventNode>> waitQueue_;
+        std::unique_ptr<std::queue<EventNode>> queue_;
         std::mutex eventMutex_;
+        mutable std::shared_mutex sharedMutex_;
 
         std::map<Event, std::map<void *, EventListener>> listenerMap_;
         std::map<void *, EventListener> curListener_;
         std::mutex listenerMutex_;
-
-        std::atomic_bool handling_;
     };
 } // base

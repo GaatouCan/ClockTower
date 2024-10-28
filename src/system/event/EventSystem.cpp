@@ -7,46 +7,55 @@ namespace base {
     }
 
     awaitable<void> EventSystem::HandleEvent() {
-        {
-            std::scoped_lock lock(eventMutex_);
-            curQueue_.swap(waitQueue_);
-        }
+        while (!IsQueueEmpty()) {
+            EventNode node;
 
-        handling_ = true;
-        while (!curQueue_->empty()) {
-            auto [event, param] = curQueue_->front();
-            curQueue_->pop();
+            {
+                std::scoped_lock lock(eventMutex_);
+                node = queue_->front();
+                queue_->pop();
+            }
+
+            if (node.event == Event::UNAVAILABLE) {
+                delete node.param;
+                continue;
+            }
 
             curListener_.clear();
 
             // 拷贝一份map 减少锁的范围 可以在调用事件处理函数时修改注册map
             {
                 std::scoped_lock lock(listenerMutex_);
-                if (const auto iter = listenerMap_.find(event); iter != listenerMap_.end()) {
+                if (const auto iter = listenerMap_.find(node.event); iter != listenerMap_.end()) {
                     curListener_ = iter->second;
                 }
             }
 
             for (const auto& listener : std::views::values(curListener_)) {
-                std::invoke(listener, param);
+                std::invoke(listener, node.param);
             }
 
-            delete param;
+            delete node.param;
         }
-        handling_ = false;
 
         co_return;
     }
 
+    bool EventSystem::IsQueueEmpty() const {
+        std::shared_lock lock(sharedMutex_);
+        return queue_->empty();
+    }
+
     void EventSystem::Dispatch(const Event event, IEventParam *parma) {
+        const bool empty = IsQueueEmpty();
+
         {
             std::scoped_lock lock(eventMutex_);
-            waitQueue_->emplace(EventNode(event, parma));
+            queue_->emplace(event, parma);
         }
 
-        if (!handling_) {
-            co_spawn(GetWorld().GetIOContext(),  HandleEvent(), detached);
-        }
+        if (empty)
+            co_spawn(GetWorld().GetIOContext(), HandleEvent(), detached);
     }
 
     void EventSystem::RegisterListener(const Event event, void *ptr, const EventListener &listener) {

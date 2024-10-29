@@ -4,7 +4,7 @@
 #include <spdlog/spdlog.h>
 
 namespace base {
-    awaitable<void> UPackageCodecImpl::Encode(TcpSocket &socket, IPackage *pkg) {
+    awaitable<void> UPackageCodecImpl::Encode(ATcpSocket &socket, IPackage *pkg) {
         try {
             const auto tmp = dynamic_cast<FPackage *>(pkg);
 
@@ -38,7 +38,7 @@ namespace base {
         co_return;
     }
 
-    awaitable<void> UPackageCodecImpl::Decode(TcpSocket &socket, IPackage *pkg) {
+    awaitable<void> UPackageCodecImpl::Decode(ATcpSocket &socket, IPackage *pkg) {
         try {
             const auto tmp = dynamic_cast<FPackage *>(pkg);
             {

@@ -13,7 +13,7 @@ namespace base {
         std::unique_ptr<std::thread> th;
         std::unique_ptr<mysqlx::Session> sess;
         std::unique_ptr<TSDeque<IDBCallbackWrapper *>> queue;
-        ThreadID tid;
+        AThreadID tid;
     };
 
     class DatabaseSystem final : public ISubSystem {

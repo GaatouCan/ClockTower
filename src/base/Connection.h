@@ -21,7 +21,7 @@ namespace base {
 
     class UConnection final : public std::enable_shared_from_this<UConnection> {
 
-        TcpSocket socket_;
+        ATcpSocket socket_;
         UPackagePool &pool_;
 
         TSDeque<IPackage *> output_;
@@ -31,10 +31,10 @@ namespace base {
 
         std::string key_;
 
-        SteadyTimer watchdogTimer_;
-        TimePoint deadline_;
+        ASteadyTimer watchdogTimer_;
+        ATimePoint deadline_;
 
-        ThreadID tid_;
+        AThreadID tid_;
 
         uint32_t ctxNullCount_ = 0;
         std::any ctx_;
@@ -46,7 +46,7 @@ namespace base {
     public:
         UConnection() = delete;
 
-        UConnection(TcpSocket socket, UPackagePool &pool);
+        UConnection(ATcpSocket socket, UPackagePool &pool);
         ~UConnection();
 
         void ConnectToClient();
@@ -61,8 +61,8 @@ namespace base {
         static void SetWriteTimeout(uint32_t sec);
         static void SetReadTimeout(uint32_t sec);
 
-        UConnection &SetThreadID(ThreadID tid);
-        [[nodiscard]] ThreadID GetThreadID() const;
+        UConnection &SetThreadID(AThreadID tid);
+        [[nodiscard]] AThreadID GetThreadID() const;
         [[nodiscard]] bool IsSameThread() const;
 
         template<typename T>
@@ -92,7 +92,7 @@ namespace base {
         [[nodiscard]] std::string GetKey() const { return key_; }
         [[nodiscard]] const std::any &GetContext() const { return ctx_; }
 
-        [[nodiscard]] TcpSocket &GetSocket() { return socket_; }
+        [[nodiscard]] ATcpSocket &GetSocket() { return socket_; }
 
         [[nodiscard]] asio::ip::address RemoteAddress() const;
 

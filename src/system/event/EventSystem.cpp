@@ -26,7 +26,7 @@ namespace base {
                 queue_->pop();
             }
 
-            if (node.event == Event::UNAVAILABLE) {
+            if (node.event == EEvent::UNAVAILABLE) {
                 delete node.param;
                 continue;
             }
@@ -56,7 +56,7 @@ namespace base {
         return queue_->empty();
     }
 
-    void EventSystem::Dispatch(const Event event, IEventParam *parma) {
+    void EventSystem::Dispatch(const EEvent event, IEventParam *parma) {
         const bool empty = IsQueueEmpty();
 
         {
@@ -68,8 +68,8 @@ namespace base {
             co_spawn(GetWorld().GetIOContext(), HandleEvent(), detached);
     }
 
-    void EventSystem::RegisterListener(const Event event, void *ptr, const EventListener &listener) {
-        if (event == Event::UNAVAILABLE || ptr == nullptr)
+    void EventSystem::RegisterListener(const EEvent event, void *ptr, const EventListener &listener) {
+        if (event == EEvent::UNAVAILABLE || ptr == nullptr)
             return;
 
         std::scoped_lock lock(listenerMutex_);
@@ -79,12 +79,12 @@ namespace base {
         listenerMap_[event][ptr] = listener;
     }
 
-    void EventSystem::RemoveListener(const Event event, void *ptr) {
+    void EventSystem::RemoveListener(const EEvent event, void *ptr) {
         if (ptr == nullptr)
             return;
 
         std::scoped_lock lock(listenerMutex_);
-        if (event == Event::UNAVAILABLE) {
+        if (event == EEvent::UNAVAILABLE) {
             for (auto &val : std::views::values(listenerMap_)) {
                 val.erase(ptr);
             }

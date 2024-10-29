@@ -32,16 +32,16 @@ namespace base {
             return nullptr;
         }
 
-        [[nodiscard]] ThreadID GetThreadID() const;
+        [[nodiscard]] AThreadID GetThreadID() const;
         [[nodiscard]] bool InManagerThread() const;
 
     private:
         std::unordered_map<std::type_index, IManager *> mgrMap_;
 
         asio::io_context ctx_;
-        SteadyTimer timer_;
+        ASteadyTimer timer_;
         std::thread mgrThread_;
-        ThreadID tid_;
+        AThreadID tid_;
     };
 } // base
 

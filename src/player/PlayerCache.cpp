@@ -9,7 +9,7 @@ PlayerCache::~PlayerCache() {
 
 }
 
-void PlayerCache::OnTick(TimePoint now) {
+void PlayerCache::OnTick(ATimePoint now) {
     // TODO
 }
 

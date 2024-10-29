@@ -48,7 +48,7 @@ namespace base {
         co_spawn(ctx_, [this]() mutable -> awaitable<void> {
             try {
                 running_ = true;
-                TimePoint point = std::chrono::steady_clock::now();
+                ATimePoint point = std::chrono::steady_clock::now();
 
                 do {
                     point += expire_;

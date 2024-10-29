@@ -10,7 +10,7 @@ namespace base {
     std::chrono::duration<uint32_t> UConnection::writeTimeout    = CONNECTION_WRITE_TIMEOUT;
     std::chrono::duration<uint32_t> UConnection::readTimeout     = CONNECTION_READ_TIMEOUT;
 
-    UConnection::UConnection(TcpSocket socket, UPackagePool &pool)
+    UConnection::UConnection(ATcpSocket socket, UPackagePool &pool)
         : socket_(std::move(socket)),
           pool_(pool),
           watchdogTimer_(socket_.get_executor()) {
@@ -75,12 +75,12 @@ namespace base {
         readTimeout = std::chrono::seconds(sec);
     }
 
-    UConnection & UConnection::SetThreadID(const ThreadID tid) {
+    UConnection & UConnection::SetThreadID(const AThreadID tid) {
         tid_ = tid;
         return *this;
     }
 
-    ThreadID UConnection::GetThreadID() const {
+    AThreadID UConnection::GetThreadID() const {
         return tid_;
     }
 
@@ -195,7 +195,7 @@ namespace base {
     }
 
     awaitable<void> UConnection::Timeout(const std::chrono::duration<uint32_t> expire) {
-        SteadyTimer timer(co_await asio::this_coro::executor);
+        ASteadyTimer timer(co_await asio::this_coro::executor);
         timer.expires_after(expire);
         co_await timer.async_wait();
     }

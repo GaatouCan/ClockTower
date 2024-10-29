@@ -5,11 +5,11 @@ namespace base {
         : ctx_(ctx) {
     }
 
-    void IManager::SetThreadID(const ThreadID tid) {
+    void IManager::SetThreadID(const AThreadID tid) {
         tid_ = tid;
     }
 
-    ThreadID IManager::GetThreadID() const {
+    AThreadID IManager::GetThreadID() const {
         return tid_;
     }
 
@@ -17,7 +17,7 @@ namespace base {
         return tid_ == std::this_thread::get_id();
     }
 
-    void IManager::OnTick(TimePoint now) {
+    void IManager::OnTick(ATimePoint now) {
     }
 
     asio::io_context & IManager::GetIOContext() const {

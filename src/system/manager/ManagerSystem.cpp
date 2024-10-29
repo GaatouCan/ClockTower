@@ -38,7 +38,7 @@ namespace base {
 
         co_spawn(ctx_, [this]() mutable -> awaitable<void> {
             try {
-                TimePoint point = std::chrono::steady_clock::now();
+                ATimePoint point = std::chrono::steady_clock::now();
                 point = std::chrono::floor<std::chrono::seconds>(point);
 
                 while (!ctx_.stopped()) {
@@ -55,7 +55,7 @@ namespace base {
         }, detached);
     }
 
-    ThreadID ManagerSystem::GetThreadID() const {
+    AThreadID ManagerSystem::GetThreadID() const {
         return tid_;
     }
 

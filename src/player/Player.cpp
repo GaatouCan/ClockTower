@@ -35,7 +35,7 @@ void Player::SetConnection(const base::AConnectionPointer &conn) {
     conn_ = conn;
 }
 
-ThreadID Player::GetThreadID() const {
+AThreadID Player::GetThreadID() const {
     return conn_->GetThreadID();
 }
 
@@ -71,7 +71,7 @@ void Player::OnLogin() {
     if (const auto sys = GetSystem<base::EventSystem>(); sys != nullptr) {
         const auto param = new EP_PlayerLogin;
         param->pid = id_;
-        sys->Dispatch(Event::PLAYER_LOGIN, param);
+        sys->Dispatch(EEvent::PLAYER_LOGIN, param);
     }
 }
 
@@ -89,7 +89,7 @@ void Player::OnLogout() {
     if (const auto sys = GetSystem<base::EventSystem>(); sys != nullptr) {
         const auto param = new EP_PlayerLogout;
         param->pid = id_;
-        sys->Dispatch(Event::PLAYER_LOGOUT, param);
+        sys->Dispatch(EEvent::PLAYER_LOGOUT, param);
     }
 }
 

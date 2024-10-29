@@ -1,6 +1,6 @@
 #pragma once
 
-enum class Event {
+enum class EEvent {
     UNAVAILABLE,
     PLAYER_LOGIN,
     PLAYER_LOGOUT

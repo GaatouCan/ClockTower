@@ -14,7 +14,7 @@
 
 #include <chrono>
 
-using TimePoint = std::chrono::time_point<std::chrono::steady_clock>;
+using ATimePoint = std::chrono::time_point<std::chrono::steady_clock>;
 
 #include <asio.hpp>
 
@@ -28,9 +28,9 @@ using asio::as_tuple_t;
 using asio::use_awaitable_t;
 using default_token = as_tuple_t<use_awaitable_t<> >;
 
-using TcpSocket = default_token::as_default_on_t<tcp::socket>;
-using SteadyTimer = default_token::as_default_on_t<asio::steady_timer>;
-using TcpAcceptor = default_token::as_default_on_t<tcp::acceptor>;
+using ATcpSocket = default_token::as_default_on_t<tcp::socket>;
+using ASteadyTimer = default_token::as_default_on_t<asio::steady_timer>;
+using ATcpAcceptor = default_token::as_default_on_t<tcp::acceptor>;
 
 #include <thread>
-using ThreadID = std::thread::id;
+using AThreadID = std::thread::id;

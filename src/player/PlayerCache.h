@@ -16,7 +16,7 @@ public:
     explicit PlayerCache(asio::io_context &ctx);
     ~PlayerCache() override;
 
-    void OnTick(TimePoint now) override;
+    void OnTick(ATimePoint now) override;
 
     void SyncCache(CacheNode node);
     awaitable<std::optional<CacheNode>> FindCacheNode(uint64_t pid) const;

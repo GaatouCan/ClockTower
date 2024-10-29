@@ -17,7 +17,7 @@ class EventModule final {
     class Player *owner_;
 
     struct EventNode {
-        Event event = Event::UNAVAILABLE;
+        EEvent event = EEvent::UNAVAILABLE;
         base::IEventParam *param = nullptr;
     };
 
@@ -25,7 +25,7 @@ class EventModule final {
     std::mutex eventMutex_;
     mutable std::shared_mutex sharedMutex_;
 
-    std::map<Event, std::map<void *, EventListener>> listenerMap_;
+    std::map<EEvent, std::map<void *, EventListener>> listenerMap_;
     std::map<void *, EventListener> curListener_;
     std::mutex listenerMutex_;
 
@@ -40,8 +40,8 @@ public:
     [[nodiscard]] bool IsQueueEmpty() const;
 
     template<typename TARGET, typename CALLABLE>
-        void RegisterListenerT(const Event event, void *ptr, void *target, CALLABLE && func) {
-        if (event == Event::UNAVAILABLE || ptr == nullptr || target == nullptr)
+        void RegisterListenerT(const EEvent event, void *ptr, void *target, CALLABLE && func) {
+        if (event == EEvent::UNAVAILABLE || ptr == nullptr || target == nullptr)
             return;
 
         this->RegisterListener(event, ptr, [target, func = std::forward<CALLABLE>(func)](base::IEventParam *param) {
@@ -55,11 +55,11 @@ public:
         });
     }
 
-    void RegisterListener(Event event, void *ptr, const EventListener &listener);
+    void RegisterListener(EEvent event, void *ptr, const EventListener &listener);
 
-    void RemoveListener(Event event, void *ptr);
+    void RemoveListener(EEvent event, void *ptr);
 
-    void Dispatch(Event event, base::IEventParam *parma);
+    void Dispatch(EEvent event, base::IEventParam *parma);
 
 private:
     asio::awaitable<void> HandleEvent();

@@ -28,7 +28,7 @@ class Player final : public ICharacter, public std::enable_shared_from_this<Play
     ComponentModule componentModule_;
     EventModule eventModule_;
 
-    TimePoint loginTime_;
+    ATimePoint loginTime_;
     base::PlatformInfo platform_;
 
     std::map<uint64_t, base::URepeatedTimer> timerMap_;
@@ -45,7 +45,7 @@ public:
     base::AConnectionPointer GetConnection() const;
     void SetConnection(const base::AConnectionPointer &conn);
 
-    [[nodiscard]] ThreadID GetThreadID() const;
+    [[nodiscard]] AThreadID GetThreadID() const;
 
     bool IsSameThread() const;
 

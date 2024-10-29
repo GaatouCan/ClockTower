@@ -183,7 +183,7 @@ namespace base {
         return ctx_;
     }
 
-    ThreadID UGameWorld::GetThreadID() const {
+    AThreadID UGameWorld::GetThreadID() const {
         return tid_;
     }
 } // base

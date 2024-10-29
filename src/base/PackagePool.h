@@ -17,7 +17,7 @@ namespace base {
 
         std::queue<IPackage *> queue_;
         size_t useCount_ = 0;
-        TimePoint collectTime_;
+        ATimePoint collectTime_;
 
         // 扩容和收缩临界点和比例
         // 每个线程下的数据包池行为目前设计为一致

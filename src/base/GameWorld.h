@@ -18,12 +18,12 @@ namespace base {
     class UGameWorld final {
 
         asio::io_context ctx_;
-        TcpAcceptor acceptor_;
+        ATcpAcceptor acceptor_;
 
         UMultiContextPool pool_;
 
         std::map<std::string, AConnectionPointer> connMap_;
-        SteadyTimer fullTimer_;
+        ASteadyTimer fullTimer_;
 
         struct SystemPriority {
             int priority;
@@ -42,7 +42,7 @@ namespace base {
         std::priority_queue<SystemPriority, std::vector<SystemPriority>, std::less<>> destPriority_;
         std::unordered_map<std::type_index, ISubSystem *> systemMap_;
 
-        ThreadID tid_;
+        AThreadID tid_;
 
         bool inited_;
         std::atomic_bool running_;
@@ -63,7 +63,7 @@ namespace base {
         FContextNode &NextContextNode();
 
         asio::io_context &GetIOContext();
-        ThreadID GetThreadID() const;
+        AThreadID GetThreadID() const;
 
         template<SYSTEM_TYPE T>
         T *GetSystem() noexcept {
@@ -106,7 +106,7 @@ namespace base {
  * @param priority 值越低约先初始化
  */
 #define REGISTER_SYSTEM(sys, priority) \
-    static base::GameWorld::TSystemRegister<sys> g_##sys##_register(priority);
+    static base::UGameWorld::TSystemRegister<sys> g_##sys##_register(priority);
 
 inline base::UGameWorld &GetWorld() {
     static base::UGameWorld world;

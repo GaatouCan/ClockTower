@@ -24,11 +24,11 @@ namespace base {
     public:
         [[nodiscard]] bool IsQueueEmpty() const;
 
-        void Dispatch(Event event, IEventParam *parma);
+        void Dispatch(EEvent event, IEventParam *parma);
 
         template<typename TARGET, typename CALLABLE>
-        void RegisterListenerT(const Event event, void *ptr, void *target, CALLABLE && func) {
-            if (event == Event::UNAVAILABLE || ptr == nullptr || target == nullptr)
+        void RegisterListenerT(const EEvent event, void *ptr, void *target, CALLABLE && func) {
+            if (event == EEvent::UNAVAILABLE || ptr == nullptr || target == nullptr)
                 return;
 
             this->RegisterListener(event, ptr, [target, func = std::forward<CALLABLE>(func)](IEventParam *param) {
@@ -42,14 +42,14 @@ namespace base {
             });
         }
 
-        void RegisterListener(Event event, void *ptr, const EventListener &listener);
+        void RegisterListener(EEvent event, void *ptr, const EventListener &listener);
 
-        void RemoveListener(Event event, void *ptr);
+        void RemoveListener(EEvent event, void *ptr);
 
     private:
 
         struct EventNode {
-            Event event = Event::UNAVAILABLE;
+            EEvent event = EEvent::UNAVAILABLE;
             IEventParam *param = nullptr;
         };
 
@@ -57,7 +57,7 @@ namespace base {
         std::mutex eventMutex_;
         mutable std::shared_mutex sharedMutex_;
 
-        std::map<Event, std::map<void *, EventListener>> listenerMap_;
+        std::map<EEvent, std::map<void *, EventListener>> listenerMap_;
         std::map<void *, EventListener> curListener_;
         std::mutex listenerMutex_;
     };

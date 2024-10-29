@@ -10,7 +10,7 @@ namespace base {
     class URepeatedTimer final {
 
         asio::io_context& ctx_;
-        SteadyTimer timer_;
+        ASteadyTimer timer_;
 
         TimerID id_;
         TimerFunctor func_;

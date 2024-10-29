@@ -24,8 +24,8 @@ bool EventModule::IsQueueEmpty() const {
     return queue_->empty();
 }
 
-void EventModule::RegisterListener(const Event event, void *ptr, const EventListener &listener) {
-    if (event == Event::UNAVAILABLE || ptr == nullptr)
+void EventModule::RegisterListener(const EEvent event, void *ptr, const EventListener &listener) {
+    if (event == EEvent::UNAVAILABLE || ptr == nullptr)
         return;
 
     std::scoped_lock lock(listenerMutex_);
@@ -35,12 +35,12 @@ void EventModule::RegisterListener(const Event event, void *ptr, const EventList
     listenerMap_[event][ptr] = listener;
 }
 
-void EventModule::RemoveListener(const Event event, void *ptr) {
+void EventModule::RemoveListener(const EEvent event, void *ptr) {
     if (ptr == nullptr)
         return;
 
     std::scoped_lock lock(listenerMutex_);
-    if (event == Event::UNAVAILABLE) {
+    if (event == EEvent::UNAVAILABLE) {
         for (auto &val : std::views::values(listenerMap_)) {
             val.erase(ptr);
         }
@@ -51,7 +51,7 @@ void EventModule::RemoveListener(const Event event, void *ptr) {
     }
 }
 
-void EventModule::Dispatch(Event event, base::IEventParam *parma) {
+void EventModule::Dispatch(EEvent event, base::IEventParam *parma) {
     const bool empty = IsQueueEmpty();
 
     {
@@ -73,7 +73,7 @@ awaitable<void> EventModule::HandleEvent() {
             queue_->pop();
         }
 
-        if (node.event == Event::UNAVAILABLE) {
+        if (node.event == EEvent::UNAVAILABLE) {
             delete node.param;
             continue;
         }

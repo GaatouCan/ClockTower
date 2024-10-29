@@ -10,7 +10,7 @@ namespace base {
     class IManager {
 
         asio::io_context &ctx_;
-        ThreadID tid_;
+        AThreadID tid_;
 
         std::unordered_map<uint64_t, URepeatedTimer> timerMap_;
 
@@ -20,13 +20,13 @@ namespace base {
         explicit IManager(asio::io_context &ctx);
         virtual ~IManager() = default;
 
-        void SetThreadID(ThreadID tid);
-        [[nodiscard]] ThreadID GetThreadID() const;
+        void SetThreadID(AThreadID tid);
+        [[nodiscard]] AThreadID GetThreadID() const;
         [[nodiscard]] bool IsSameThread() const;
 
         DISABLE_COPY_MOVE(IManager)
 
-        virtual void OnTick(TimePoint now);
+        virtual void OnTick(ATimePoint now);
 
         [[nodiscard]] asio::io_context &GetIOContext() const;
 

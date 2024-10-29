@@ -8,7 +8,7 @@ namespace base {
     public:
         virtual ~IPackageCodec() = default;
 
-        virtual awaitable<void> Encode(TcpSocket &socket, IPackage *pkg) = 0;
-        virtual awaitable<void> Decode(TcpSocket &socket, IPackage *pkg) = 0;
+        virtual awaitable<void> Encode(ATcpSocket &socket, IPackage *pkg) = 0;
+        virtual awaitable<void> Decode(ATcpSocket &socket, IPackage *pkg) = 0;
     };
 }

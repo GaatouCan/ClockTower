@@ -10,7 +10,7 @@ namespace base {
     struct FContextNode {
         UPackagePool pool;
         asio::io_context ctx;
-        ThreadID tid;
+        AThreadID tid;
     };
 
     /**

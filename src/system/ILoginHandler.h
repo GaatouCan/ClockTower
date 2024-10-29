@@ -15,7 +15,7 @@ namespace base {
         virtual ~ILoginHandler() = default;
 
         virtual LoginInfo ParseLoginInfo(IPackage *) = 0;
-        virtual asio::awaitable<void> OnPlayerLogin(const std::shared_ptr<class Connection> &conn, const LoginInfo &) = 0;
+        virtual asio::awaitable<void> OnPlayerLogin(const std::shared_ptr<class UConnection> &conn, const LoginInfo &) = 0;
     };
 
     template<PACKAGE_TYPE T>

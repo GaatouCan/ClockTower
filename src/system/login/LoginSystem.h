@@ -6,7 +6,7 @@
 
 namespace base {
 
-    class Connection;
+    class UConnection;
 
     class LoginSystem final : public ISubSystem {
 
@@ -17,7 +17,7 @@ namespace base {
         bool VerifyAddress(const asio::ip::address& addr);
         uint64_t VerifyToken(uint64_t pid, const std::string &token);
 
-        awaitable<void> OnLogin(const std::shared_ptr<Connection> &conn, IPackage *pkg);
+        awaitable<void> OnLogin(const std::shared_ptr<UConnection> &conn, IPackage *pkg);
 
     private:
         std::unique_ptr<ILoginHandler> handler_;

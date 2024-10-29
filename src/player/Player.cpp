@@ -8,7 +8,7 @@
 #include <login.pb.h>
 
 
-Player::Player(base::ConnectionPointer conn)
+Player::Player(base::AConnectionPointer conn)
     : conn_(std::move(conn)),
       id_(0),
       componentModule_(this),
@@ -27,11 +27,11 @@ uint64_t Player::GetPlayerID() const {
     return id_;
 }
 
-base::ConnectionPointer Player::GetConnection() const {
+base::AConnectionPointer Player::GetConnection() const {
     return conn_;
 }
 
-void Player::SetConnection(const base::ConnectionPointer &conn) {
+void Player::SetConnection(const base::AConnectionPointer &conn) {
     conn_ = conn;
 }
 
@@ -128,7 +128,7 @@ void Player::SyncCache(CacheNode *node) {
     componentModule_.SyncCache(node);
 }
 
-std::shared_ptr<Player> CreatePlayer(const base::ConnectionPointer &conn, const uint64_t pid) {
+std::shared_ptr<Player> CreatePlayer(const base::AConnectionPointer &conn, const uint64_t pid) {
     auto plr = std::make_shared<Player>(conn);
     plr->SetPlayerId(pid);
 

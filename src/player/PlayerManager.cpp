@@ -10,7 +10,7 @@ PlayerManager::~PlayerManager() {
     playerMap_.clear();
 }
 
-awaitable<void> PlayerManager::OnPlayerLogin(const std::shared_ptr<base::Connection> &conn, const uint64_t pid) {
+awaitable<void> PlayerManager::OnPlayerLogin(const std::shared_ptr<base::UConnection> &conn, const uint64_t pid) {
     if (const auto plr = FindPlayer(pid); plr != nullptr) {
 
         // 首先断开旧连接
@@ -57,7 +57,7 @@ void PlayerManager::OnPlayerLogout(const uint64_t pid) {
     }
 }
 
-std::shared_ptr<Player> PlayerManager::EmplacePlayer(const std::shared_ptr<base::Connection> &conn, const uint64_t pid) {
+std::shared_ptr<Player> PlayerManager::EmplacePlayer(const std::shared_ptr<base::UConnection> &conn, const uint64_t pid) {
     const auto plr = CreatePlayer(conn, pid);
     PushPlayer(plr);
     return plr;

@@ -139,13 +139,13 @@ namespace base {
                         continue;
                     }
 
-                    const auto conn = std::make_shared<Connection>(std::move(socket), pool);
+                    const auto conn = std::make_shared<UConnection>(std::move(socket), pool);
                     spdlog::info("Accept connection from: {}", addr.to_string());
 
                     const std::string key = fmt::format("{} - {}", addr.to_string(), CurrentTimeCount());
 
                     conn->SetCodec<UPackageCodecImpl>()
-                            .SetHandler<ConnectionHandlerImpl>()
+                            .SetHandler<UConnectionHandlerImpl>()
                             .SetThreadID(tid)
                             .SetKey(key)
                             .ConnectToClient();

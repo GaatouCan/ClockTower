@@ -20,7 +20,7 @@ namespace base {
         return pid;
     }
 
-    awaitable<void> LoginSystem::OnLogin(const std::shared_ptr<Connection> &conn, IPackage *pkg) {
+    awaitable<void> LoginSystem::OnLogin(const std::shared_ptr<UConnection> &conn, IPackage *pkg) {
         if (handler_ == nullptr)
             co_return;
 

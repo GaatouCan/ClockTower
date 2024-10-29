@@ -22,7 +22,7 @@ struct EP_PlayerLogout final : base::IEventParam {
 
 class Player final : public ICharacter, public std::enable_shared_from_this<Player> {
 
-    base::ConnectionPointer conn_;
+    base::AConnectionPointer conn_;
     uint64_t id_;
 
     ComponentModule componentModule_;
@@ -36,14 +36,14 @@ class Player final : public ICharacter, public std::enable_shared_from_this<Play
 public:
     Player() = delete;
 
-    explicit Player(base::ConnectionPointer conn);
+    explicit Player(base::AConnectionPointer conn);
     ~Player() override;
 
     Player &SetPlayerId(uint64_t id);
     uint64_t GetPlayerID() const;
 
-    base::ConnectionPointer GetConnection() const;
-    void SetConnection(const base::ConnectionPointer &conn);
+    base::AConnectionPointer GetConnection() const;
+    void SetConnection(const base::AConnectionPointer &conn);
 
     [[nodiscard]] ThreadID GetThreadID() const;
 
@@ -96,7 +96,7 @@ public:
     void SyncCache(struct CacheNode *node);
 };
 
-std::shared_ptr<Player> CreatePlayer(const base::ConnectionPointer &, uint64_t);
+std::shared_ptr<Player> CreatePlayer(const base::AConnectionPointer &, uint64_t);
 
 #define SendPackage(proto, data) \
     Send(static_cast<uint32_t>(protocol::ProtoType::proto), data.SerializeAsString())

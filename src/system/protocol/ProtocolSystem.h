@@ -10,7 +10,7 @@ class Player;
 
 namespace base {
 
-    class Connection;
+    class UConnection;
     class FPackage;
 
     using ProtoFunctor = awaitable<void>(*)(const std::shared_ptr<Player>&, FPackage *);
@@ -33,7 +33,7 @@ namespace base {
             handler_ = std::make_unique<T>();
         }
 
-        awaitable<void> OnReadPackage(const std::shared_ptr<Connection> &conn, IPackage *pkg) const;
+        awaitable<void> OnReadPackage(const std::shared_ptr<UConnection> &conn, IPackage *pkg) const;
 
     private:
         std::unique_ptr<TProtocolHandler<ProtoFunctor>> handler_;

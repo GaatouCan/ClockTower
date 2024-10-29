@@ -9,7 +9,7 @@
 #include <asio/experimental/awaitable_operators.hpp>
 
 namespace base {
-    using ConnectionPtr = std::shared_ptr<Connection>;
+    using ConnectionPtr = std::shared_ptr<UConnection>;
 
     using namespace std::literals::chrono_literals;
     using namespace asio::experimental::awaitable_operators;
@@ -20,7 +20,7 @@ namespace base {
 
     constexpr static int NULL_CONTEXT_MAX_COUNT = 3;
 
-    class Connection final : public std::enable_shared_from_this<Connection> {
+    class UConnection final : public std::enable_shared_from_this<UConnection> {
 
         TcpSocket socket_;
         PackagePool &pool_;
@@ -45,30 +45,30 @@ namespace base {
         static std::chrono::duration<uint32_t> readTimeout;
 
     public:
-        Connection() = delete;
+        UConnection() = delete;
 
-        Connection(TcpSocket socket, PackagePool &pool);
-        ~Connection();
+        UConnection(TcpSocket socket, PackagePool &pool);
+        ~UConnection();
 
         void ConnectToClient();
         void Disconnect();
 
-        Connection &SetContext(const std::any &ctx);
-        Connection &ResetContext();
+        UConnection &SetContext(const std::any &ctx);
+        UConnection &ResetContext();
 
-        Connection &SetKey(const std::string &key);
+        UConnection &SetKey(const std::string &key);
 
         static void SetWatchdogTimeout(uint32_t sec);
         static void SetWriteTimeout(uint32_t sec);
         static void SetReadTimeout(uint32_t sec);
 
-        Connection &SetThreadID(ThreadID tid);
+        UConnection &SetThreadID(ThreadID tid);
         [[nodiscard]] ThreadID GetThreadID() const;
         [[nodiscard]] bool IsSameThread() const;
 
         template<typename T>
         requires std::derived_from<T, IPackageCodec>
-        Connection &SetCodec() {
+        UConnection &SetCodec() {
             if (codec_ != nullptr)
                 codec_.reset();
 
@@ -78,7 +78,7 @@ namespace base {
 
         template<typename T>
         requires std::derived_from<T, IConnectionHandler>
-        Connection &SetHandler() {
+        UConnection &SetHandler() {
             if (handler_ != nullptr)
                 handler_.reset();
 

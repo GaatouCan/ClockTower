@@ -1,15 +1,13 @@
 #pragma once
 
-#include "./ConnectionHandlerImpl.h"
-#include "Package.h"
 #include "../IConnectionHandler.h"
 
 namespace base {
-    class ConnectionHandlerImpl final : public TConnectionHandler<FPackage> {
+    class UConnectionHandlerImpl final : public IConnectionHandler {
     public:
-        void OnConnected(const ConnectionPointer &) override;
-        void OnClosed(const ConnectionPointer &) override;
+        void OnConnected(const AConnectionPointer &) override;
+        void OnClosed(const AConnectionPointer &) override;
 
-        awaitable<void> OnReadPackageT(const ConnectionPointer &conn, FPackage *pkg) override;
+        awaitable<void> OnReadPackage(const AConnectionPointer &conn, IPackage *pkg) override;
     };
 } // base

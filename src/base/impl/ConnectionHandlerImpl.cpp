@@ -6,11 +6,11 @@
 #include "../../system/manager/ManagerSystem.h"
 
 namespace base {
-    void ConnectionHandlerImpl::OnConnected(const ConnectionPointer &conn) {
+    void UConnectionHandlerImpl::OnConnected(const AConnectionPointer &conn) {
 
     }
 
-    void ConnectionHandlerImpl::OnClosed(const ConnectionPointer &conn) {
+    void UConnectionHandlerImpl::OnClosed(const AConnectionPointer &conn) {
         GetWorld().RemoveConnection(conn->GetKey());
 
         if (!conn->GetContext().has_value())
@@ -25,7 +25,7 @@ namespace base {
             spdlog::error("{} - Fail to Found PlayerManager", __func__);
     }
 
-    awaitable<void> ConnectionHandlerImpl::OnReadPackageT(const ConnectionPointer &conn, FPackage *pkg) {
+    awaitable<void> UConnectionHandlerImpl::OnReadPackage(const AConnectionPointer &conn, IPackage *pkg) {
         spdlog::trace("{} - Receive Package[{}] From {}.",
             __func__,
             ProtoTypeToString(static_cast<ProtoType>(pkg->GetID())),

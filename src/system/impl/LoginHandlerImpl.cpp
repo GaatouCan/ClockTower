@@ -8,7 +8,7 @@
 
 
 namespace base {
-    awaitable<void> LoginHandlerImpl::OnPlayerLogin(const std::shared_ptr<Connection> &conn, const LoginInfo &info) {
+    awaitable<void> LoginHandlerImpl::OnPlayerLogin(const std::shared_ptr<UConnection> &conn, const LoginInfo &info) {
         if (const auto plrMgr = GetManager<PlayerManager>(); plrMgr != nullptr) {
             co_await plrMgr->OnPlayerLogin(conn, info.pid);
         } else

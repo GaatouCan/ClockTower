@@ -6,7 +6,7 @@
 #include <spdlog/spdlog.h>
 
 namespace base {
-    awaitable<void> ProtocolHandlerImpl::Execute(const std::shared_ptr<Connection> &conn, IPackage *pkg) {
+    awaitable<void> ProtocolHandlerImpl::Execute(const std::shared_ptr<UConnection> &conn, IPackage *pkg) {
         if (!pkg->IsAvailable()) {
             spdlog::warn("{} - Package unavailable", __func__);
             co_return;

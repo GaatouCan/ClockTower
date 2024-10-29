@@ -14,7 +14,7 @@
 #include <spdlog/spdlog.h>
 
 REGISTER_SYSTEM(UConfigSystem, 0)
-// REGISTER_SYSTEM(ProtocolSystem, 1)
+REGISTER_SYSTEM(UProtocolSystem, 1)
 REGISTER_SYSTEM(LoginSystem, 2)
 // REGISTER_SYSTEM(DatabaseSystem, 9)
 // REGISTER_SYSTEM(ManagerSystem, 10)

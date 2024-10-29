@@ -36,7 +36,7 @@ awaitable<void> UConnectionHandlerImpl::OnReadPackage(const AConnectionPointer &
             exit(-1);
         }
     } else {
-        if (const auto sys = GetSystem<ProtocolSystem>(); sys != nullptr) {
+        if (const auto sys = GetSystem<UProtocolSystem>(); sys != nullptr) {
             co_await sys->OnReadPackage(conn, pkg);
         } else {
             spdlog::critical("{} - ProtocolSystem not found.", __func__);

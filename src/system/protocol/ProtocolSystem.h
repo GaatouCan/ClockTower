@@ -1,45 +1,38 @@
 #pragma once
 
 #include "../../base/ISubSystem.h"
-#include "../TProtocolHandler.h"
-#include "../../base/impl/Package.h"
+#include "../IProtocolHandler.h"
 
 #include <concepts>
 
-class Player;
 
-namespace base {
+class UConnection;
 
-    class UConnection;
-    class FPackage;
+class UProtocolSystem final : public ISubSystem {
 
-    using ProtoFunctor = awaitable<void>(*)(const std::shared_ptr<Player>&, FPackage *);
+    SUB_SYSTEM_BODY(ProtocolSystem)
+    void Init() override;
 
-    class ProtocolSystem final : public ISubSystem {
+public:
+    void RegisterProtocol(ProtoType type, const AProtoFunctor &func);
 
-        SUB_SYSTEM_BODY(ProtocolSystem)
+    [[nodiscard]] AProtoFunctor Find(ProtoType proto) const;
 
-        void Init() override;
+    template<typename T>
+    requires std::derived_from<T, IProtocolHandler>
+    void SetHandler() {
+        if (handler_ != nullptr)
+            handler_.reset();
 
-        void RegisterProtocol() const;
+        handler_ = std::make_unique<T>();
+    }
 
-    public:
-        template<typename T>
-        requires std::derived_from<T, TProtocolHandler<ProtoFunctor>>
-        void SetHandler() {
-            if (handler_ != nullptr)
-                handler_.reset();
+    awaitable<void> OnReadPackage(const std::shared_ptr<UConnection> &conn, IPackage *pkg) const;
 
-            handler_ = std::make_unique<T>();
-        }
-
-        awaitable<void> OnReadPackage(const std::shared_ptr<UConnection> &conn, IPackage *pkg) const;
-
-    private:
-        std::unique_ptr<TProtocolHandler<ProtoFunctor>> handler_;
-    };
+private:
+    std::unordered_map<ProtoType, AProtoFunctor> protoMap_;
+    std::unique_ptr<IProtocolHandler> handler_;
+};
 
 #define REGISTER_PROTOCOL(proto) \
     handler_->Register(ProtoType::proto, &proto);
-
-} // base

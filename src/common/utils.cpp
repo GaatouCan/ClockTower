@@ -3,12 +3,12 @@
 #include "../base/impl/Package.h"
 #include "../system/config/ConfigSystem.h"
 
-base::IPackage *CreatePackage() {
-    return new base::FPackage();
+IPackage *CreatePackage() {
+    return new FPackage();
 }
 
-void InitPackage(base::IPackage *pkg) {
-    const auto tmp = dynamic_cast<base::FPackage *>(pkg);
+void InitPackage(IPackage *pkg) {
+    const auto tmp = dynamic_cast<FPackage *>(pkg);
     if (tmp == nullptr)
         return;
 
@@ -25,9 +25,9 @@ void InitPackage(base::IPackage *pkg) {
 
     if (!cfg["package"]["method"].IsNull()) {
         if (const auto method = cfg["package"]["method"].as<std::string>(); method == "LineBased")
-            tmp->ChangeMethod(base::ECodecMethod::LINE_BASED);
+            tmp->ChangeMethod(ECodecMethod::LINE_BASED);
         else if (method == "Protobuf")
-            tmp->ChangeMethod(base::ECodecMethod::PROTOBUF);
+            tmp->ChangeMethod(ECodecMethod::PROTOBUF);
     }
 }
 

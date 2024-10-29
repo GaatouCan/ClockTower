@@ -64,10 +64,10 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${PROTOBUF_GENERATED_DIR})
 link_directories(${PROTOBUF_LIBRARY_DIR}/Debug)
 
-execute_process(
-        COMMAND ./PreBuildTool.exe "--config=build.json"
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-)
+#execute_process(
+#        COMMAND ./PreBuildTool.exe "--config=build.json"
+#        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+#)
 
 #include_directories(${CMAKE_SOURCE_DIR}/struct)
 

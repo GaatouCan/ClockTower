@@ -3,36 +3,34 @@
 #include "../common/common.h"
 #include "PackagePool.h"
 
-namespace base {
-    /**
-     * 每个IO线程的数据节点
-     */
-    struct FContextNode {
-        UPackagePool pool;
-        asio::io_context ctx;
-        AThreadID tid;
-    };
+/**
+ * 每个IO线程的数据节点
+ */
+struct FContextNode {
+    UPackagePool pool;
+    asio::io_context ctx;
+    AThreadID tid;
+};
 
-    /**
-     * 多线程池
-     * 每个线程单独一个io_context和一个数据包池
-     */
-    class UMultiContextPool final {
+/**
+ * 多线程池
+ * 每个线程单独一个io_context和一个数据包池
+ */
+class UMultiContextPool final {
 
-        std::vector<FContextNode> nodeVec_;
-        std::vector<asio::io_context::work> workVec_;
-        std::vector<std::thread> threadVec_;
+    std::vector<FContextNode> nodeVec_;
+    std::vector<asio::io_context::work> workVec_;
+    std::vector<std::thread> threadVec_;
 
-        std::atomic_size_t nextIndex_;
+    std::atomic_size_t nextIndex_;
 
-    public:
-        UMultiContextPool();
-        ~UMultiContextPool();
+public:
+    UMultiContextPool();
+    ~UMultiContextPool();
 
-        DISABLE_COPY_MOVE(UMultiContextPool)
+    DISABLE_COPY_MOVE(UMultiContextPool)
 
-        void Start(size_t num = std::thread::hardware_concurrency());
+    void Start(size_t num = std::thread::hardware_concurrency());
 
-        FContextNode &NextContextNode();
-    };
-} // bas
+    FContextNode &NextContextNode();
+};

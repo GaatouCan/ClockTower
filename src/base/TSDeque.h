@@ -5,104 +5,103 @@
 #include <shared_mutex>
 #include <atomic>
 
-namespace base {
-    template<typename T>
-    class TSDeque {
-    public:
-        TSDeque() = default;
-        ~TSDeque() = default;
 
-        T &Front() {
-            std::scoped_lock lock(mutex_);
-            return deque_.front();
-        }
+template<typename T>
+class TSDeque {
+public:
+    TSDeque() = default;
+    ~TSDeque() = default;
 
-        T &Back() {
-            std::scoped_lock lock(mutex_);
-            return deque_.back();
-        }
+    T &Front() {
+        std::scoped_lock lock(mutex_);
+        return deque_.front();
+    }
 
-        void PushFront(const T &data) {
-            std::scoped_lock lock(mutex_);
-            deque_.push_front(data);
+    T &Back() {
+        std::scoped_lock lock(mutex_);
+        return deque_.back();
+    }
 
-            std::unique_lock blockLock(blocking_);
-            condVar_.notify_one();
-        }
+    void PushFront(const T &data) {
+        std::scoped_lock lock(mutex_);
+        deque_.push_front(data);
 
-        void PushBack(const T &data) {
-            std::scoped_lock lock(mutex_);
-            deque_.push_back(data);
+        std::unique_lock blockLock(blocking_);
+        condVar_.notify_one();
+    }
 
-            std::unique_lock blockLock(blocking_);
-            condVar_.notify_one();
-        }
+    void PushBack(const T &data) {
+        std::scoped_lock lock(mutex_);
+        deque_.push_back(data);
 
-        void PushFront(T &&data) {
-            std::scoped_lock lock(mutex_);
-            deque_.emplace_front(data);
+        std::unique_lock blockLock(blocking_);
+        condVar_.notify_one();
+    }
 
-            std::unique_lock blockLock(blocking_);
-            condVar_.notify_one();
-        }
+    void PushFront(T &&data) {
+        std::scoped_lock lock(mutex_);
+        deque_.emplace_front(data);
 
-        void PushBack(T &&data) {
-            std::scoped_lock lock(mutex_);
-            deque_.emplace_back(data);
+        std::unique_lock blockLock(blocking_);
+        condVar_.notify_one();
+    }
 
-            std::unique_lock blockLock(blocking_);
-            condVar_.notify_one();
-        }
+    void PushBack(T &&data) {
+        std::scoped_lock lock(mutex_);
+        deque_.emplace_back(data);
 
-        T PopFront() {
-            std::scoped_lock lock(mutex_);
-            auto data = std::move(deque_.front());
-            deque_.pop_front();
-            return data;
-        }
+        std::unique_lock blockLock(blocking_);
+        condVar_.notify_one();
+    }
 
-        T PopBack() {
-            std::scoped_lock lock(mutex_);
-            auto data = std::move(deque_.back());
-            deque_.pop_back();
-            return data;
-        }
+    T PopFront() {
+        std::scoped_lock lock(mutex_);
+        auto data = std::move(deque_.front());
+        deque_.pop_front();
+        return data;
+    }
 
-        bool IsEmpty() const {
-            std::shared_lock lock(sharedMutex_);
-            return deque_.empty();
-        }
+    T PopBack() {
+        std::scoped_lock lock(mutex_);
+        auto data = std::move(deque_.back());
+        deque_.pop_back();
+        return data;
+    }
 
-        size_t Size() const {
-            std::shared_lock lock(sharedMutex_);
-            return deque_.size();
-        }
+    bool IsEmpty() const {
+        std::shared_lock lock(sharedMutex_);
+        return deque_.empty();
+    }
 
-        void Clear() {
-            std::scoped_lock lock(blocking_);
-            deque_.clear();
-        }
+    size_t Size() const {
+        std::shared_lock lock(sharedMutex_);
+        return deque_.size();
+    }
 
-        void Quit() {
-            quit_ = true;
-            condVar_.notify_all();
-        }
+    void Clear() {
+        std::scoped_lock lock(blocking_);
+        deque_.clear();
+    }
 
-        bool IsRunning() const {
-            return !quit_;
-        }
+    void Quit() {
+        quit_ = true;
+        condVar_.notify_all();
+    }
 
-        void Wait() {
-            std::unique_lock lock(blocking_);
-            condVar_.wait(lock, [this] { return !deque_.empty() || quit_; });
-        }
+    bool IsRunning() const {
+        return !quit_;
+    }
 
-    private:
-        std::deque<T> deque_;
-        std::mutex mutex_;
-        mutable std::shared_mutex sharedMutex_;
-        std::mutex blocking_;
-        std::condition_variable condVar_;
-        std::atomic_bool quit_{false};
-    };
-}
+    void Wait() {
+        std::unique_lock lock(blocking_);
+        condVar_.wait(lock, [this] { return !deque_.empty() || quit_; });
+    }
+
+private:
+    std::deque<T> deque_;
+    std::mutex mutex_;
+    mutable std::shared_mutex sharedMutex_;
+    std::mutex blocking_;
+    std::condition_variable condVar_;
+    std::atomic_bool quit_{false};
+};

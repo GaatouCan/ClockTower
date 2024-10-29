@@ -7,7 +7,7 @@ auto main(int argc, char *argv[]) -> int {
     spdlog::set_level(spdlog::level::trace);
     spdlog::info("Welcome to ClockTower!");
 
-    if (const auto sys = GetSystem<base::ConfigSystem>(); sys != nullptr) {
+    if (const auto sys = GetSystem<sys::UConfigSystem>(); sys != nullptr) {
         sys->SetYAMLPath("../../config");
     }
 

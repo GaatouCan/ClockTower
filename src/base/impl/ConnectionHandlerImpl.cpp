@@ -5,48 +5,43 @@
 #include "../../player/PlayerManager.h"
 #include "../../system/manager/ManagerSystem.h"
 
-namespace base {
-    void UConnectionHandlerImpl::OnConnected(const AConnectionPointer &conn) {
 
-    }
+void UConnectionHandlerImpl::OnConnected(const AConnectionPointer &conn) {
+}
 
-    void UConnectionHandlerImpl::OnClosed(const AConnectionPointer &conn) {
-        GetWorld().RemoveConnection(conn->GetKey());
+void UConnectionHandlerImpl::OnClosed(const AConnectionPointer &conn) {
+    GetWorld().RemoveConnection(conn->GetKey());
 
-        if (!conn->GetContext().has_value())
-            return;
+    if (!conn->GetContext().has_value())
+        return;
 
-        const auto pid = std::any_cast<uint64_t>(conn->GetContext());
-        conn->ResetContext();
+    const auto pid = std::any_cast<uint64_t>(conn->GetContext());
+    conn->ResetContext();
 
-        if (const auto plrMgr = GetManager<PlayerManager>(); plrMgr != nullptr)
-            plrMgr->OnPlayerLogout(pid);
-        else
-            spdlog::error("{} - Fail to Found PlayerManager", __func__);
-    }
+    if (const auto plrMgr = GetManager<PlayerManager>(); plrMgr != nullptr)
+        plrMgr->OnPlayerLogout(pid);
+    else
+        spdlog::error("{} - Fail to Found PlayerManager", __func__);
+}
 
-    awaitable<void> UConnectionHandlerImpl::OnReadPackage(const AConnectionPointer &conn, IPackage *pkg) {
-        spdlog::trace("{} - Receive Package[{}] From {}.",
-            __func__,
-            ProtoTypeToString(static_cast<ProtoType>(pkg->GetID())),
-            conn->RemoteAddress().to_string());
+awaitable<void> UConnectionHandlerImpl::OnReadPackage(const AConnectionPointer &conn, IPackage *pkg) {
+    spdlog::trace("{} - Receive Package[{}] From {}.", __func__, protocol::ProtoTypeToString(static_cast<protocol::ProtoType>(pkg->GetID())), conn->RemoteAddress().to_string());
 
-        if (!conn->GetContext().has_value()) {
-            if (const auto sys = GetSystem<LoginSystem>(); sys != nullptr) {
-                co_await sys->OnLogin(conn, pkg);
-            } else {
-                spdlog::critical("{}: LoginSystem not found.", __func__);
-                GetWorld().Shutdown();
-                exit(-1);
-            }
+    if (!conn->GetContext().has_value()) {
+        if (const auto sys = GetSystem<LoginSystem>(); sys != nullptr) {
+            co_await sys->OnLogin(conn, pkg);
         } else {
-            if (const auto sys = GetSystem<ProtocolSystem>(); sys != nullptr) {
-                co_await sys->OnReadPackage(conn, pkg);
-            } else {
-                spdlog::critical("{} - ProtocolSystem not found.", __func__);
-                GetWorld().Shutdown();
-                exit(-1);
-            }
+            spdlog::critical("{}: LoginSystem not found.", __func__);
+            GetWorld().Shutdown();
+            exit(-1);
+        }
+    } else {
+        if (const auto sys = GetSystem<ProtocolSystem>(); sys != nullptr) {
+            co_await sys->OnReadPackage(conn, pkg);
+        } else {
+            spdlog::critical("{} - ProtocolSystem not found.", __func__);
+            GetWorld().Shutdown();
+            exit(-1);
         }
     }
-} // base
+}

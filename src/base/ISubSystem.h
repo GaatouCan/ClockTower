@@ -2,24 +2,25 @@
 
 #include "../common/common.h"
 
-namespace base {
-    class ISubSystem {
 
-        friend class UGameWorld;
+class ISubSystem {
 
-    protected:
-        ISubSystem() = default;
-        virtual ~ISubSystem() = default;
+    friend class UGameWorld;
 
-        virtual void Init() = 0;
+protected:
+    ISubSystem() = default;
+    virtual ~ISubSystem() = default;
 
-    public:
-        DISABLE_COPY_MOVE(ISubSystem)
-        [[nodiscard]] virtual const char* GetSystemName() const = 0;
-    };
+    virtual void Init() = 0;
 
-    template<class T>
-    concept SYSTEM_TYPE = std::derived_from<T, ISubSystem>;
+public:
+    DISABLE_COPY_MOVE(ISubSystem)
+
+    [[nodiscard]] virtual const char *GetSystemName() const = 0;
+};
+
+template<class T>
+concept SYSTEM_TYPE = std::derived_from<T, ISubSystem>;
 
 #define SUB_SYSTEM_BODY(sys) \
     friend UGameWorld; \
@@ -28,5 +29,3 @@ public: \
         return #sys; \
     } \
 private:
-
-}

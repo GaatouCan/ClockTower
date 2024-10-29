@@ -8,100 +8,94 @@
 #include <memory>
 #include <asio/experimental/awaitable_operators.hpp>
 
-namespace base {
+using namespace std::literals::chrono_literals;
+using namespace asio::experimental::awaitable_operators;
 
-    using namespace std::literals::chrono_literals;
-    using namespace asio::experimental::awaitable_operators;
+constexpr static int NULL_CONTEXT_MAX_COUNT = 3;
 
-    constexpr static auto CONNECTION_EXPIRE_SECONDS = 30s;
-    constexpr static auto CONNECTION_WRITE_TIMEOUT = 10s;
-    constexpr static auto CONNECTION_READ_TIMEOUT = 10s;
+class UConnection final : public std::enable_shared_from_this<UConnection> {
 
-    constexpr static int NULL_CONTEXT_MAX_COUNT = 3;
+    ATcpSocket socket_;
+    UPackagePool &pool_;
 
-    class UConnection final : public std::enable_shared_from_this<UConnection> {
+    TSDeque<IPackage *> output_;
 
-        ATcpSocket socket_;
-        UPackagePool &pool_;
+    std::unique_ptr<IPackageCodec> codec_ = nullptr;
+    std::unique_ptr<IConnectionHandler> handler_ = nullptr;
 
-        TSDeque<IPackage *> output_;
+    std::string key_;
 
-        std::unique_ptr<IPackageCodec> codec_ = nullptr;
-        std::unique_ptr<IConnectionHandler> handler_ = nullptr;
+    ASteadyTimer watchdogTimer_;
+    ATimePoint deadline_;
 
-        std::string key_;
+    AThreadID tid_;
 
-        ASteadyTimer watchdogTimer_;
-        ATimePoint deadline_;
+    uint32_t ctxNullCount_ = 0;
+    std::any ctx_;
 
-        AThreadID tid_;
+    static std::chrono::duration<uint32_t> expireTime;
+    static std::chrono::duration<uint32_t> writeTimeout;
+    static std::chrono::duration<uint32_t> readTimeout;
 
-        uint32_t ctxNullCount_ = 0;
-        std::any ctx_;
+public:
+    UConnection() = delete;
 
-        static std::chrono::duration<uint32_t> expireTime;
-        static std::chrono::duration<uint32_t> writeTimeout;
-        static std::chrono::duration<uint32_t> readTimeout;
+    UConnection(ATcpSocket socket, UPackagePool &pool);
+    ~UConnection();
 
-    public:
-        UConnection() = delete;
+    void ConnectToClient();
+    void Disconnect();
 
-        UConnection(ATcpSocket socket, UPackagePool &pool);
-        ~UConnection();
+    UConnection &SetContext(const std::any &ctx);
+    UConnection &ResetContext();
 
-        void ConnectToClient();
-        void Disconnect();
+    UConnection &SetKey(const std::string &key);
 
-        UConnection &SetContext(const std::any &ctx);
-        UConnection &ResetContext();
+    static void SetWatchdogTimeout(uint32_t sec);
+    static void SetWriteTimeout(uint32_t sec);
+    static void SetReadTimeout(uint32_t sec);
 
-        UConnection &SetKey(const std::string &key);
+    UConnection &SetThreadID(AThreadID tid);
+    [[nodiscard]] AThreadID GetThreadID() const;
 
-        static void SetWatchdogTimeout(uint32_t sec);
-        static void SetWriteTimeout(uint32_t sec);
-        static void SetReadTimeout(uint32_t sec);
+    [[nodiscard]] bool IsSameThread() const;
 
-        UConnection &SetThreadID(AThreadID tid);
-        [[nodiscard]] AThreadID GetThreadID() const;
-        [[nodiscard]] bool IsSameThread() const;
+    template<typename T>
+    requires std::derived_from<T, IPackageCodec>
+    UConnection &SetCodec() {
+        if (codec_ != nullptr)
+            codec_.reset();
 
-        template<typename T>
-        requires std::derived_from<T, IPackageCodec>
-        UConnection &SetCodec() {
-            if (codec_ != nullptr)
-                codec_.reset();
+        codec_ = std::make_unique<T>();
+        return *this;
+    }
 
-            codec_ = std::make_unique<T>();
-            return *this;
-        }
+    template<typename T>
+    requires std::derived_from<T, IConnectionHandler>
+    UConnection &SetHandler() {
+        if (handler_ != nullptr)
+            handler_.reset();
 
-        template<typename T>
-        requires std::derived_from<T, IConnectionHandler>
-        UConnection &SetHandler() {
-            if (handler_ != nullptr)
-                handler_.reset();
+        handler_ = std::make_unique<T>();
+        return *this;
+    }
 
-            handler_ = std::make_unique<T>();
-            return *this;
-        }
+    IPackage *BuildPackage() const;
 
-        IPackage *BuildPackage() const;
-        void Send(IPackage *pkg);
+    void Send(IPackage *pkg);
 
-        [[nodiscard]] bool IsConnected() const { return socket_.is_open(); }
-        [[nodiscard]] std::string GetKey() const { return key_; }
-        [[nodiscard]] const std::any &GetContext() const { return ctx_; }
+    [[nodiscard]] bool IsConnected() const { return socket_.is_open(); }
+    [[nodiscard]] std::string GetKey() const { return key_; }
+    [[nodiscard]] const std::any &GetContext() const { return ctx_; }
 
-        [[nodiscard]] ATcpSocket &GetSocket() { return socket_; }
+    [[nodiscard]] ATcpSocket &GetSocket() { return socket_; }
 
-        [[nodiscard]] asio::ip::address RemoteAddress() const;
+    [[nodiscard]] asio::ip::address RemoteAddress() const;
 
-    private:
-        awaitable<void> Watchdog();
+private:
+    awaitable<void> Watchdog();
+    awaitable<void> WritePackage();
+    awaitable<void> ReadPackage();
 
-        awaitable<void> WritePackage();
-        awaitable<void> ReadPackage();
-
-        static awaitable<void> Timeout(std::chrono::duration<uint32_t> expire);
-    };
-} // base
+    static awaitable<void> Timeout(std::chrono::duration<uint32_t> expire);
+};

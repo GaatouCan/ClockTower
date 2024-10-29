@@ -3,28 +3,16 @@
 #include <asio.hpp>
 #include "../base/IPackage.h"
 
-namespace base {
+struct FLoginInfo {
+    uint64_t pid = 0;
+    std::string token;
+};
 
-    struct LoginInfo {
-        uint64_t pid = 0;
-        std::string token;
-    };
+class ILoginHandler {
+public:
+    virtual ~ILoginHandler() = default;
 
-    class ILoginHandler {
-    public:
-        virtual ~ILoginHandler() = default;
+    virtual FLoginInfo ParseLoginInfo(IPackage *) = 0;
 
-        virtual LoginInfo ParseLoginInfo(IPackage *) = 0;
-        virtual asio::awaitable<void> OnPlayerLogin(const std::shared_ptr<class UConnection> &conn, const LoginInfo &) = 0;
-    };
-
-    template<PACKAGE_TYPE T>
-    class TLoginHandler : public ILoginHandler {
-    public:
-        LoginInfo ParseLoginInfo(IPackage *pkg) override {
-            return ParseLoginInfoT(dynamic_cast<T *>(pkg));
-        }
-
-        virtual LoginInfo ParseLoginInfoT(T *) = 0;
-    };
-}
+    virtual asio::awaitable<void> OnPlayerLogin(const std::shared_ptr<class UConnection> &conn, const FLoginInfo &) = 0;
+};

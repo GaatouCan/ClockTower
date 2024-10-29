@@ -7,24 +7,29 @@
 #include <spdlog/spdlog.h>
 
 
-namespace base {
-    awaitable<void> LoginHandlerImpl::OnPlayerLogin(const std::shared_ptr<UConnection> &conn, const LoginInfo &info) {
-        if (const auto plrMgr = GetManager<PlayerManager>(); plrMgr != nullptr) {
-            co_await plrMgr->OnPlayerLogin(conn, info.pid);
-        } else
-            spdlog::warn("{} - PlayerManager not found", __func__);
-    }
+awaitable<void> LoginHandlerImpl::OnPlayerLogin(const std::shared_ptr<UConnection> &conn, const FLoginInfo &info) {
+    if (const auto plrMgr = GetManager<PlayerManager>(); plrMgr != nullptr) {
+        co_await plrMgr->OnPlayerLogin(conn, info.pid);
+    } else
+        spdlog::warn("{} - PlayerManager not found", __func__);
+}
 
-    LoginInfo LoginHandlerImpl::ParseLoginInfoT(FPackage *pkg) {
+FLoginInfo LoginHandlerImpl::ParseLoginInfo(IPackage *pkg) {
+    try {
+        const auto tmp = dynamic_cast<FPackage *>(pkg);
+
         if (pkg->GetID() != static_cast<uint32_t>(protocol::ProtoType::CS_LoginRequest))
             return {};
 
         Login::CS_LoginRequest request;
-        request.ParseFromString(pkg->GetData());
+        request.ParseFromString(tmp->GetData());
 
         return {
             request.player_id(),
             request.token()
         };
+    } catch (std::exception &e) {
+        spdlog::warn("{} - {}", __func__, e.what());
+        return {};
     }
-} // base
+}

@@ -6,9 +6,9 @@
 #include <functional>
 #include <thread>
 
-base::IPackage *CreatePackage();
+IPackage *CreatePackage();
 
-void InitPackage(base::IPackage *pkg);
+void InitPackage(IPackage *pkg);
 
 void TraverseFolder(const std::string &folder, const std::function<void(const std::filesystem::directory_entry &)> &func);
 

@@ -4,22 +4,20 @@
 #include "../../base/IPackage.h"
 #include "../../base/ISubSystem.h"
 
-namespace base {
 
-    class UConnection;
+class UConnection;
 
-    class LoginSystem final : public ISubSystem {
+class LoginSystem final : public ISubSystem {
+    SUB_SYSTEM_BODY(LoginSystem)
+    void Init() override;
 
-        SUB_SYSTEM_BODY(LoginSystem)
-        void Init() override;
+public:
+    bool VerifyAddress(const asio::ip::address &addr);
 
-    public:
-        bool VerifyAddress(const asio::ip::address& addr);
-        uint64_t VerifyToken(uint64_t pid, const std::string &token);
+    uint64_t VerifyToken(uint64_t pid, const std::string &token);
 
-        awaitable<void> OnLogin(const std::shared_ptr<UConnection> &conn, IPackage *pkg);
+    awaitable<void> OnLogin(const std::shared_ptr<UConnection> &conn, IPackage *pkg);
 
-    private:
-        std::unique_ptr<ILoginHandler> handler_;
-    };
-} // base
+private:
+    std::unique_ptr<ILoginHandler> handler_;
+};

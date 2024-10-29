@@ -3,7 +3,7 @@
 #include <spdlog/spdlog.h>
 
 namespace base {
-    RepeatedTimer::RepeatedTimer(asio::io_context &ctx)
+    URepeatedTimer::URepeatedTimer(asio::io_context &ctx)
         : ctx_(ctx),
           timer_(ctx_),
           id_(0),
@@ -12,30 +12,30 @@ namespace base {
           running_(false) {
     }
 
-    RepeatedTimer::~RepeatedTimer() {
+    URepeatedTimer::~URepeatedTimer() {
         Stop();
     }
 
-    RepeatedTimer &RepeatedTimer::SetTimerID(const TimerID id) {
+    URepeatedTimer &URepeatedTimer::SetTimerID(const TimerID id) {
         id_ = id;
         return *this;
     }
 
-    TimerID RepeatedTimer::GetTimerID() const {
+    TimerID URepeatedTimer::GetTimerID() const {
         return id_;
     }
 
-    RepeatedTimer &RepeatedTimer::SetExpireTime(const std::chrono::duration<uint32_t> expire) {
+    URepeatedTimer &URepeatedTimer::SetExpireTime(const std::chrono::duration<uint32_t> expire) {
         expire_ = expire;
         return *this;
     }
 
-    RepeatedTimer &RepeatedTimer::SetLoop(const bool loop) {
+    URepeatedTimer &URepeatedTimer::SetLoop(const bool loop) {
         loop_ = loop;
         return *this;
     }
 
-    RepeatedTimer &RepeatedTimer::Start() {
+    URepeatedTimer &URepeatedTimer::Start() {
         if (expire_.count() == 0)
             return *this;
 
@@ -67,7 +67,7 @@ namespace base {
         return *this;
     }
 
-    RepeatedTimer & RepeatedTimer::Stop() {
+    URepeatedTimer & URepeatedTimer::Stop() {
         if (!running_)
             return *this;
 

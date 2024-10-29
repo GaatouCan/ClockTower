@@ -8,19 +8,19 @@
 #include <typeindex>
 
 namespace base {
-    class GameWorld;
+    class UGameWorld;
 }
 
-base::GameWorld &GetWorld();
+base::UGameWorld &GetWorld();
 
 namespace base {
 
-    class GameWorld final {
+    class UGameWorld final {
 
         asio::io_context ctx_;
         TcpAcceptor acceptor_;
 
-        MultiContextPool pool_;
+        UMultiContextPool pool_;
 
         std::map<std::string, AConnectionPointer> connMap_;
         SteadyTimer fullTimer_;
@@ -48,19 +48,19 @@ namespace base {
         std::atomic_bool running_;
 
     public:
-        GameWorld();
-        ~GameWorld();
+        UGameWorld();
+        ~UGameWorld();
 
-        DISABLE_COPY_MOVE(GameWorld)
+        DISABLE_COPY_MOVE(UGameWorld)
 
-        GameWorld &Init();
-        GameWorld &Run();
+        UGameWorld &Init();
+        UGameWorld &Run();
 
-        GameWorld &Shutdown();
+        UGameWorld &Shutdown();
 
         void RemoveConnection(const std::string &key);
 
-        ContextNode &NextContextNode();
+        FContextNode &NextContextNode();
 
         asio::io_context &GetIOContext();
         ThreadID GetThreadID() const;
@@ -108,8 +108,8 @@ namespace base {
 #define REGISTER_SYSTEM(sys, priority) \
     static base::GameWorld::TSystemRegister<sys> g_##sys##_register(priority);
 
-inline base::GameWorld &GetWorld() {
-    static base::GameWorld world;
+inline base::UGameWorld &GetWorld() {
+    static base::UGameWorld world;
     return world;
 }
 

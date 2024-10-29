@@ -13,7 +13,7 @@ namespace base {
      * 数据包池
      * @attention 单线程下使用 设计为一个数据包池对应一个线程下的io_context
      */
-    class PackagePool final {
+    class UPackagePool final {
 
         std::queue<IPackage *> queue_;
         size_t useCount_ = 0;
@@ -32,10 +32,10 @@ namespace base {
         static float collectScale;
 
     public:
-        explicit PackagePool(size_t capacity = defaultCapacity);
-        ~PackagePool();
+        explicit UPackagePool(size_t capacity = defaultCapacity);
+        ~UPackagePool();
 
-        DISABLE_COPY_MOVE(PackagePool)
+        DISABLE_COPY_MOVE(UPackagePool)
 
         /**
          * 从池里获取一个数据包

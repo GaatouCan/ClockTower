@@ -3,11 +3,11 @@
 #include <spdlog/spdlog.h>
 
 namespace base {
-    MultiContextPool::MultiContextPool()
+    UMultiContextPool::UMultiContextPool()
         : nextIndex_(0) {
     }
 
-    MultiContextPool::~MultiContextPool() {
+    UMultiContextPool::~UMultiContextPool() {
         workVec_.clear();
 
         for (auto &thread : threadVec_) {
@@ -17,8 +17,8 @@ namespace base {
         }
     }
 
-    void MultiContextPool::Start(const size_t num) {
-        nodeVec_ = std::vector<ContextNode>(num);
+    void UMultiContextPool::Start(const size_t num) {
+        nodeVec_ = std::vector<FContextNode>(num);
         for (auto &node : nodeVec_) {
             workVec_.emplace_back(node.ctx);
             threadVec_.emplace_back([this, &node] {
@@ -34,7 +34,7 @@ namespace base {
         spdlog::info("MultiContextPool Started With {} Thread(s).", num);
     }
 
-    ContextNode &MultiContextPool::NextContextNode() {
+    FContextNode &UMultiContextPool::NextContextNode() {
         if (nodeVec_.empty())
             throw std::runtime_error("No context node available");
 

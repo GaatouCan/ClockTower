@@ -31,7 +31,7 @@ class Player final : public ICharacter, public std::enable_shared_from_this<Play
     TimePoint loginTime_;
     base::PlatformInfo platform_;
 
-    std::map<uint64_t, base::RepeatedTimer> timerMap_;
+    std::map<uint64_t, base::URepeatedTimer> timerMap_;
 
 public:
     Player() = delete;

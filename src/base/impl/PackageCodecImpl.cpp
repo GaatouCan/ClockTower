@@ -12,13 +12,13 @@ namespace base {
                 auto [ec, len] = co_await async_write(socket, asio::buffer(&tmp->header_, FPackage::headerSize));
                 if (ec) {
                     spdlog::warn("{} - Write package header failed: {}", __func__, ec.message());
-                    pkg->Invalid();
+                    tmp->Invalid();
                     co_return;
                 }
 
                 if (len == 0) {
                     spdlog::warn("{} - Write package header length equal zero", __func__);
-                    pkg->Invalid();
+                    tmp->Invalid();
                     co_return;
                 }
             }
@@ -28,7 +28,7 @@ namespace base {
 
             if (auto [ec, len] = co_await async_write(socket, asio::buffer(tmp->data_)); ec) {
                 spdlog::warn("{} - Write data failed: {}", __func__, ec.message());
-                pkg->Invalid();
+                tmp->Invalid();
             }
 
         } catch (std::exception &e) {
@@ -45,13 +45,13 @@ namespace base {
                 auto [ec, len] = co_await async_read(socket, asio::buffer(&tmp->header_, FPackage::headerSize));
                 if (ec) {
                     spdlog::warn("{} - Read package header failed: {}", __func__, ec.message());
-                    pkg->Invalid();
+                    tmp->Invalid();
                     co_return;
                 }
 
                 if (len == 0) {
                     spdlog::warn("{} - Read package header length equal zero", __func__);
-                    pkg->Invalid();
+                    tmp->Invalid();
                     co_return;
                 }
             }

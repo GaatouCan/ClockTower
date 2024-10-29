@@ -12,7 +12,7 @@ namespace base {
         asio::io_context &ctx_;
         ThreadID tid_;
 
-        std::unordered_map<uint64_t, RepeatedTimer> timerMap_;
+        std::unordered_map<uint64_t, URepeatedTimer> timerMap_;
 
     public:
         IManager() = delete;

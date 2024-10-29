@@ -5,22 +5,22 @@
 
 namespace base {
 
-    size_t PackagePool::defaultCapacity = 64;
-    size_t PackagePool::minCapacity = 16;
+    size_t UPackagePool::defaultCapacity = 64;
+    size_t UPackagePool::minCapacity = 16;
 
-    float PackagePool::expanseRate = 0.3f;
-    float PackagePool::expanseScale = 1.f;
+    float UPackagePool::expanseRate = 0.3f;
+    float UPackagePool::expanseScale = 1.f;
 
-    float PackagePool::collectRate = 1.f;
-    float PackagePool::collectScale = 0.7f;
+    float UPackagePool::collectRate = 1.f;
+    float UPackagePool::collectScale = 0.7f;
 
-    PackagePool::PackagePool(const size_t capacity) {
+    UPackagePool::UPackagePool(const size_t capacity) {
         for (size_t i = 0; i < capacity; i++) {
             queue_.emplace(CreatePackage());
         }
     }
 
-    PackagePool::~PackagePool() {
+    UPackagePool::~UPackagePool() {
         while (!queue_.empty()) {
             const auto pkg = queue_.front();
             queue_.pop();
@@ -28,7 +28,7 @@ namespace base {
         }
     }
 
-    IPackage * PackagePool::Acquire() {
+    IPackage * UPackagePool::Acquire() {
         Expanse();
 
         IPackage *pkg = queue_.front();
@@ -40,7 +40,7 @@ namespace base {
         return pkg;
     }
 
-    void PackagePool::Recycle(IPackage *pkg) {
+    void UPackagePool::Recycle(IPackage *pkg) {
         if (pkg != nullptr) {
             pkg->Reset();
             queue_.push(pkg);
@@ -50,7 +50,7 @@ namespace base {
         Collect();
     }
 
-    void PackagePool::LoadConfig(const YAML::Node &cfg) {
+    void UPackagePool::LoadConfig(const YAML::Node &cfg) {
         if (cfg["package"].IsNull() && cfg["package"]["pool"].IsNull())
             return;
 
@@ -75,31 +75,31 @@ namespace base {
         spdlog::info("Package pool configuration loaded.");
     }
 
-    void PackagePool::SetDefaultCapacity(const size_t capacity) {
+    void UPackagePool::SetDefaultCapacity(const size_t capacity) {
         defaultCapacity = capacity;
     }
 
-    void PackagePool::SetMinimumCapacity(const size_t capacity) {
+    void UPackagePool::SetMinimumCapacity(const size_t capacity) {
         minCapacity = capacity;
     }
 
-    void PackagePool::SetExpanseRate(const float rate) {
+    void UPackagePool::SetExpanseRate(const float rate) {
         expanseRate = rate;
     }
 
-    void PackagePool::SetExpanseScale(const float scale) {
+    void UPackagePool::SetExpanseScale(const float scale) {
         expanseScale = scale;
     }
 
-    void PackagePool::SetCollectRate(const float rate) {
+    void UPackagePool::SetCollectRate(const float rate) {
         collectRate = rate;
     }
 
-    void PackagePool::SetCollectScale(const float scale) {
+    void UPackagePool::SetCollectScale(const float scale) {
         collectScale = scale;
     }
 
-    void PackagePool::Expanse() {
+    void UPackagePool::Expanse() {
         if (useCount_ == 0)
             return;
 
@@ -113,7 +113,7 @@ namespace base {
             queue_.emplace(CreatePackage());
     }
 
-    void PackagePool::Collect() {
+    void UPackagePool::Collect() {
         const auto now = std::chrono::steady_clock::now();
 
         // 不要太频繁

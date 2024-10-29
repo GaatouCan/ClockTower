@@ -9,12 +9,12 @@ namespace base {
 
     static constexpr uint32_t UNAVAILABLE_PACKAGE_ID = 1000;
 
-    enum class CodecMethod : uint16_t {
+    enum class ECodecMethod : uint16_t {
         LINE_BASED,
         PROTOBUF
     };
 
-    static constexpr auto DEFAULT_ENCODING_METHOD = CodecMethod::PROTOBUF;
+    static constexpr auto DEFAULT_ENCODING_METHOD = ECodecMethod::PROTOBUF;
 
     class FPackage final : public IPackage {
 
@@ -24,7 +24,7 @@ namespace base {
             uint32_t magic;
             uint32_t version;
 
-            CodecMethod method;
+            ECodecMethod method;
             uint16_t reserved;
 
             uint32_t id;
@@ -63,8 +63,8 @@ namespace base {
         FPackage &SetVersion(uint32_t version);
         [[nodiscard]] uint32_t GetVersion() const;
 
-        FPackage &ChangeMethod(CodecMethod method);
-        [[nodiscard]] CodecMethod GetMethod() const;
+        FPackage &ChangeMethod(ECodecMethod method);
+        [[nodiscard]] ECodecMethod GetMethod() const;
 
         [[nodiscard]] size_t GetDataLength() const;
 

@@ -25,9 +25,9 @@ void InitPackage(base::IPackage *pkg) {
 
     if (!cfg["package"]["method"].IsNull()) {
         if (const auto method = cfg["package"]["method"].as<std::string>(); method == "LineBased")
-            tmp->ChangeMethod(base::CodecMethod::LINE_BASED);
+            tmp->ChangeMethod(base::ECodecMethod::LINE_BASED);
         else if (method == "Protobuf")
-            tmp->ChangeMethod(base::CodecMethod::PROTOBUF);
+            tmp->ChangeMethod(base::ECodecMethod::PROTOBUF);
     }
 }
 

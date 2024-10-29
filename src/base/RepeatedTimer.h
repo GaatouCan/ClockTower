@@ -7,7 +7,7 @@ namespace base {
     using TimerID = uint64_t;
     using TimerFunctor = std::function<void()>;
 
-    class RepeatedTimer final {
+    class URepeatedTimer final {
 
         asio::io_context& ctx_;
         SteadyTimer timer_;
@@ -21,30 +21,29 @@ namespace base {
         std::atomic<bool> running_;
 
     public:
-        RepeatedTimer() = delete;
+        URepeatedTimer() = delete;
 
-        explicit RepeatedTimer(asio::io_context& ctx);
+        explicit URepeatedTimer(asio::io_context& ctx);
+        ~URepeatedTimer();
 
-        DISABLE_COPY_MOVE(RepeatedTimer)
+        DISABLE_COPY_MOVE(URepeatedTimer)
 
-        ~RepeatedTimer();
-
-        RepeatedTimer& SetTimerID(TimerID id);
+        URepeatedTimer& SetTimerID(TimerID id);
         [[nodiscard]] TimerID GetTimerID() const;
 
-        RepeatedTimer& SetExpireTime(std::chrono::duration<uint32_t> expire);
-        RepeatedTimer& SetLoop(bool loop);
+        URepeatedTimer& SetExpireTime(std::chrono::duration<uint32_t> expire);
+        URepeatedTimer& SetLoop(bool loop);
 
         template<typename FUNCTOR, typename... ARGS>
-        RepeatedTimer &SetCallback(FUNCTOR &&func, ARGS&&... args) {
+        URepeatedTimer &SetCallback(FUNCTOR &&func, ARGS&&... args) {
             func_ = [func = std::forward<FUNCTOR>(func), ...args = std::forward<ARGS>(args)] {
                 std::invoke(func, args...);
             };
             return *this;
         }
 
-        RepeatedTimer& Start();
-        RepeatedTimer& Stop();
+        URepeatedTimer& Start();
+        URepeatedTimer& Stop();
 
     };
 } // base

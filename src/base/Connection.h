@@ -9,7 +9,6 @@
 #include <asio/experimental/awaitable_operators.hpp>
 
 namespace base {
-    using ConnectionPtr = std::shared_ptr<UConnection>;
 
     using namespace std::literals::chrono_literals;
     using namespace asio::experimental::awaitable_operators;
@@ -23,7 +22,7 @@ namespace base {
     class UConnection final : public std::enable_shared_from_this<UConnection> {
 
         TcpSocket socket_;
-        PackagePool &pool_;
+        UPackagePool &pool_;
 
         TSDeque<IPackage *> output_;
 
@@ -47,7 +46,7 @@ namespace base {
     public:
         UConnection() = delete;
 
-        UConnection(TcpSocket socket, PackagePool &pool);
+        UConnection(TcpSocket socket, UPackagePool &pool);
         ~UConnection();
 
         void ConnectToClient();

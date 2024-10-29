@@ -7,8 +7,8 @@ namespace base {
     /**
      * 每个IO线程的数据节点
      */
-    struct ContextNode {
-        PackagePool pool;
+    struct FContextNode {
+        UPackagePool pool;
         asio::io_context ctx;
         ThreadID tid;
     };
@@ -17,22 +17,22 @@ namespace base {
      * 多线程池
      * 每个线程单独一个io_context和一个数据包池
      */
-    class MultiContextPool final {
+    class UMultiContextPool final {
 
-        std::vector<ContextNode> nodeVec_;
+        std::vector<FContextNode> nodeVec_;
         std::vector<asio::io_context::work> workVec_;
         std::vector<std::thread> threadVec_;
 
         std::atomic_size_t nextIndex_;
 
     public:
-        MultiContextPool();
-        ~MultiContextPool();
+        UMultiContextPool();
+        ~UMultiContextPool();
 
-        DISABLE_COPY_MOVE(MultiContextPool)
+        DISABLE_COPY_MOVE(UMultiContextPool)
 
         void Start(size_t num = std::thread::hardware_concurrency());
 
-        ContextNode &NextContextNode();
+        FContextNode &NextContextNode();
     };
 } // bas

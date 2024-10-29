@@ -10,7 +10,7 @@ namespace base {
     std::chrono::duration<uint32_t> UConnection::writeTimeout    = CONNECTION_WRITE_TIMEOUT;
     std::chrono::duration<uint32_t> UConnection::readTimeout     = CONNECTION_READ_TIMEOUT;
 
-    UConnection::UConnection(TcpSocket socket, PackagePool &pool)
+    UConnection::UConnection(TcpSocket socket, UPackagePool &pool)
         : socket_(std::move(socket)),
           pool_(pool),
           watchdogTimer_(socket_.get_executor()) {

@@ -77,7 +77,7 @@ namespace base {
         return header_.id > UNAVAILABLE_PACKAGE_ID;
     }
 
-    FPackage &FPackage::ChangeMethod(const CodecMethod method) {
+    FPackage &FPackage::ChangeMethod(const ECodecMethod method) {
         header_.method = method;
         return *this;
     }
@@ -116,7 +116,7 @@ namespace base {
         return header_.version;
     }
 
-    CodecMethod FPackage::GetMethod() const {
+    ECodecMethod FPackage::GetMethod() const {
         return header_.method;
     }
 

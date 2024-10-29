@@ -21,14 +21,14 @@ namespace base {
     REGISTER_SYSTEM(ManagerSystem, 10)
     REGISTER_SYSTEM(EventSystem, 11)
 
-    GameWorld::GameWorld()
+    UGameWorld::UGameWorld()
         : acceptor_(ctx_),
           fullTimer_(ctx_),
           inited_(false),
           running_(false) {
     }
 
-    GameWorld::~GameWorld() {
+    UGameWorld::~UGameWorld() {
         Shutdown();
 
         while (!destPriority_.empty()) {
@@ -53,7 +53,7 @@ namespace base {
         spdlog::info("Game world destroyed.");
     }
 
-    GameWorld &GameWorld::Init() {
+    UGameWorld &UGameWorld::Init() {
         while (!initPriority_.empty()) {
             auto [priority, type] = initPriority_.top();
             initPriority_.pop();
@@ -69,7 +69,7 @@ namespace base {
         const auto &config = GetServerConfig();
 
         // Set PackagePool static option
-        PackagePool::LoadConfig(config);
+        UPackagePool::LoadConfig(config);
 
         pool_.Start(config["server"]["work_thread"].as<size_t>());
 
@@ -79,7 +79,7 @@ namespace base {
         return *this;
     }
 
-    GameWorld &GameWorld::Run() {
+    UGameWorld &UGameWorld::Run() {
         running_ = true;
 
         asio::signal_set signals(ctx_, SIGINT, SIGTERM);
@@ -93,7 +93,7 @@ namespace base {
         return *this;
     }
 
-    GameWorld &GameWorld::Shutdown() {
+    UGameWorld &UGameWorld::Shutdown() {
         if (!inited_)
             return *this;
 
@@ -111,7 +111,7 @@ namespace base {
         return *this;
     }
 
-    awaitable<void> GameWorld::WaitForConnect() {
+    awaitable<void> UGameWorld::WaitForConnect() {
         const auto &config = GetServerConfig();
 
         try {
@@ -164,7 +164,7 @@ namespace base {
         }
     }
 
-    void GameWorld::RemoveConnection(const std::string &key) {
+    void UGameWorld::RemoveConnection(const std::string &key) {
         if (std::this_thread::get_id() != tid_) {
             co_spawn(ctx_, [this, key]() mutable -> awaitable<void> {
                 connMap_.erase(key);
@@ -175,15 +175,15 @@ namespace base {
         connMap_.erase(key);
     }
 
-    ContextNode &GameWorld::NextContextNode() {
+    FContextNode &UGameWorld::NextContextNode() {
         return pool_.NextContextNode();
     }
 
-    asio::io_context &GameWorld::GetIOContext() {
+    asio::io_context &UGameWorld::GetIOContext() {
         return ctx_;
     }
 
-    ThreadID GameWorld::GetThreadID() const {
+    ThreadID UGameWorld::GetThreadID() const {
         return tid_;
     }
 } // base

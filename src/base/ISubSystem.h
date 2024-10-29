@@ -5,7 +5,7 @@
 namespace base {
     class ISubSystem {
 
-        friend class GameWorld;
+        friend class UGameWorld;
 
     protected:
         ISubSystem() = default;
@@ -22,7 +22,7 @@ namespace base {
     concept SYSTEM_TYPE = std::derived_from<T, ISubSystem>;
 
 #define SUB_SYSTEM_BODY(sys) \
-    friend GameWorld; \
+    friend UGameWorld; \
 public: \
     [[nodiscard]] constexpr const char *GetSystemName() const override { \
         return #sys; \

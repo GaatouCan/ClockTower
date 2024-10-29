@@ -3,6 +3,7 @@
 #include "../../base/ISubSystem.h"
 #include "../../base/GameWorld.h"
 
+#include <spdlog/spdlog.h>
 #include <yaml-cpp/yaml.h>
 #include <nlohmann/json.hpp>
 

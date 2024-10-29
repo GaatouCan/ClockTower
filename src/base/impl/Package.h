@@ -16,9 +16,9 @@ namespace base {
 
     static constexpr auto DEFAULT_ENCODING_METHOD = CodecMethod::PROTOBUF;
 
-    class Package final : public IPackage {
+    class FPackage final : public IPackage {
 
-        friend class PackageCodecImpl;
+        friend class UPackageCodecImpl;
 
         struct Header {
             uint32_t magic;
@@ -35,35 +35,35 @@ namespace base {
         std::vector<uint8_t> data_;
 
     public:
-        Package();
-        ~Package() override;
+        FPackage();
+        ~FPackage() override;
 
-        Package(const Package &rhs);
-        Package(Package &&rhs) noexcept;
+        FPackage(const FPackage &rhs);
+        FPackage(FPackage &&rhs) noexcept;
 
-        Package &operator=(const Package &rhs);
-        Package &operator=(Package &&rhs) noexcept;
+        FPackage &operator=(const FPackage &rhs);
+        FPackage &operator=(FPackage &&rhs) noexcept;
 
-        Package(uint32_t id, std::string_view data);
-        Package(uint32_t id, const std::stringstream &ss);
+        FPackage(uint32_t id, std::string_view data);
+        FPackage(uint32_t id, const std::stringstream &ss);
 
         void Reset() override;
         void Invalid() override;
         [[nodiscard]] bool IsAvailable() const override;
 
-        Package &SetPackageID(uint32_t id);
+        FPackage &SetPackageID(uint32_t id);
         [[nodiscard]] uint32_t GetID() const override;
 
-        Package &SetData(std::string_view data);
-        Package &SetData(const std::stringstream &ss);
+        FPackage &SetData(std::string_view data);
+        FPackage &SetData(const std::stringstream &ss);
 
-        Package &SetMagic(uint32_t magic);
+        FPackage &SetMagic(uint32_t magic);
         [[nodiscard]] uint32_t GetMagic() const;
 
-        Package &SetVersion(uint32_t version);
+        FPackage &SetVersion(uint32_t version);
         [[nodiscard]] uint32_t GetVersion() const;
 
-        Package &ChangeMethod(CodecMethod method);
+        FPackage &ChangeMethod(CodecMethod method);
         [[nodiscard]] CodecMethod GetMethod() const;
 
         [[nodiscard]] size_t GetDataLength() const;

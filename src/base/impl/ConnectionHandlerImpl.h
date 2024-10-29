@@ -5,11 +5,11 @@
 #include "../IConnectionHandler.h"
 
 namespace base {
-    class ConnectionHandlerImpl final : public TConnectionHandler<Package> {
+    class ConnectionHandlerImpl final : public TConnectionHandler<FPackage> {
     public:
         void OnConnected(const ConnectionPointer &) override;
         void OnClosed(const ConnectionPointer &) override;
 
-        awaitable<void> OnReadPackageT(const ConnectionPointer &conn, Package *pkg) override;
+        awaitable<void> OnReadPackageT(const ConnectionPointer &conn, FPackage *pkg) override;
     };
 } // base

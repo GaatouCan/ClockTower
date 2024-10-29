@@ -1,14 +1,14 @@
 #include "Package.h"
 
 namespace base {
-    Package::Package()
+    FPackage::FPackage()
         : header_() {
         memset(&header_, 0, sizeof(header_));
     }
 
-    Package::~Package() = default;
+    FPackage::~FPackage() = default;
 
-    Package::Package(const Package &rhs) : Package() {
+    FPackage::FPackage(const FPackage &rhs) : FPackage() {
         if (this != &rhs) {
             memcpy(&header_, &rhs.header_, sizeof(header_));
 
@@ -19,7 +19,7 @@ namespace base {
         }
     }
 
-    Package::Package(Package &&rhs) noexcept : Package() {
+    FPackage::FPackage(FPackage &&rhs) noexcept : FPackage() {
         if (this != &rhs) {
             memcpy(&header_, &rhs.header_, sizeof(header_));
 
@@ -28,7 +28,7 @@ namespace base {
         }
     }
 
-    Package &Package::operator=(const Package &rhs) {
+    FPackage &FPackage::operator=(const FPackage &rhs) {
         if (this != &rhs) {
             memcpy(&header_, &rhs.header_, sizeof(header_));
 
@@ -40,7 +40,7 @@ namespace base {
         return *this;
     }
 
-    Package &Package::operator=(Package &&rhs) noexcept {
+    FPackage &FPackage::operator=(FPackage &&rhs) noexcept {
         if (this != &rhs) {
             memcpy(&header_, &rhs.header_, sizeof(header_));
 
@@ -50,89 +50,89 @@ namespace base {
         return *this;
     }
 
-    Package::Package(const uint32_t id, const std::string_view data)
-        : Package() {
+    FPackage::FPackage(const uint32_t id, const std::string_view data)
+        : FPackage() {
         data_.resize(data.size());
         memcpy(data_.data(), data.data(), data.size());
         header_.id = id;
         header_.size = data_.size();
     }
 
-    Package::Package(const uint32_t id, const std::stringstream &ss)
-        : Package(id, ss.str()) {
+    FPackage::FPackage(const uint32_t id, const std::stringstream &ss)
+        : FPackage(id, ss.str()) {
     }
 
-    void Package::Reset() {
+    void FPackage::Reset() {
         memset(&header_, 0, sizeof(header_));
 
         data_.clear();
         data_.shrink_to_fit();
     }
 
-    void Package::Invalid() {
+    void FPackage::Invalid() {
         header_.id = UNAVAILABLE_PACKAGE_ID;
     }
 
-    bool Package::IsAvailable() const {
+    bool FPackage::IsAvailable() const {
         return header_.id > UNAVAILABLE_PACKAGE_ID;
     }
 
-    Package &Package::ChangeMethod(const CodecMethod method) {
+    FPackage &FPackage::ChangeMethod(const CodecMethod method) {
         header_.method = method;
         return *this;
     }
 
-    Package &Package::SetPackageID(const uint32_t id) {
+    FPackage &FPackage::SetPackageID(const uint32_t id) {
         header_.id = id;
         return *this;
     }
 
-    Package &Package::SetData(const std::string_view data) {
+    FPackage &FPackage::SetData(const std::string_view data) {
         data_.resize(data.size());
         memcpy(data_.data(), data.data(), data.size());
         header_.size = data_.size();
         return *this;
     }
 
-    Package &Package::SetData(const std::stringstream &ss) {
+    FPackage &FPackage::SetData(const std::stringstream &ss) {
         return SetData(ss.str());
     }
 
-    Package & Package::SetMagic(const uint32_t magic) {
+    FPackage & FPackage::SetMagic(const uint32_t magic) {
         header_.magic = magic;
         return *this;
     }
 
-    Package & Package::SetVersion(const uint32_t version) {
+    FPackage & FPackage::SetVersion(const uint32_t version) {
         header_.version = version;
         return *this;
     }
 
-    uint32_t Package::GetMagic() const {
+    uint32_t FPackage::GetMagic() const {
         return header_.magic;
     }
 
-    uint32_t Package::GetVersion() const {
+    uint32_t FPackage::GetVersion() const {
         return header_.version;
     }
 
-    CodecMethod Package::GetMethod() const {
+    CodecMethod FPackage::GetMethod() const {
         return header_.method;
     }
 
-    uint32_t Package::GetID() const {
+    uint32_t FPackage::GetID() const {
         return header_.id;
     }
 
-    size_t Package::GetDataLength() const {
+    size_t FPackage::GetDataLength() const {
         return data_.size();
     }
 
-    std::string Package::GetData() const {
+    std::string FPackage::GetData() const {
         return {data_.begin(), data_.end()};
     }
 
-    const std::vector<uint8_t> &Package::GetRawData() const {
+    const std::vector<uint8_t> &FPackage::GetRawData() const {
         return data_;
     }
 } // base

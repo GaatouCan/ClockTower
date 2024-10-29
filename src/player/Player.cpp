@@ -113,13 +113,13 @@ void Player::Send(base::IPackage *pkg) const {
 }
 
 void Player::Send(const uint32_t id, const std::string_view data) const {
-    const auto pkg = dynamic_cast<base::Package *>(conn_->BuildPackage());
+    const auto pkg = dynamic_cast<base::FPackage *>(conn_->BuildPackage());
     pkg->SetPackageID(id).SetData(data);
     Send(pkg);
 }
 
 void Player::Send(const uint32_t id, const std::stringstream &ss) const {
-    const auto pkg = dynamic_cast<base::Package *>(conn_->BuildPackage());
+    const auto pkg = dynamic_cast<base::FPackage *>(conn_->BuildPackage());
     pkg->SetPackageID(id).SetData(ss.str());
     Send(pkg);
 }

@@ -25,7 +25,7 @@ namespace base {
             spdlog::error("{} - Fail to Found PlayerManager", __func__);
     }
 
-    awaitable<void> ConnectionHandlerImpl::OnReadPackageT(const ConnectionPointer &conn, Package *pkg) {
+    awaitable<void> ConnectionHandlerImpl::OnReadPackageT(const ConnectionPointer &conn, FPackage *pkg) {
         spdlog::trace("{} - Receive Package[{}] From {}.",
             __func__,
             ProtoTypeToString(static_cast<ProtoType>(pkg->GetID())),

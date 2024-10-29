@@ -1,12 +1,12 @@
 #pragma once
 
 #include "../IPackageCodec.h"
-#include "Package.h"
+
 
 namespace base {
-    class PackageCodecImpl final : public TPackageCodec<Package>{
+    class UPackageCodecImpl final : public IPackageCodec {
     public:
-        awaitable<void> EncodeT(TcpSocket &socket, Package *pkg) override;
-        awaitable<void> DecodeT(TcpSocket &socket, Package *pkg) override;
+        awaitable<void> Encode(TcpSocket &socket, IPackage *pkg) override;
+        awaitable<void> Decode(TcpSocket &socket, IPackage *pkg) override;
     };
 } // base

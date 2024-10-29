@@ -34,7 +34,7 @@ namespace base {
         const auto pid = std::any_cast<uint64_t>(conn->GetContext());
         if (const auto plr = plrMgr->FindPlayer(pid); plr != nullptr) {
             assert(plr->GetConnection() == conn);
-            co_await std::invoke(func, plr, dynamic_cast<Package *>(pkg));
+            co_await std::invoke(func, plr, dynamic_cast<FPackage *>(pkg));
         }
     }
 } // base

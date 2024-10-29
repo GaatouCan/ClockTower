@@ -4,11 +4,11 @@
 #include "../system/config/ConfigSystem.h"
 
 base::IPackage *CreatePackage() {
-    return new base::Package();
+    return new base::FPackage();
 }
 
 void InitPackage(base::IPackage *pkg) {
-    const auto tmp = dynamic_cast<base::Package *>(pkg);
+    const auto tmp = dynamic_cast<base::FPackage *>(pkg);
     if (tmp == nullptr)
         return;
 

@@ -82,7 +82,7 @@ void AppearanceCT::SendInfo() const {
     GetOwner()->SendPackage(SC_AppearanceResponse, res);
 }
 
-awaitable<void> protocol::CS_AppearanceRequest(const std::shared_ptr<Player> &plr, base::Package *pkg) {
+awaitable<void> protocol::CS_AppearanceRequest(const std::shared_ptr<Player> &plr, base::FPackage *pkg) {
     if (plr == nullptr)
         co_return;
 

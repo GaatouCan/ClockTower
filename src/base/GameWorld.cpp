@@ -144,7 +144,7 @@ namespace base {
 
                     const std::string key = fmt::format("{} - {}", addr.to_string(), CurrentTimeCount());
 
-                    conn->SetCodec<PackageCodecImpl>()
+                    conn->SetCodec<UPackageCodecImpl>()
                             .SetHandler<ConnectionHandlerImpl>()
                             .SetThreadID(tid)
                             .SetKey(key)

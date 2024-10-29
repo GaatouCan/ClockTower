@@ -15,7 +15,7 @@ namespace base {
             spdlog::warn("{} - PlayerManager not found", __func__);
     }
 
-    LoginInfo LoginHandlerImpl::ParseLoginInfoT(Package *pkg) {
+    LoginInfo LoginHandlerImpl::ParseLoginInfoT(FPackage *pkg) {
         if (pkg->GetID() != static_cast<uint32_t>(protocol::ProtoType::CS_LoginRequest))
             return {};
 

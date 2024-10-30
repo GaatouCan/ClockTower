@@ -14,14 +14,14 @@ class AppearanceCT final : public IPlayerComponent {
 public:
     explicit AppearanceCT(UComponentModule *module);
 
-    void Serialize_Appearance(base::Serializer &s);
-    void Deserialize_Appearance(base::Deserializer &ds);
+    void Serialize_Appearance(USerializer &s);
+    void Deserialize_Appearance(UDeserializer &ds);
 
-    void Serialize_Avatar(base::Serializer &s);
-    void Deserialize_Avatar(base::Deserializer &ds);
+    void Serialize_Avatar(USerializer &s);
+    void Deserialize_Avatar(UDeserializer &ds);
 
-    void Serialize_AvatarFrame(base::Serializer &s);
-    void Deserialize_AvatarFrame(base::Deserializer &ds);
+    void Serialize_AvatarFrame(USerializer &s);
+    void Deserialize_AvatarFrame(UDeserializer &ds);
 
     void SendInfo() const;
 };

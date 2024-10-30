@@ -21,23 +21,23 @@ AppearanceCT::AppearanceCT(UComponentModule *module)
     SERIALIZE_COMPONENT(AppearanceCT, AvatarFrame)
 }
 
-void AppearanceCT::Serialize_Appearance(base::Serializer &s) {
+void AppearanceCT::Serialize_Appearance(USerializer &s) {
     s.Serialize(&appearance_);
 }
 
-void AppearanceCT::Deserialize_Appearance(base::Deserializer &ds) {
+void AppearanceCT::Deserialize_Appearance(UDeserializer &ds) {
     if (ds.HasMore()) {
         ds.Deserialize(&appearance_);
     }
 }
 
-void AppearanceCT::Serialize_Avatar(base::Serializer &s) {
+void AppearanceCT::Serialize_Avatar(USerializer &s) {
     for (auto &avatar: std::views::values(avatarMap_)) {
         s.Serialize(&avatar);
     }
 }
 
-void AppearanceCT::Deserialize_Avatar(base::Deserializer &ds) {
+void AppearanceCT::Deserialize_Avatar(UDeserializer &ds) {
     while (ds.HasMore()) {
         orm::DBTable_Avatar avatar;
         ds.Deserialize(&avatar);
@@ -45,13 +45,13 @@ void AppearanceCT::Deserialize_Avatar(base::Deserializer &ds) {
     }
 }
 
-void AppearanceCT::Serialize_AvatarFrame(base::Serializer &s) {
+void AppearanceCT::Serialize_AvatarFrame(USerializer &s) {
     for (auto &frame: std::views::values(avatarFrameMap_)) {
         s.Serialize(&frame);
     }
 }
 
-void AppearanceCT::Deserialize_AvatarFrame(base::Deserializer &ds) {
+void AppearanceCT::Deserialize_AvatarFrame(UDeserializer &ds) {
     while (ds.HasMore()) {
         orm::DBTable_AvatarFrame frame;
         ds.Deserialize(&frame);
@@ -82,21 +82,21 @@ void AppearanceCT::SendInfo() const {
     GetOwner()->SendPackage(SC_AppearanceResponse, res);
 }
 
-awaitable<void> protocol::CS_AppearanceRequest(const std::shared_ptr<UPlayer> &plr, base::FPackage *pkg) {
-    if (plr == nullptr)
-        co_return;
-
-    Appearance::CS_AppearanceRequest req;
-    req.ParseFromString(pkg->GetData());
-
-    const auto ct = plr->GetComponentModule().GetComponent<AppearanceCT>();
-    if (ct == nullptr)
-        co_return;
-
-    switch (req.operate_type()) {
-        case Appearance::SEND_INFO: {
-            ct->SendInfo();
-        } break;
-        default: break;
-    }
-}
+// awaitable<void> protocol::CS_AppearanceRequest(const std::shared_ptr<UPlayer> &plr, IPackage *pkg) {
+//     if (plr == nullptr)
+//         co_return;
+//
+//     Appearance::CS_AppearanceRequest req;
+//     req.ParseFromString(pkg->GetData());
+//
+//     const auto ct = plr->GetComponentModule().GetComponent<AppearanceCT>();
+//     if (ct == nullptr)
+//         co_return;
+//
+//     switch (req.operate_type()) {
+//         case Appearance::SEND_INFO: {
+//             ct->SendInfo();
+//         } break;
+//         default: break;
+//     }
+// }

@@ -86,7 +86,7 @@ public:
 { \
     GetModule()->RegisterSerializer<comp>(PascalToUnderline(#tb), [](IPlayerComponent *ct, mysqlx::Table table) { \
         try { \
-            base::Serializer serializer(std::move(table)); \
+            USerializer serializer(std::move(table)); \
             dynamic_cast<comp *>(ct)->Serialize_##tb(serializer); \
         } catch (std::bad_cast &e) { \
             spdlog::error("{} - {} Serializer: {}", #comp, #tb, e.what()); \
@@ -94,7 +94,7 @@ public:
     }); \
     GetModule()->RegisterDeserializer<comp>(PascalToUnderline(#tb), [](IPlayerComponent *ct, mysqlx::RowResult res) { \
         try { \
-            base::Deserializer deserializer(std::move(res)); \
+            UDeserializer deserializer(std::move(res)); \
             dynamic_cast<comp *>(ct)->Deserialize_##tb(deserializer); \
         } catch (std::bad_cast &e) { \
             spdlog::error("{} - {} deserializer: {}", #comp, #tb, e.what()); \

@@ -3,7 +3,7 @@
 #include "../../../system/manager/Manager.h"
 
 
-class ChatManager final : public base::IManager {
+class ChatManager final : public IManager {
 
 public:
     explicit ChatManager(asio::io_context &ctx);

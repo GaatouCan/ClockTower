@@ -35,4 +35,4 @@ private:
 };
 
 #define REGISTER_PROTOCOL(proto) \
-    handler_->Register(ProtoType::proto, &proto);
+    sys->RegisterProtocol(EProtoType::proto, &proto);

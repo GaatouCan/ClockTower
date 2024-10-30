@@ -70,12 +70,7 @@ link_directories(${PROTOBUF_LIBRARY_DIR}/Debug)
 #)
 
 #include_directories(${CMAKE_SOURCE_DIR}/struct)
-
-file(GLOB_RECURSE PROTOCOL
-        ${CMAKE_SOURCE_DIR}/protobuf/Protocol.generated.h
-        ${CMAKE_SOURCE_DIR}/protobuf/ProtoType.generated.h
-        ${CMAKE_SOURCE_DIR}/protobuf/Protocol.generated.cpp
-)
+include_directories(${CMAKE_SOURCE_DIR}/protobuf/cpp)
 
 file(GLOB_RECURSE ORM_DIR
         ${CMAKE_SOURCE_DIR}/struct/orm/*.h
@@ -87,7 +82,7 @@ file(GLOB_RECURSE SOURCE_DIR
         ${CMAKE_SOURCE_DIR}/src/*.cpp
 )
 
-add_executable(server src/server.cpp ${SOURCE_DIR} ${PROTOCOL} ${ORM_DIR})
+add_executable(server src/server.cpp ${SOURCE_DIR} ${ORM_DIR})
 
 target_link_libraries(server PRIVATE spdlog::spdlog)
 target_link_libraries(server PRIVATE asio::asio)

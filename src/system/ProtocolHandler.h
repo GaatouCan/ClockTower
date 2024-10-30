@@ -1,7 +1,6 @@
 #pragma once
 
-#include "../../protobuf/ProtoType.generated.h"
-
+#include <ProtoType.gen.h>
 #include <asio.hpp>
 
 

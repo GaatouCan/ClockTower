@@ -51,7 +51,7 @@ void UEventModule::RemoveListener(const EEvent event, void *ptr) {
     }
 }
 
-void UEventModule::Dispatch(EEvent event, base::IEventParam *parma) {
+void UEventModule::Dispatch(EEvent event, IEventParam *parma) {
     const bool empty = IsQueueEmpty();
 
     {

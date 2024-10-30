@@ -11,6 +11,6 @@ class ILoginHandler {
 public:
     virtual ~ILoginHandler() = default;
 
-    virtual FLoginInfo ParseLoginInfo(IPackage *) = 0;
-    virtual awaitable<void> OnPlayerLogin(const std::shared_ptr<UConnection> &conn, const FLoginInfo &) = 0;
+    virtual FLoginInfo ParseLoginInfo(class IPackage *) = 0;
+    virtual asio::awaitable<void> OnPlayerLogin(const std::shared_ptr<class UConnection> &conn, const FLoginInfo &) = 0;
 };

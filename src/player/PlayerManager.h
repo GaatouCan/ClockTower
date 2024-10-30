@@ -7,15 +7,15 @@
 #include <mutex>
 #include <shared_mutex>
 
-class PlayerManager final : public IManager {
+class UPlayerManager final : public IManager {
 
     std::unordered_map<uint64_t, std::shared_ptr<UPlayer>> playerMap_;
     std::mutex mutex_;
     std::shared_mutex sharedMutex_;
 
 public:
-    explicit PlayerManager(asio::io_context &ctx);
-    ~PlayerManager() override;
+    explicit UPlayerManager(asio::io_context &ctx);
+    ~UPlayerManager() override;
 
     awaitable<void> OnPlayerLogin(const std::shared_ptr<UConnection> &conn, uint64_t pid);
     void OnPlayerLogout(uint64_t pid);

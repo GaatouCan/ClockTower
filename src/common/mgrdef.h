@@ -1,8 +1,15 @@
-//
-// Created by admin on 24-10-30.
-//
+#pragma once
 
-#ifndef MGRDEF_H
-#define MGRDEF_H
+#include "../system/manager/ManagerSystem.h"
 
-#endif //MGRDEF_H
+#include "../player/PlayerManager.h"
+#include "../player/PlayerCache.h"
+
+inline void LoadManager(UManagerSystem * sys) {
+    if (sys == nullptr)
+        return;
+
+    sys->CreateManager<UPlayerManager>();
+    sys->CreateManager<UPlayerCache>();
+
+}

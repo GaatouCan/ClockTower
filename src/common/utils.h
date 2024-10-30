@@ -1,14 +1,8 @@
 #pragma once
 
-#include "../base/Package.h"
-
 #include <filesystem>
 #include <functional>
 #include <thread>
-
-IPackage *CreatePackage();
-
-void InitPackage(IPackage *pkg);
 
 void TraverseFolder(const std::string &folder, const std::function<void(const std::filesystem::directory_entry &)> &func);
 

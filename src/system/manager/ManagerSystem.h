@@ -10,6 +10,7 @@
 class UManagerSystem final : public ISubSystem {
 
     SUB_SYSTEM_BODY(ManagerSystem)
+
     UManagerSystem();
     ~UManagerSystem() override;
 
@@ -17,8 +18,8 @@ class UManagerSystem final : public ISubSystem {
 
 public:
     template<MANAGER_TYPE T>
-        void CreateManager(asio::io_context &ctx) {
-        mgrMap_[typeid(T)] = new T(ctx);
+        void CreateManager() {
+        mgrMap_[typeid(T)] = new T(ctx_);
         spdlog::info("{} - Loaded Manager: {}", typeid(T).name());
     }
 

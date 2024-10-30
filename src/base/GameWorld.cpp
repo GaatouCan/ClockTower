@@ -16,7 +16,7 @@
 REGISTER_SYSTEM(UConfigSystem, 0)
 REGISTER_SYSTEM(UProtocolSystem, 1)
 REGISTER_SYSTEM(ULoginSystem, 2)
-// REGISTER_SYSTEM(DatabaseSystem, 9)
+REGISTER_SYSTEM(UDatabaseSystem, 9)
 REGISTER_SYSTEM(UManagerSystem, 10)
 REGISTER_SYSTEM(UEventSystem, 11)
 

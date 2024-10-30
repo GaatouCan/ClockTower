@@ -13,7 +13,7 @@
 
 #include <appearance.pb.h>
 
-AppearanceCT::AppearanceCT(ComponentModule *module)
+AppearanceCT::AppearanceCT(UComponentModule *module)
     : IPlayerComponent(module) {
 
     SERIALIZE_COMPONENT(AppearanceCT, Appearance)
@@ -82,7 +82,7 @@ void AppearanceCT::SendInfo() const {
     GetOwner()->SendPackage(SC_AppearanceResponse, res);
 }
 
-awaitable<void> protocol::CS_AppearanceRequest(const std::shared_ptr<Player> &plr, base::FPackage *pkg) {
+awaitable<void> protocol::CS_AppearanceRequest(const std::shared_ptr<UPlayer> &plr, base::FPackage *pkg) {
     if (plr == nullptr)
         co_return;
 

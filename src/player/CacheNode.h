@@ -2,6 +2,6 @@
 
 #include <cstdint>
 
-struct CacheNode {
+struct FCacheNode {
     uint64_t pid;
 };

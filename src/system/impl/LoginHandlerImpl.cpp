@@ -7,14 +7,14 @@
 #include <spdlog/spdlog.h>
 
 
-awaitable<void> LoginHandlerImpl::OnPlayerLogin(const std::shared_ptr<UConnection> &conn, const FLoginInfo &info) {
+awaitable<void> ULoginHandlerImpl::OnPlayerLogin(const std::shared_ptr<UConnection> &conn, const FLoginInfo &info) {
     if (const auto plrMgr = GetManager<PlayerManager>(); plrMgr != nullptr) {
         co_await plrMgr->OnPlayerLogin(conn, info.pid);
     } else
         spdlog::warn("{} - PlayerManager not found", __func__);
 }
 
-FLoginInfo LoginHandlerImpl::ParseLoginInfo(IPackage *pkg) {
+FLoginInfo ULoginHandlerImpl::ParseLoginInfo(IPackage *pkg) {
     try {
         const auto tmp = dynamic_cast<FPackage *>(pkg);
 

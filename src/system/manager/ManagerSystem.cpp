@@ -2,64 +2,61 @@
 
 #include <spdlog/spdlog.h>
 
-namespace base {
-    ManagerSystem::ManagerSystem()
-        : timer_(ctx_) {
-    }
 
-    ManagerSystem::~ManagerSystem() {
-        if (mgrThread_.joinable())
-            mgrThread_.join();
+UManagerSystem::UManagerSystem()
+    : timer_(ctx_) {
+}
 
-        timer_.cancel();
+UManagerSystem::~UManagerSystem() {
+    if (mgrThread_.joinable())
+        mgrThread_.join();
 
-        if (!ctx_.stopped())
+    timer_.cancel();
+
+    if (!ctx_.stopped())
+        ctx_.stop();
+
+    for (const auto mgr: std::views::values(mgrMap_))
+        delete mgr;
+}
+
+void UManagerSystem::Init() {
+    mgrThread_ = std::thread([this] {
+        tid_ = std::this_thread::get_id();
+        asio::signal_set signals(ctx_, SIGINT, SIGTERM);
+        signals.async_wait([&](auto, auto) {
             ctx_.stop();
-
-        for (const auto mgr: std::views::values(mgrMap_))
-            delete mgr;
-    }
-
-    void ManagerSystem::Init() {
-        LoadManager();
-
-        mgrThread_ = std::thread([this] {
-            tid_ = std::this_thread::get_id();
-            asio::signal_set signals(ctx_, SIGINT, SIGTERM);
-            signals.async_wait([&](auto, auto) {
-                ctx_.stop();
-            });
-
-            for (const auto mgr: std::views::values(mgrMap_))
-                mgr->SetThreadID(tid_);
-
-            ctx_.run();
         });
 
-        co_spawn(ctx_, [this]() mutable -> awaitable<void> {
-            try {
-                ATimePoint point = std::chrono::steady_clock::now();
-                point = std::chrono::floor<std::chrono::seconds>(point);
+        for (const auto mgr: std::views::values(mgrMap_))
+            mgr->SetThreadID(tid_);
 
-                while (!ctx_.stopped()) {
-                    point += std::chrono::seconds(1);
-                    timer_.expires_at(point);
-                    co_await timer_.async_wait();
+        ctx_.run();
+    });
 
-                    for (const auto mgr: std::views::values(mgrMap_))
-                        mgr->OnTick(point);
-                }
-            } catch (std::exception &e) {
-                spdlog::warn("{}", e.what());
+    co_spawn(ctx_, [this]() mutable -> awaitable<void> {
+        try {
+            ATimePoint point = std::chrono::steady_clock::now();
+            point = std::chrono::floor<std::chrono::seconds>(point);
+
+            while (!ctx_.stopped()) {
+                point += std::chrono::seconds(1);
+                timer_.expires_at(point);
+                co_await timer_.async_wait();
+
+                for (const auto mgr: std::views::values(mgrMap_))
+                    mgr->OnTick(point);
             }
-        }, detached);
-    }
+        } catch (std::exception &e) {
+            spdlog::warn("{}", e.what());
+        }
+    }, detached);
+}
 
-    AThreadID ManagerSystem::GetThreadID() const {
-        return tid_;
-    }
+AThreadID UManagerSystem::GetThreadID() const {
+    return tid_;
+}
 
-    bool ManagerSystem::InManagerThread() const {
-        return tid_ == std::this_thread::get_id();
-    }
-} // base
+bool UManagerSystem::InManagerThread() const {
+    return tid_ == std::this_thread::get_id();
+}

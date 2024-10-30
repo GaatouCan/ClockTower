@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../IPackage.h"
+#include "../Package.h"
 
 #include <vector>
 #include <sstream>

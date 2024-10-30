@@ -1,18 +1,18 @@
-#include "IPlayerComponent.h"
+#include "PlayerComponent.h"
 #include "ComponentModule.h"
 
-IPlayerComponent::IPlayerComponent(ComponentModule *module)
+IPlayerComponent::IPlayerComponent(UComponentModule *module)
     : module_(module){
 }
 
 IPlayerComponent::~IPlayerComponent() {
 }
 
-ComponentModule * IPlayerComponent::GetModule() const {
+UComponentModule * IPlayerComponent::GetModule() const {
     return module_;
 }
 
-Player * IPlayerComponent::GetOwner() const {
+UPlayer * IPlayerComponent::GetOwner() const {
     if (module_ != nullptr)
         return module_->GetOwner();
     return nullptr;
@@ -24,5 +24,5 @@ void IPlayerComponent::OnLogin() {
 void IPlayerComponent::OnLogout() {
 }
 
-void IPlayerComponent::SyncCache(CacheNode *node) {
+void IPlayerComponent::SyncCache(FCacheNode *node) {
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../IPackageCodec.h"
+#include "../PackageCodec.h"
 
 
 class UPackageCodecImpl final : public IPackageCodec {

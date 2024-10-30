@@ -7,23 +7,6 @@
 
 
 awaitable<void> ProtocolHandlerImpl::Execute(const AProtoFunctor &func, const std::shared_ptr<UConnection> &conn, IPackage *pkg) {
-    if (!pkg->IsAvailable()) {
-        spdlog::warn("{} - Package unavailable", __func__);
-        co_return;
-    }
-
-    if (pkg->GetID() >= static_cast<uint32_t>(ProtoType::PROTO_TYPE_MAX)) {
-        spdlog::warn("{} - Protocol type out of range", __func__);
-        co_return;
-    }
-
-    const auto type = static_cast<ProtoType>(pkg->GetID());
-
-    if (!func) {
-        spdlog::warn("{} - Protocol type not found", __func__);
-        co_return;
-    }
-
     const auto plrMgr = GetManager<PlayerManager>();
     if (plrMgr == nullptr) {
         spdlog::warn("{} - PlayerManager not found", __func__);

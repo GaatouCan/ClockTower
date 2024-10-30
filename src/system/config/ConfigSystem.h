@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../base/ISubSystem.h"
+#include "../../base/SubSystem.h"
 #include "../../base/GameWorld.h"
 
 #include <spdlog/spdlog.h>

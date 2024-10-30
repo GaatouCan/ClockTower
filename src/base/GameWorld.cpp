@@ -15,10 +15,10 @@
 
 REGISTER_SYSTEM(UConfigSystem, 0)
 REGISTER_SYSTEM(UProtocolSystem, 1)
-REGISTER_SYSTEM(LoginSystem, 2)
+REGISTER_SYSTEM(ULoginSystem, 2)
 // REGISTER_SYSTEM(DatabaseSystem, 9)
-// REGISTER_SYSTEM(ManagerSystem, 10)
-// REGISTER_SYSTEM(EventSystem, 11)
+REGISTER_SYSTEM(UManagerSystem, 10)
+REGISTER_SYSTEM(UEventSystem, 11)
 
 UGameWorld::UGameWorld()
     : acceptor_(ctx_),
@@ -118,7 +118,7 @@ awaitable<void> UGameWorld::WaitForConnect() {
         acceptor_.bind({tcp::v4(), config["server"]["port"].as<uint16_t>()});
         acceptor_.listen();
 
-        const auto loginSys = GetSystem<LoginSystem>();
+        const auto loginSys = GetSystem<ULoginSystem>();
         if (loginSys == nullptr) {
             throw std::runtime_error("Failed to get login system");
         }

@@ -10,7 +10,7 @@ PlayerManager::~PlayerManager() {
     playerMap_.clear();
 }
 
-awaitable<void> PlayerManager::OnPlayerLogin(const std::shared_ptr<base::UConnection> &conn, const uint64_t pid) {
+awaitable<void> PlayerManager::OnPlayerLogin(const std::shared_ptr<UConnection> &conn, const uint64_t pid) {
     if (const auto plr = FindPlayer(pid); plr != nullptr) {
 
         // 首先断开旧连接
@@ -57,13 +57,13 @@ void PlayerManager::OnPlayerLogout(const uint64_t pid) {
     }
 }
 
-std::shared_ptr<Player> PlayerManager::EmplacePlayer(const std::shared_ptr<base::UConnection> &conn, const uint64_t pid) {
+std::shared_ptr<UPlayer> PlayerManager::EmplacePlayer(const std::shared_ptr<UConnection> &conn, const uint64_t pid) {
     const auto plr = CreatePlayer(conn, pid);
     PushPlayer(plr);
     return plr;
 }
 
-void PlayerManager::PushPlayer(const std::shared_ptr<Player>& plr) {
+void PlayerManager::PushPlayer(const std::shared_ptr<UPlayer>& plr) {
     if (!IsSameThread()) {
         RunInThread(&PlayerManager::PushPlayer, this, plr);
         return;
@@ -73,7 +73,7 @@ void PlayerManager::PushPlayer(const std::shared_ptr<Player>& plr) {
     playerMap_[plr->GetPlayerID()] = plr;
 }
 
-std::shared_ptr<Player> PlayerManager::FindPlayer(const uint64_t pid) {
+std::shared_ptr<UPlayer> PlayerManager::FindPlayer(const uint64_t pid) {
     std::shared_lock lock(sharedMutex_);
     if (const auto it = playerMap_.find(pid); it != playerMap_.end()) {
         return it->second;
@@ -81,7 +81,7 @@ std::shared_ptr<Player> PlayerManager::FindPlayer(const uint64_t pid) {
     return nullptr;
 }
 
-std::shared_ptr<Player> PlayerManager::RemovePlayer(const uint64_t pid) {
+std::shared_ptr<UPlayer> PlayerManager::RemovePlayer(const uint64_t pid) {
     std::scoped_lock lock(mutex_);
     if (const auto it = playerMap_.find(pid); it != playerMap_.end()) {
         auto res = it->second;

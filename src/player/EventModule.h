@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../system/event/IEventParam.h"
+#include "../system/event/EventParam.h"
 #include "../common/event.h"
 
 #include <memory>
@@ -12,16 +12,16 @@
 #include <asio.hpp>
 
 
-class EventModule final {
+class UEventModule final {
 
-    class Player *owner_;
+    class UPlayer *owner_;
 
-    struct EventNode {
+    struct FEventNode {
         EEvent event = EEvent::UNAVAILABLE;
-        base::IEventParam *param = nullptr;
+        IEventParam *param = nullptr;
     };
 
-    std::unique_ptr<std::queue<EventNode>> queue_;
+    std::unique_ptr<std::queue<FEventNode>> queue_;
     std::mutex eventMutex_;
     mutable std::shared_mutex sharedMutex_;
 
@@ -30,12 +30,12 @@ class EventModule final {
     std::mutex listenerMutex_;
 
 public:
-    EventModule() = delete;
+    UEventModule() = delete;
 
-    explicit EventModule(Player *plr);
-    ~EventModule();
+    explicit UEventModule(UPlayer *plr);
+    ~UEventModule();
 
-    [[nodiscard]] Player *GetOwner() const;
+    [[nodiscard]] UPlayer *GetOwner() const;
 
     [[nodiscard]] bool IsQueueEmpty() const;
 
@@ -44,7 +44,7 @@ public:
         if (event == EEvent::UNAVAILABLE || ptr == nullptr || target == nullptr)
             return;
 
-        this->RegisterListener(event, ptr, [target, func = std::forward<CALLABLE>(func)](base::IEventParam *param) {
+        this->RegisterListener(event, ptr, [target, func = std::forward<CALLABLE>(func)](IEventParam *param) {
             try {
                 if (target != nullptr) {
                     std::invoke(func, static_cast<TARGET *>(target), param);
@@ -59,7 +59,7 @@ public:
 
     void RemoveListener(EEvent event, void *ptr);
 
-    void Dispatch(EEvent event, base::IEventParam *parma);
+    void Dispatch(EEvent event, IEventParam *parma);
 
 private:
     asio::awaitable<void> HandleEvent();

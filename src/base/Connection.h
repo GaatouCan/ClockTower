@@ -1,7 +1,7 @@
 #pragma once
 
-#include "IPackageCodec.h"
-#include "IConnectionHandler.h"
+#include "PackageCodec.h"
+#include "ConnectionHandler.h"
 #include "TSDeque.h"
 #include "PackagePool.h"
 

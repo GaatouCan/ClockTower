@@ -28,7 +28,7 @@ awaitable<void> UConnectionHandlerImpl::OnReadPackage(const AConnectionPointer &
     spdlog::trace("{} - Receive Package[{}] From {}.", __func__, protocol::ProtoTypeToString(static_cast<protocol::ProtoType>(pkg->GetID())), conn->RemoteAddress().to_string());
 
     if (!conn->GetContext().has_value()) {
-        if (const auto sys = GetSystem<LoginSystem>(); sys != nullptr) {
+        if (const auto sys = GetSystem<ULoginSystem>(); sys != nullptr) {
             co_await sys->OnLogin(conn, pkg);
         } else {
             spdlog::critical("{}: LoginSystem not found.", __func__);

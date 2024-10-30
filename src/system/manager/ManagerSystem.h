@@ -1,57 +1,51 @@
 #pragma once
 
-#include "../../base/ISubSystem.h"
-#include "IManager.h"
 #include "../../base/GameWorld.h"
+#include "../../base/SubSystem.h"
+#include "Manager.h"
 
 #include <typeindex>
 
-namespace base {
 
-    class ManagerSystem final : public ISubSystem {
-        SUB_SYSTEM_BODY(ManagerSystem)
+class UManagerSystem final : public ISubSystem {
 
-        ManagerSystem();
-        ~ManagerSystem() override;
+    SUB_SYSTEM_BODY(ManagerSystem)
+    UManagerSystem();
+    ~UManagerSystem() override;
 
-        void Init() override;
+    void Init() override;
 
-        void LoadManager();
-
-        template<MANAGER_TYPE T>
+public:
+    template<MANAGER_TYPE T>
         void CreateManager(asio::io_context &ctx) {
-            mgrMap_[typeid(T)] = new T(ctx);
+        mgrMap_[typeid(T)] = new T(ctx);
+        spdlog::info("{} - Loaded Manager: {}", typeid(T).name());
+    }
+
+    template<MANAGER_TYPE T>
+    T *GetManager() {
+        if (const auto it = mgrMap_.find(typeid(T)); it != mgrMap_.end()) {
+            return dynamic_cast<T *>(it->second);
         }
+        return nullptr;
+    }
 
-    public:
-        template<MANAGER_TYPE T>
-        T *GetManager() {
-            if (const auto it = mgrMap_.find(typeid(T)); it != mgrMap_.end()) {
-                return dynamic_cast<T *>(it->second);
-            }
-            return nullptr;
-        }
+    [[nodiscard]] AThreadID GetThreadID() const;
+    [[nodiscard]] bool InManagerThread() const;
 
-        [[nodiscard]] AThreadID GetThreadID() const;
-        [[nodiscard]] bool InManagerThread() const;
+private:
+    std::unordered_map<std::type_index, IManager *> mgrMap_;
 
-    private:
-        std::unordered_map<std::type_index, IManager *> mgrMap_;
+    asio::io_context ctx_;
+    ASteadyTimer timer_;
 
-        asio::io_context ctx_;
-        ASteadyTimer timer_;
-        std::thread mgrThread_;
-        AThreadID tid_;
-    };
-} // base
+    std::thread mgrThread_;
+    AThreadID tid_;
+};
 
-#define REGISTER_MANAGER(mgr) \
-    CreateManager<mgr>(ctx_); \
-    spdlog::info("\tLoading {}.", #mgr);
-
-template<base::MANAGER_TYPE T>
+template<MANAGER_TYPE T>
 T *GetManager() {
-    const auto sys = GetSystem<base::ManagerSystem>();
+    const auto sys = GetSystem<UManagerSystem>();
     if (sys == nullptr) {
         spdlog::critical("{} - Failed to found ManagerSystem.", __func__);
         GetWorld().Shutdown();

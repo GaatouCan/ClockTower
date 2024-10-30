@@ -2,23 +2,23 @@
 #include "../system/database/DatabaseSystem.h"
 #include "../base/GameWorld.h"
 
-PlayerCache::PlayerCache(asio::io_context &ctx) : IManager(ctx) {
+UPlayerCache::UPlayerCache(asio::io_context &ctx) : IManager(ctx) {
 }
 
-PlayerCache::~PlayerCache() {
+UPlayerCache::~UPlayerCache() {
 
 }
 
-void PlayerCache::OnTick(ATimePoint now) {
+void UPlayerCache::OnTick(ATimePoint now) {
     // TODO
 }
 
-void PlayerCache::SyncCache(CacheNode node) {
+void UPlayerCache::SyncCache(FCacheNode node) {
     std::unique_lock lock(blockMutex_);
     cacheMap_.insert_or_assign(node.pid, node);
 }
 
-awaitable<std::optional<CacheNode>> PlayerCache::FindCacheNode(const uint64_t pid) const {
+awaitable<std::optional<FCacheNode>> UPlayerCache::FindCacheNode(const uint64_t pid) const {
     {
         std::shared_lock lock(sharedMutex_);
         if (const auto iter = cacheMap_.find(pid); iter != cacheMap_.end()) {

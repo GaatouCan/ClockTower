@@ -1,11 +1,11 @@
 #include "EventModule.h"
 #include "Player.h"
 
-EventModule::EventModule(Player *plr)
+UEventModule::UEventModule(UPlayer *plr)
     : owner_(plr) {
 }
 
-EventModule::~EventModule() {
+UEventModule::~UEventModule() {
     listenerMap_.clear();
     while (!queue_->empty()) {
         auto &[event, param] = queue_->front();
@@ -15,16 +15,16 @@ EventModule::~EventModule() {
     }
 }
 
-Player * EventModule::GetOwner() const {
+UPlayer * UEventModule::GetOwner() const {
     return owner_;
 }
 
-bool EventModule::IsQueueEmpty() const {
+bool UEventModule::IsQueueEmpty() const {
     std::shared_lock lock(sharedMutex_);
     return queue_->empty();
 }
 
-void EventModule::RegisterListener(const EEvent event, void *ptr, const EventListener &listener) {
+void UEventModule::RegisterListener(const EEvent event, void *ptr, const EventListener &listener) {
     if (event == EEvent::UNAVAILABLE || ptr == nullptr)
         return;
 
@@ -35,7 +35,7 @@ void EventModule::RegisterListener(const EEvent event, void *ptr, const EventLis
     listenerMap_[event][ptr] = listener;
 }
 
-void EventModule::RemoveListener(const EEvent event, void *ptr) {
+void UEventModule::RemoveListener(const EEvent event, void *ptr) {
     if (ptr == nullptr)
         return;
 
@@ -51,7 +51,7 @@ void EventModule::RemoveListener(const EEvent event, void *ptr) {
     }
 }
 
-void EventModule::Dispatch(EEvent event, base::IEventParam *parma) {
+void UEventModule::Dispatch(EEvent event, base::IEventParam *parma) {
     const bool empty = IsQueueEmpty();
 
     {
@@ -63,9 +63,9 @@ void EventModule::Dispatch(EEvent event, base::IEventParam *parma) {
         co_spawn(owner_->GetConnection()->GetSocket().get_executor(), HandleEvent(), detached);
 }
 
-awaitable<void> EventModule::HandleEvent() {
+awaitable<void> UEventModule::HandleEvent() {
     while (!IsQueueEmpty()) {
-        EventNode node;
+        FEventNode node;
 
         {
             std::scoped_lock lock(eventMutex_);

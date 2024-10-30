@@ -4,8 +4,8 @@
 
 
 void UProtocolSystem::Init() {
-    SetHandler<ProtocolHandlerImpl>();
-    RegisterProtocol();
+    if (handler_ == nullptr)
+        SetHandler<ProtocolHandlerImpl>();
 }
 
 void UProtocolSystem::RegisterProtocol(const ProtoType type, const AProtoFunctor &func) {
@@ -20,9 +20,25 @@ AProtoFunctor UProtocolSystem::Find(const ProtoType proto) const {
 }
 
 awaitable<void> UProtocolSystem::OnReadPackage(const std::shared_ptr<UConnection> &conn, IPackage *pkg) const {
-    if (handler_ != nullptr) {
-        if (const auto func = Find(static_cast<ProtoType>(pkg->GetID()))) {
-            co_await handler_->Execute(func, conn, pkg);
-        }
+    if (handler_ == nullptr) {
+        spdlog::critical("{} - handler not set.", __func__);
+        co_return;
+    }
+
+    if (!pkg->IsAvailable()) {
+        spdlog::warn("{} - Package unavailable", __func__);
+        co_return;
+    }
+
+    if (pkg->GetID() >= static_cast<uint32_t>(ProtoType::PROTO_TYPE_MAX)) {
+        spdlog::warn("{} - Protocol type out of range", __func__);
+        co_return;
+    }
+
+
+    if (const auto func = Find(static_cast<ProtoType>(pkg->GetID())); func) {
+        co_await handler_->Execute(func, conn, pkg);
+    } else {
+        spdlog::warn("{} - Package[{}] Protocol functor unavailable.", __func__, pkg->GetID());
     }
 }

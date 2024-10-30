@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../ILoginHandler.h"
-#include "../../base/IPackage.h"
-#include "../../base/ISubSystem.h"
+#include "../LoginHandler.h"
+#include "../../base/Package.h"
+#include "../../base/SubSystem.h"
 
 
 class UConnection;
 
-class LoginSystem final : public ISubSystem {
+class ULoginSystem final : public ISubSystem {
     SUB_SYSTEM_BODY(LoginSystem)
     void Init() override;
 
@@ -17,6 +17,15 @@ public:
     uint64_t VerifyToken(uint64_t pid, const std::string &token);
 
     awaitable<void> OnLogin(const std::shared_ptr<UConnection> &conn, IPackage *pkg);
+
+    template<typename T>
+    requires std::derived_from<T, ILoginHandler>
+    void SetHandler() {
+        if (handler_ != nullptr) {
+            handler_.reset();
+        }
+        handler_ = std::make_unique<T>();
+    }
 
 private:
     std::unique_ptr<ILoginHandler> handler_;

@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../../base/ISubSystem.h"
+#include "../../base/SubSystem.h"
 #include "../../base/TSDeque.h"
 #include "../IDBCallbackWrapper.h"
 

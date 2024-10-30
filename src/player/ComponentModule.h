@@ -3,11 +3,11 @@
 #include <typeindex>
 #include <mysqlx/xdevapi.h>
 
-#include "IPlayerComponent.h"
+#include "PlayerComponent.h"
 
-class ComponentModule final {
+class UComponentModule final {
 
-    class Player *owner_;
+    class UPlayer *owner_;
 
     using SerializeHandler = std::function<void(IPlayerComponent *, mysqlx::Table)>;
     using DeserializeHandler = std::function<void(IPlayerComponent *, mysqlx::RowResult)>;
@@ -25,12 +25,12 @@ class ComponentModule final {
     std::map<std::type_index, ComponentNode> componentMap_;
 
 public:
-    ComponentModule() = delete;
+    UComponentModule() = delete;
 
-    explicit ComponentModule(Player *plr);
-    ~ComponentModule();
+    explicit UComponentModule(UPlayer *plr);
+    ~UComponentModule();
 
-    [[nodiscard]] Player *GetOwner() const;
+    [[nodiscard]] UPlayer *GetOwner() const;
 
     template<typename T>
     requires std::derived_from<T, IPlayerComponent>
@@ -74,7 +74,7 @@ public:
     void OnLogin();
     void OnLogout();
 
-    void SyncCache(CacheNode *node);
+    void SyncCache(FCacheNode *node);
 };
 
 /**

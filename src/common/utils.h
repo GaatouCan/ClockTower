@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../base/IPackage.h"
+#include "../base/Package.h"
 
 #include <filesystem>
 #include <functional>

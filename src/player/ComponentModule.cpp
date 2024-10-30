@@ -3,22 +3,22 @@
 
 #include "../world/component/appearance/AppearanceCT.h"
 
-ComponentModule::ComponentModule(Player *plr)
+UComponentModule::UComponentModule(UPlayer *plr)
     : owner_(plr){
     CreateComponent<AppearanceCT>();
 }
 
-ComponentModule::~ComponentModule() {
+UComponentModule::~UComponentModule() {
     for (const auto& [comp, serialize] : std::views::values(componentMap_)) {
         delete comp;
     }
 }
 
-Player * ComponentModule::GetOwner() const {
+UPlayer * UComponentModule::GetOwner() const {
     return owner_;
 }
 
-void ComponentModule::Serialize(mysqlx::Schema &schema) {
+void UComponentModule::Serialize(mysqlx::Schema &schema) {
     for (const auto& [comp, serialize] : std::views::values(componentMap_)) {
         for (const auto& [tableName, node] : serialize) {
             if (mysqlx::Table table = schema.getTable(tableName); table.existsInDatabase()) {
@@ -30,7 +30,7 @@ void ComponentModule::Serialize(mysqlx::Schema &schema) {
     }
 }
 
-void ComponentModule::Deserialize(mysqlx::Schema &schema) {
+void UComponentModule::Deserialize(mysqlx::Schema &schema) {
     for (const auto& [comp, serialize] : std::views::values(componentMap_)) {
         for (const auto& [tableName, node] : serialize) {
             if (mysqlx::Table table = schema.getTable(tableName); table.existsInDatabase()) {
@@ -43,19 +43,19 @@ void ComponentModule::Deserialize(mysqlx::Schema &schema) {
     }
 }
 
-void ComponentModule::OnLogin() {
+void UComponentModule::OnLogin() {
     for (const auto& [comp, serialize] : std::views::values(componentMap_)) {
         comp->OnLogin();
     }
 }
 
-void ComponentModule::OnLogout() {
+void UComponentModule::OnLogout() {
     for (const auto& [comp, serialize] : std::views::values(componentMap_)) {
         comp->OnLogout();
     }
 }
 
-void ComponentModule::SyncCache(CacheNode *node) {
+void UComponentModule::SyncCache(FCacheNode *node) {
     for (const auto& [comp, serialize] : std::views::values(componentMap_)) {
         comp->SyncCache(node);
     }

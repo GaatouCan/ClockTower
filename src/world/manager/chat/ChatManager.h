@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../../system/manager/IManager.h"
+#include "../../../system/manager/Manager.h"
 
 
 class ChatManager final : public base::IManager {

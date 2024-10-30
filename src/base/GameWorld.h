@@ -3,7 +3,7 @@
 #include "../common/common.h"
 #include "MultiContextPool.h"
 #include "Connection.h"
-#include "ISubSystem.h"
+#include "SubSystem.h"
 
 #include <typeindex>
 

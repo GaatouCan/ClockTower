@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../base/ICharacter.h"
+#include "../base/Character.h"
 #include "../base/Connection.h"
 #include "../base/RepeatedTimer.h"
 #include "../system/login/PlatformInfo.h"
-#include "../system/event/IEventParam.h"
+#include "../system/event/EventParam.h"
 #include "../common/utils.h"
 
 #include "ComponentModule.h"
@@ -12,38 +12,38 @@
 
 #include <spdlog/spdlog.h>
 
-struct EP_PlayerLogin final : base::IEventParam {
+struct FEventParam_PlayerLogin final : IEventParam {
     uint64_t pid;
 };
 
-struct EP_PlayerLogout final : base::IEventParam {
+struct FEventParam_PlayerLogout final : IEventParam {
     uint64_t pid;
 };
 
-class Player final : public ICharacter, public std::enable_shared_from_this<Player> {
+class UPlayer final : public ICharacter, public std::enable_shared_from_this<UPlayer> {
 
-    base::AConnectionPointer conn_;
+    AConnectionPointer conn_;
     uint64_t id_;
 
-    ComponentModule componentModule_;
-    EventModule eventModule_;
+    UComponentModule componentModule_;
+    UEventModule eventModule_;
 
     ATimePoint loginTime_;
-    base::PlatformInfo platform_;
+    FPlatformInfo platform_;
 
-    std::map<uint64_t, base::URepeatedTimer> timerMap_;
+    std::map<uint64_t, URepeatedTimer> timerMap_;
 
 public:
-    Player() = delete;
+    UPlayer() = delete;
 
-    explicit Player(base::AConnectionPointer conn);
-    ~Player() override;
+    explicit UPlayer(AConnectionPointer conn);
+    ~UPlayer() override;
 
-    Player &SetPlayerId(uint64_t id);
+    UPlayer &SetPlayerId(uint64_t id);
     uint64_t GetPlayerID() const;
 
-    base::AConnectionPointer GetConnection() const;
-    void SetConnection(const base::AConnectionPointer &conn);
+    AConnectionPointer GetConnection() const;
+    void SetConnection(const AConnectionPointer &conn);
 
     [[nodiscard]] AThreadID GetThreadID() const;
 
@@ -61,8 +61,8 @@ public:
         }, detached);
     }
 
-    ComponentModule &GetComponentModule();
-    EventModule &GetEventModule();
+    UComponentModule &GetComponentModule();
+    UEventModule &GetEventModule();
 
     void OnLogin();
     void OnLogout();
@@ -87,16 +87,16 @@ public:
 
     void StopTimer(uint64_t timerID);
 
-    base::IPackage *BuildPackage() const;
-    void Send(base::IPackage *pkg) const;
+    IPackage *BuildPackage() const;
+    void Send(IPackage *pkg) const;
 
     void Send(uint32_t id, std::string_view data) const;
     void Send(uint32_t id, const std::stringstream &ss) const;
 
-    void SyncCache(struct CacheNode *node);
+    void SyncCache(struct FCacheNode *node);
 };
 
-std::shared_ptr<Player> CreatePlayer(const base::AConnectionPointer &, uint64_t);
+std::shared_ptr<UPlayer> CreatePlayer(const AConnectionPointer &, uint64_t);
 
 #define SendPackage(proto, data) \
     Send(static_cast<uint32_t>(protocol::ProtoType::proto), data.SerializeAsString())

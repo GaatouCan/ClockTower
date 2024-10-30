@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../base/ISubSystem.h"
-#include "../IProtocolHandler.h"
+#include "../../base/SubSystem.h"
+#include "../ProtocolHandler.h"
 
 #include <concepts>
 

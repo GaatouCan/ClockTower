@@ -1,28 +1,32 @@
 #include "LoginSystem.h"
 
-#include <spdlog/spdlog.h>
-
 #include "../../base/Connection.h"
 #include "../impl/LoginHandlerImpl.h"
 
+#include <spdlog/spdlog.h>
 
-void LoginSystem::Init() {
-    handler_ = std::make_unique<LoginHandlerImpl>();
+
+void ULoginSystem::Init() {
+    if (handler_ == nullptr) {
+        SetHandler<ULoginHandlerImpl>();
+    }
 }
 
-bool LoginSystem::VerifyAddress(const asio::ip::address &addr) {
+bool ULoginSystem::VerifyAddress(const asio::ip::address &addr) {
     // TODO
     return true;
 }
 
-uint64_t LoginSystem::VerifyToken(uint64_t pid, const std::string &token) {
+uint64_t ULoginSystem::VerifyToken(uint64_t pid, const std::string &token) {
     // TODO
     return pid;
 }
 
-awaitable<void> LoginSystem::OnLogin(const std::shared_ptr<UConnection> &conn, IPackage *pkg) {
-    if (handler_ == nullptr)
+awaitable<void> ULoginSystem::OnLogin(const std::shared_ptr<UConnection> &conn, IPackage *pkg) {
+    if (handler_ == nullptr) {
+        spdlog::critical("{} - handler not set.", __func__);
         co_return;
+    }
 
     const auto info = handler_->ParseLoginInfo(pkg);
     if (info.pid == 0) {

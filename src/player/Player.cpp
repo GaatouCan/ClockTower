@@ -8,52 +8,52 @@
 #include <login.pb.h>
 
 
-Player::Player(base::AConnectionPointer conn)
+UPlayer::UPlayer(AConnectionPointer conn)
     : conn_(std::move(conn)),
       id_(0),
       componentModule_(this),
       eventModule_(this) {
 }
 
-Player::~Player() {
+UPlayer::~UPlayer() {
 }
 
-Player &Player::SetPlayerId(const uint64_t id) {
+UPlayer &UPlayer::SetPlayerId(const uint64_t id) {
     id_ = id;
     return *this;
 }
 
-uint64_t Player::GetPlayerID() const {
+uint64_t UPlayer::GetPlayerID() const {
     return id_;
 }
 
-base::AConnectionPointer Player::GetConnection() const {
+AConnectionPointer UPlayer::GetConnection() const {
     return conn_;
 }
 
-void Player::SetConnection(const base::AConnectionPointer &conn) {
+void UPlayer::SetConnection(const AConnectionPointer &conn) {
     conn_ = conn;
 }
 
-AThreadID Player::GetThreadID() const {
+AThreadID UPlayer::GetThreadID() const {
     return conn_->GetThreadID();
 }
 
-bool Player::IsSameThread() const {
+bool UPlayer::IsSameThread() const {
     return std::this_thread::get_id() == GetThreadID();
 }
 
-ComponentModule &Player::GetComponentModule() {
+UComponentModule &UPlayer::GetComponentModule() {
     return componentModule_;
 }
 
-EventModule &Player::GetEventModule() {
+UEventModule &UPlayer::GetEventModule() {
     return eventModule_;
 }
 
-void Player::OnLogin() {
+void UPlayer::OnLogin() {
     if (!IsSameThread()) {
-        RunInThread(&Player::OnLogin, this);
+        RunInThread(&UPlayer::OnLogin, this);
         return;
     }
     spdlog::info("{} - Player[{}] login succeed.", __func__, GetPlayerID());
@@ -68,16 +68,16 @@ void Player::OnLogin() {
 
     SendPackage(SC_LoginResponse, response);
 
-    if (const auto sys = GetSystem<base::EventSystem>(); sys != nullptr) {
-        const auto param = new EP_PlayerLogin;
+    if (const auto sys = GetSystem<UEventSystem>(); sys != nullptr) {
+        const auto param = new FEventParam_PlayerLogin;
         param->pid = id_;
         sys->Dispatch(EEvent::PLAYER_LOGIN, param);
     }
 }
 
-void Player::OnLogout() {
+void UPlayer::OnLogout() {
     if (!IsSameThread()) {
-        RunInThread(&Player::OnLogin, this);
+        RunInThread(&UPlayer::OnLogin, this);
         return;
     }
 
@@ -86,50 +86,50 @@ void Player::OnLogout() {
     componentModule_.OnLogout();
     spdlog::info("{} - Player[{}] logout.", __func__, GetPlayerID());
 
-    if (const auto sys = GetSystem<base::EventSystem>(); sys != nullptr) {
-        const auto param = new EP_PlayerLogout;
+    if (const auto sys = GetSystem<UEventSystem>(); sys != nullptr) {
+        const auto param = new FEventParam_PlayerLogout;
         param->pid = id_;
         sys->Dispatch(EEvent::PLAYER_LOGOUT, param);
     }
 }
 
-bool Player::IsLogin() const {
+bool UPlayer::IsLogin() const {
     return loginTime_.time_since_epoch().count() > 0;
 }
 
-void Player::StopTimer(const uint64_t timerID) {
+void UPlayer::StopTimer(const uint64_t timerID) {
     if (const auto iter = timerMap_.find(timerID); iter != timerMap_.end()) {
         iter->second.Stop();
         timerMap_.erase(iter);
     }
 }
 
-base::IPackage *Player::BuildPackage() const {
+IPackage *UPlayer::BuildPackage() const {
     return conn_->BuildPackage();
 }
 
-void Player::Send(base::IPackage *pkg) const {
+void UPlayer::Send(IPackage *pkg) const {
     conn_->Send(pkg);
 }
 
-void Player::Send(const uint32_t id, const std::string_view data) const {
-    const auto pkg = dynamic_cast<base::FPackage *>(conn_->BuildPackage());
+void UPlayer::Send(const uint32_t id, const std::string_view data) const {
+    const auto pkg = dynamic_cast<FPackage *>(conn_->BuildPackage());
     pkg->SetPackageID(id).SetData(data);
     Send(pkg);
 }
 
-void Player::Send(const uint32_t id, const std::stringstream &ss) const {
-    const auto pkg = dynamic_cast<base::FPackage *>(conn_->BuildPackage());
+void UPlayer::Send(const uint32_t id, const std::stringstream &ss) const {
+    const auto pkg = dynamic_cast<FPackage *>(conn_->BuildPackage());
     pkg->SetPackageID(id).SetData(ss.str());
     Send(pkg);
 }
 
-void Player::SyncCache(CacheNode *node) {
+void UPlayer::SyncCache(FCacheNode *node) {
     componentModule_.SyncCache(node);
 }
 
-std::shared_ptr<Player> CreatePlayer(const base::AConnectionPointer &conn, const uint64_t pid) {
-    auto plr = std::make_shared<Player>(conn);
+std::shared_ptr<UPlayer> CreatePlayer(const AConnectionPointer &conn, const uint64_t pid) {
+    auto plr = std::make_shared<UPlayer>(conn);
     plr->SetPlayerId(pid);
 
     return plr;

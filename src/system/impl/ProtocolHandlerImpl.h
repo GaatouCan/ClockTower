@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../IProtocolHandler.h"
+#include "../ProtocolHandler.h"
 #include "../protocol/ProtocolSystem.h"
 
 

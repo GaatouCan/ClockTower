@@ -2,7 +2,7 @@
 
 #include "../../../system/database/Serializer.h"
 #include "../../../system/database/Deserializer.h"
-#include "../../../player/IPlayerComponent.h"
+#include "../../../player/PlayerComponent.h"
 #include "../../struct/orm/appearance.orm.h"
 
 class AppearanceCT final : public IPlayerComponent {
@@ -12,7 +12,7 @@ class AppearanceCT final : public IPlayerComponent {
     std::map<uint32_t, orm::DBTable_AvatarFrame> avatarFrameMap_;
 
 public:
-    explicit AppearanceCT(ComponentModule *module);
+    explicit AppearanceCT(UComponentModule *module);
 
     void Serialize_Appearance(base::Serializer &s);
     void Deserialize_Appearance(base::Deserializer &ds);

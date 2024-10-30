@@ -165,13 +165,13 @@ def generate_orm_clazz(src: str, dist: str):
  */\n\n''' % (platform.python_version(), VERSION, file_name))
 
             file.write('#pragma once\n\n')
-            file.write('#include "../../src/system/database/IDBTable.h"\n\n')
+            file.write('#include "../../src/system/database/DBTable.h"\n\n')
 
             file.write('namespace orm {\n\n')
 
             for table in table_list:
                 # 类定义开始
-                file.write('\tclass DBTable_%s final : public IDBTable {\n' % to_upper_camel_case(table['name']))
+                file.write('\tclass UDBTable_%s final : public IDBTable {\n' % to_upper_camel_case(table['name']))
                 file.write('\tpublic:\n')
 
                 construct_str = '\t\t\t'
@@ -197,10 +197,10 @@ def generate_orm_clazz(src: str, dist: str):
                 if len(construct_str) > 6:
                     construct_str = construct_str[:-6]
 
-                file.write('\n\t\tDBTable_%s() = default;\n\n' % to_upper_camel_case(table['name']))
+                file.write('\n\t\tUDBTable_%s() = default;\n\n' % to_upper_camel_case(table['name']))
 
                 # 含参构造函数
-                file.write('\t\tDBTable_%s(\n%s\n\t\t);\n\n' % (to_upper_camel_case(table['name']), construct_str))
+                file.write('\t\tUDBTable_%s(\n%s\n\t\t);\n\n' % (to_upper_camel_case(table['name']), construct_str))
 
                 # 纯虚函数重写
                 file.write('\t\t[[nodiscard]] constexpr const char* GetTableName() const override {\n')
@@ -288,20 +288,20 @@ def generate_orm_clazz(src: str, dist: str):
                 file.write('\t//===================================== table: %s =====================================\n\n' % table['name'])
             
                 # 含参构造函数
-                file.write('\tDBTable_%s::DBTable_%s(%s)\n\t\t: %s {\n\t}\n\n' % (to_upper_camel_case(table['name']), to_upper_camel_case(table['name']), construct_str, init_str))
+                file.write('\tUDBTable_%s::UDBTable_%s(%s)\n\t\t: %s {\n\t}\n\n' % (to_upper_camel_case(table['name']), to_upper_camel_case(table['name']), construct_str, init_str))
 
                 # file.write('\tstd::string DBTable_%s::GetTableName() {\n' % to_upper_camel_case(table['name']))
                 # file.write('\t\treturn "%s";\n\t}\n\n' % table['name'])
 
                 # 查找函数实现
-                file.write('\tmysqlx::RowResult DBTable_%s::Query(mysqlx::Table &table) {\n' % to_upper_camel_case(table['name']))
+                file.write('\tmysqlx::RowResult UDBTable_%s::Query(mysqlx::Table &table) {\n' % to_upper_camel_case(table['name']))
                 file.write('\t\treturn table.select()\n')
                 file.write('\t\t\t%s\n' % where_expr)
                 file.write('\t\t\t.execute();\n')
                 file.write('\t}\n\n')
             
                 # Query(mysqlx::Schema &schema)
-                file.write('\tmysqlx::RowResult DBTable_%s::Query(mysqlx::Schema &schema) {\n' % to_upper_camel_case(table['name']))
+                file.write('\tmysqlx::RowResult UDBTable_%s::Query(mysqlx::Schema &schema) {\n' % to_upper_camel_case(table['name']))
             
                 file.write('\t\tmysqlx::Table table = schema.getTable(GetTableName());\n')
                 file.write('\t\tif (!table.existsInDatabase())\n')
@@ -311,7 +311,7 @@ def generate_orm_clazz(src: str, dist: str):
                 file.write('\t}\n\n')
 
                 # 读取函数
-                file.write('\tvoid DBTable_%s::Read(mysqlx::Row &row) {\n' % to_upper_camel_case(table['name']))
+                file.write('\tvoid UDBTable_%s::Read(mysqlx::Row &row) {\n' % to_upper_camel_case(table['name']))
                 file.write('\t\tif (row.isNull())\n \t\t\treturn;\n\n')
 
                 count = 0
@@ -330,7 +330,7 @@ def generate_orm_clazz(src: str, dist: str):
                 file.write('\t}\n\n')
 
                 # 写函数
-                file.write('\tvoid DBTable_%s::Write(mysqlx::Table &table) {\n' % to_upper_camel_case(table['name']))
+                file.write('\tvoid UDBTable_%s::Write(mysqlx::Table &table) {\n' % to_upper_camel_case(table['name']))
                 file.write('\t\tmysqlx::RowResult result = Query(table);\n\n')
 
                 # 如果已存在相同键 则调用update()
@@ -354,7 +354,7 @@ def generate_orm_clazz(src: str, dist: str):
                 file.write('\t}\n\n')
 
                 # 写函数重载
-                file.write('\tvoid DBTable_%s::Write(mysqlx::Schema &schema) {\n' % to_upper_camel_case(table['name']))
+                file.write('\tvoid UDBTable_%s::Write(mysqlx::Schema &schema) {\n' % to_upper_camel_case(table['name']))
                 file.write('\t\tmysqlx::Table table = schema.getTable(GetTableName());\n')
                 file.write('\t\tif (!table.existsInDatabase())\n')
                 file.write('\t\t\treturn;\n\n')
@@ -363,7 +363,7 @@ def generate_orm_clazz(src: str, dist: str):
                 file.write('\t}\n\n')
 
                 # 删除函数实验
-                file.write('\tvoid DBTable_%s::Remove(mysqlx::Table &table) {\n' % to_upper_camel_case(table['name']))
+                file.write('\tvoid UDBTable_%s::Remove(mysqlx::Table &table) {\n' % to_upper_camel_case(table['name']))
                 file.write('\t\ttable.remove()\n')
                 file.write('\t\t\t%s\n' % where_expr)
                 file.write('\t\t\t.execute();\n')
@@ -371,7 +371,7 @@ def generate_orm_clazz(src: str, dist: str):
                 file.write('\t}\n\n')
 
                 # 删除函数重载
-                file.write('\tvoid DBTable_%s::Remove(mysqlx::Schema &schema) {\n' % to_upper_camel_case(table['name']))
+                file.write('\tvoid UDBTable_%s::Remove(mysqlx::Schema &schema) {\n' % to_upper_camel_case(table['name']))
 
                 file.write('\t\tmysqlx::Table table = schema.getTable(GetTableName());\n')
                 file.write('\t\tif (!table.existsInDatabase())\n')

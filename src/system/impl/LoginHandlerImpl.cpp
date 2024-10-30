@@ -19,7 +19,7 @@ FLoginInfo ULoginHandlerImpl::ParseLoginInfo(IPackage *pkg) {
     try {
         const auto tmp = dynamic_cast<FPackage *>(pkg);
 
-        if (pkg->GetID() != static_cast<uint32_t>(protocol::ProtoType::CS_LoginRequest))
+        if (pkg->GetID() != static_cast<uint32_t>(protocol::EProtoType::CS_LoginRequest))
             return {};
 
         Login::CS_LoginRequest request;

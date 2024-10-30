@@ -5,7 +5,7 @@
 #include <asio.hpp>
 
 
-using protocol::ProtoType;
+using protocol::EProtoType;
 using AProtoFunctor = asio::awaitable<void>(*)(const std::shared_ptr<class ICharacter> &, class IPackage *);
 
 class IProtocolHandler {

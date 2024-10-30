@@ -99,4 +99,4 @@ public:
 std::shared_ptr<UPlayer> CreatePlayer(const AConnectionPointer &, uint64_t);
 
 #define SendPackage(proto, data) \
-    Send(static_cast<uint32_t>(protocol::ProtoType::proto), data.SerializeAsString())
+    Send(static_cast<uint32_t>(protocol::EProtoType::proto), data.SerializeAsString())

@@ -14,9 +14,9 @@ class UProtocolSystem final : public ISubSystem {
     void Init() override;
 
 public:
-    void RegisterProtocol(ProtoType type, const AProtoFunctor &func);
+    void RegisterProtocol(EProtoType type, const AProtoFunctor &func);
 
-    [[nodiscard]] AProtoFunctor Find(ProtoType proto) const;
+    [[nodiscard]] AProtoFunctor Find(EProtoType proto) const;
 
     template<typename T>
     requires std::derived_from<T, IProtocolHandler>
@@ -30,7 +30,7 @@ public:
     awaitable<void> OnReadPackage(const std::shared_ptr<UConnection> &conn, IPackage *pkg) const;
 
 private:
-    std::unordered_map<ProtoType, AProtoFunctor> protoMap_;
+    std::unordered_map<EProtoType, AProtoFunctor> protoMap_;
     std::unique_ptr<IProtocolHandler> handler_;
 };
 

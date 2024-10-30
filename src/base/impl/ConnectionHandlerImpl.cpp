@@ -25,7 +25,7 @@ void UConnectionHandlerImpl::OnClosed(const AConnectionPointer &conn) {
 }
 
 awaitable<void> UConnectionHandlerImpl::OnReadPackage(const AConnectionPointer &conn, IPackage *pkg) {
-    spdlog::trace("{} - Receive Package[{}] From {}.", __func__, protocol::ProtoTypeToString(static_cast<protocol::ProtoType>(pkg->GetID())), conn->RemoteAddress().to_string());
+    spdlog::trace("{} - Receive Package[{}] From {}.", __func__, protocol::ProtoTypeToString(static_cast<protocol::EProtoType>(pkg->GetID())), conn->RemoteAddress().to_string());
 
     if (!conn->GetContext().has_value()) {
         if (const auto sys = GetSystem<ULoginSystem>(); sys != nullptr) {

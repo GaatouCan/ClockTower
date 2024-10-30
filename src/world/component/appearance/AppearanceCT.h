@@ -7,9 +7,9 @@
 
 class AppearanceCT final : public IPlayerComponent {
 
-    orm::DBTable_Appearance appearance_;
-    std::map<uint32_t, orm::DBTable_Avatar> avatarMap_;
-    std::map<uint32_t, orm::DBTable_AvatarFrame> avatarFrameMap_;
+    orm::UDBTable_Appearance appearance_;
+    std::map<uint32_t, orm::UDBTable_Avatar> avatarMap_;
+    std::map<uint32_t, orm::UDBTable_AvatarFrame> avatarFrameMap_;
 
 public:
     explicit AppearanceCT(UComponentModule *module);

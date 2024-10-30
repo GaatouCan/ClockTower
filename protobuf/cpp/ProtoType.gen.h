@@ -16,14 +16,6 @@ namespace protocol {
 		SC_LoginResponse = 1002,
 		SC_OverrideLoginResponse = 1003,
 
-		// Appearance
-		CS_AppearanceRequest = 2001,
-		SC_AppearanceResponse = 2002,
-
-		// Chat
-		CS_Chat_Room_Request = 3001,
-		SC_Chat_Room_Response = 3002,
-
 		PROTO_TYPE_MAX,
 	}; // EProtoType
 
@@ -33,14 +25,6 @@ namespace protocol {
 			case EProtoType::CS_LoginRequest: return "CS_LoginRequest";
 			case EProtoType::SC_LoginResponse: return "SC_LoginResponse";
 			case EProtoType::SC_OverrideLoginResponse: return "SC_OverrideLoginResponse";
-
-			// Appearance
-			case EProtoType::CS_AppearanceRequest: return "CS_AppearanceRequest";
-			case EProtoType::SC_AppearanceResponse: return "SC_AppearanceResponse";
-
-			// Chat
-			case EProtoType::CS_Chat_Room_Request: return "CS_Chat_Room_Request";
-			case EProtoType::SC_Chat_Room_Response: return "SC_Chat_Room_Response";
 
 			default: return "UNDEFINED";
 		} // switch

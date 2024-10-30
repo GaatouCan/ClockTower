@@ -37,7 +37,7 @@ void AppearanceCT::Serialize_Avatar(USerializer &s) {
 
 void AppearanceCT::Deserialize_Avatar(UDeserializer &ds) {
     while (ds.HasMore()) {
-        orm::DBTable_Avatar avatar;
+        orm::UDBTable_Avatar avatar;
         ds.Deserialize(&avatar);
         avatarMap_[avatar.index] = avatar;
     }
@@ -51,7 +51,7 @@ void AppearanceCT::Serialize_AvatarFrame(USerializer &s) {
 
 void AppearanceCT::Deserialize_AvatarFrame(UDeserializer &ds) {
     while (ds.HasMore()) {
-        orm::DBTable_AvatarFrame frame;
+        orm::UDBTable_AvatarFrame frame;
         ds.Deserialize(&frame);
         avatarFrameMap_[frame.index] = frame;
     }
@@ -77,7 +77,7 @@ void AppearanceCT::SendInfo() const {
         frame->set_expired(val.expired_time);
     }
 
-    GetOwner()->SendPackage(SC_AppearanceResponse, res);
+    // GetOwner()->SendPackage(SC_AppearanceResponse, res);
 }
 
 // awaitable<void> protocol::CS_AppearanceRequest(const std::shared_ptr<UPlayer> &plr, IPackage *pkg) {

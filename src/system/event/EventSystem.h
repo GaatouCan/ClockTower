@@ -16,6 +16,7 @@ class UEventSystem final : public ISubSystem {
 
     SUB_SYSTEM_BODY(EventSystem)
 
+    UEventSystem();
     ~UEventSystem() override;
 
     void Init() override;
@@ -53,7 +54,7 @@ private:
         IEventParam *param = nullptr;
     };
 
-    std::unique_ptr<std::queue<EventNode> > queue_;
+    std::queue<EventNode> queue_;
     std::mutex eventMutex_;
     mutable std::shared_mutex sharedMutex_;
 

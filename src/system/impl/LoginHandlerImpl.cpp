@@ -1,11 +1,11 @@
 #include "LoginHandlerImpl.h"
 #include "../../base/impl/Package.h"
-#include "../../protobuf/ProtoType.generated.h"
 #include "../../player/PlayerManager.h"
 #include "../manager/ManagerSystem.h"
 
 #include <login.pb.h>
 #include <spdlog/spdlog.h>
+#include <ProtoType.gen.h>
 
 
 awaitable<void> ULoginHandlerImpl::OnPlayerLogin(const std::shared_ptr<UConnection> &conn, const FLoginInfo &info) {

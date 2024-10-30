@@ -2,9 +2,9 @@
 #include "../base/GameWorld.h"
 #include "../base/impl/Package.h"
 #include "../system/event/EventSystem.h"
-#include "../../protobuf/ProtoType.generated.h"
 
 #include <utility>
+#include <ProtoType.gen.h>
 #include <login.pb.h>
 
 

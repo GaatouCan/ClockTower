@@ -3,13 +3,12 @@
 #include "../../../player/ComponentModule.h"
 #include "../../../player/Player.h"
 #include "../../../common/utils.h"
-#include "../../protobuf/ProtoType.generated.h"
-#include "../../protobuf/Protocol.generated.h"
 
 #include <ranges>
 #include <utility>
 #include <spdlog/spdlog.h>
 
+#include <ProtoType.gen.h>
 #include <appearance.pb.h>
 
 AppearanceCT::AppearanceCT(UComponentModule *module)

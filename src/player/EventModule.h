@@ -21,7 +21,7 @@ class UEventModule final {
         IEventParam *param = nullptr;
     };
 
-    std::unique_ptr<std::queue<FEventNode>> queue_;
+    std::queue<FEventNode> queue_;
     std::mutex eventMutex_;
     mutable std::shared_mutex sharedMutex_;
 

@@ -20,7 +20,7 @@ public:
     template<MANAGER_TYPE T>
         void CreateManager() {
         mgrMap_[typeid(T)] = new T(ctx_);
-        spdlog::info("{} - Loaded Manager: {}", typeid(T).name());
+        spdlog::info("{} - Loaded Manager: {}", __func__, typeid(T).name());
     }
 
     template<MANAGER_TYPE T>

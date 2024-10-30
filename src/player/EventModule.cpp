@@ -7,9 +7,9 @@ UEventModule::UEventModule(UPlayer *plr)
 
 UEventModule::~UEventModule() {
     listenerMap_.clear();
-    while (!queue_->empty()) {
-        auto &[event, param] = queue_->front();
-        queue_->pop();
+    while (!queue_.empty()) {
+        auto &[event, param] = queue_.front();
+        queue_.pop();
 
         delete param;
     }
@@ -21,7 +21,7 @@ UPlayer * UEventModule::GetOwner() const {
 
 bool UEventModule::IsQueueEmpty() const {
     std::shared_lock lock(sharedMutex_);
-    return queue_->empty();
+    return queue_.empty();
 }
 
 void UEventModule::RegisterListener(const EEvent event, void *ptr, const EventListener &listener) {
@@ -56,7 +56,7 @@ void UEventModule::Dispatch(EEvent event, IEventParam *parma) {
 
     {
         std::scoped_lock lock(eventMutex_);
-        queue_->emplace(event, parma);
+        queue_.emplace(event, parma);
     }
 
     if (empty)
@@ -69,8 +69,8 @@ awaitable<void> UEventModule::HandleEvent() {
 
         {
             std::scoped_lock lock(eventMutex_);
-            node = queue_->front();
-            queue_->pop();
+            node = queue_.front();
+            queue_.pop();
         }
 
         if (node.event == EEvent::UNAVAILABLE) {

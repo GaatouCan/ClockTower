@@ -2,13 +2,16 @@
 
 #include "../../base/GameWorld.h"
 
+UEventSystem::UEventSystem() {
+}
+
 
 UEventSystem::~UEventSystem() {
     listenerMap_.clear();
 
-    while (!queue_->empty()) {
-        auto &[event, param] = queue_->front();
-        queue_->pop();
+    while (!queue_.empty()) {
+        auto &[event, param] = queue_.front();
+        queue_.pop();
         delete param;
     }
 }
@@ -20,8 +23,8 @@ awaitable<void> UEventSystem::HandleEvent() {
     while (!IsQueueEmpty()) {
         EventNode node; {
             std::scoped_lock lock(eventMutex_);
-            node = queue_->front();
-            queue_->pop();
+            node = queue_.front();
+            queue_.pop();
         }
 
         if (node.event == EEvent::UNAVAILABLE) {
@@ -51,13 +54,13 @@ awaitable<void> UEventSystem::HandleEvent() {
 
 bool UEventSystem::IsQueueEmpty() const {
     std::shared_lock lock(sharedMutex_);
-    return queue_->empty();
+    return queue_.empty();
 }
 
 void UEventSystem::Dispatch(const EEvent event, IEventParam *parma) {
     const bool empty = IsQueueEmpty(); {
         std::scoped_lock lock(eventMutex_);
-        queue_->emplace(event, parma);
+        queue_.emplace(event, parma);
     }
 
     if (empty)

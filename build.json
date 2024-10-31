@@ -4,7 +4,9 @@
         "dir": "protobuf/def",
         "gen": "protobuf/cpp",
         "def": [
-            "login"
+            "login",
+            "appearance",
+            "chat"
         ],
         "except": ["CS_LoginRequest"]
     },

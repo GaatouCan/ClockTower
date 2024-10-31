@@ -1,5 +1,6 @@
 #include "AppearanceCT.h"
 
+#include "../../../base/impl/Package.h"
 #include "../../../player/ComponentModule.h"
 #include "../../../player/Player.h"
 #include "../../../common/utils.h"
@@ -8,7 +9,7 @@
 #include <utility>
 #include <spdlog/spdlog.h>
 
-#include <ProtoType.gen.h>
+#include <Protocol.gen.h>
 #include <appearance.pb.h>
 
 AppearanceCT::AppearanceCT(UComponentModule *module)
@@ -80,21 +81,24 @@ void AppearanceCT::SendInfo() const {
     // GetOwner()->SendPackage(SC_AppearanceResponse, res);
 }
 
-// awaitable<void> protocol::CS_AppearanceRequest(const std::shared_ptr<UPlayer> &plr, IPackage *pkg) {
-//     if (plr == nullptr)
-//         co_return;
-//
-//     Appearance::CS_AppearanceRequest req;
-//     req.ParseFromString(pkg->GetData());
-//
-//     const auto ct = plr->GetComponentModule().GetComponent<AppearanceCT>();
-//     if (ct == nullptr)
-//         co_return;
-//
-//     switch (req.operate_type()) {
-//         case Appearance::SEND_INFO: {
-//             ct->SendInfo();
-//         } break;
-//         default: break;
-//     }
-// }
+awaitable<void> protocol::CS_AppearanceRequest(const std::shared_ptr<ICharacter> &plr, IPackage *pkg) {
+    if (plr == nullptr)
+        co_return;
+
+    const auto player = std::dynamic_pointer_cast<UPlayer>(plr);
+    const auto package = dynamic_cast<FPackage *>(pkg);
+
+    Appearance::CS_AppearanceRequest req;
+    req.ParseFromString(package->GetData());
+
+    const auto ct = player->GetComponentModule().GetComponent<AppearanceCT>();
+    if (ct == nullptr)
+        co_return;
+
+    switch (req.operate_type()) {
+        case Appearance::SEND_INFO: {
+            ct->SendInfo();
+        } break;
+        default: break;
+    }
+}

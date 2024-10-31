@@ -53,16 +53,39 @@ foreach (proto ${PROTOBUF_LIST})
             COMMAND ${PROTOBUF_PROTOC}
             ARGS --cpp_out ${PROTOBUF_GENERATED_DIR} -I ${PROTOBUF_DEFINE_DIR} ${proto}
             DEPENDS ${proto})
-    add_library(${proto_name}.proto STATIC ${proto_src} ${proto_hdr})
-    target_link_libraries(${proto_name}.proto PRIVATE protobuf::libprotobuf)
-
-    list(APPEND PROTOBUF_LIBS ${proto_name}.proto)
+#    add_library(${proto_name}.proto STATIC ${proto_src} ${proto_hdr})
+#    target_link_libraries(${proto_name}.proto PRIVATE protobuf::libprotobuf)
+#
+#    list(APPEND PROTOBUF_LIBS ${proto_name}.proto)
 endforeach ()
+
+file(GLOB_RECURSE PROTO_GEN_DIR
+        ${PROTOBUF_GENERATED_DIR}/*.pb.h
+        ${PROTOBUF_GENERATED_DIR}/*.pb.cc
+)
+
+add_library(libproto STATIC ${PROTO_GEN_DIR})
+target_link_libraries(libproto PRIVATE protobuf::libprotobuf)
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/struct/lib)
+
+file(GLOB_RECURSE ORM_DIR
+        ${CMAKE_SOURCE_DIR}/struct/orm/*.orm.h
+        ${CMAKE_SOURCE_DIR}/struct/orm/*.orm.cpp
+)
+
+add_library(liborm STATIC ${ORM_DIR})
+target_link_libraries(liborm PRIVATE mysql::concpp)
+
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 # Link To Generated Files
 include_directories(${PROTOBUF_GENERATED_DIR})
+include_directories(${CMAKE_SOURCE_DIR}/protobuf/cpp)
 link_directories(${PROTOBUF_LIBRARY_DIR}/Debug)
+
+include_directories(${CMAKE_SOURCE_DIR}/struct)
+link_directories(${CMAKE_SOURCE_DIR}/struct/lib/Debug)
 
 #execute_process(
 #        COMMAND ./PreBuildTool.exe "--config=build.json"
@@ -70,19 +93,13 @@ link_directories(${PROTOBUF_LIBRARY_DIR}/Debug)
 #)
 
 #include_directories(${CMAKE_SOURCE_DIR}/struct)
-include_directories(${CMAKE_SOURCE_DIR}/protobuf/cpp)
-
-file(GLOB_RECURSE ORM_DIR
-        ${CMAKE_SOURCE_DIR}/struct/orm/*.h
-        ${CMAKE_SOURCE_DIR}/struct/orm/*.cpp
-)
 
 file(GLOB_RECURSE SOURCE_DIR
         ${CMAKE_SOURCE_DIR}/src/*.h
         ${CMAKE_SOURCE_DIR}/src/*.cpp
 )
 
-add_executable(server src/server.cpp ${SOURCE_DIR} ${ORM_DIR})
+add_executable(server src/server.cpp ${SOURCE_DIR})
 
 target_link_libraries(server PRIVATE spdlog::spdlog)
 target_link_libraries(server PRIVATE asio::asio)
@@ -90,7 +107,8 @@ target_link_libraries(server PRIVATE nlohmann_json::nlohmann_json)
 target_link_libraries(server PRIVATE protobuf::libprotobuf)
 target_link_libraries(server PRIVATE yaml-cpp::yaml-cpp)
 target_link_libraries(server PRIVATE mysql::concpp)
-target_link_libraries(server PRIVATE ${PROTOBUF_LIBS})
+target_link_libraries(server PRIVATE libproto)
+target_link_libraries(server PRIVATE liborm)
 
 add_executable(demo main.cpp)
 target_link_libraries(demo PRIVATE asio::asio)

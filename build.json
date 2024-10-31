@@ -2,7 +2,7 @@
     "only_xlsx": false,
     "protobuf": {
         "dir": "protobuf/def",
-        "gen": "protobuf/cpp",
+        "gen": "src/common",
         "def": [
             "login",
             "appearance",

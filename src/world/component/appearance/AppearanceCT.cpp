@@ -4,12 +4,11 @@
 #include "../../../player/ComponentModule.h"
 #include "../../../player/Player.h"
 #include "../../../common/utils.h"
+#include "../../../common/Protocol.h"
 
 #include <ranges>
 #include <utility>
 #include <spdlog/spdlog.h>
-
-#include <Protocol.gen.h>
 #include <appearance.pb.h>
 
 AppearanceCT::AppearanceCT(UComponentModule *module)

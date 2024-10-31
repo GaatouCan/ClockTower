@@ -1,7 +1,6 @@
 #include "ChatManager.h"
 #include "../../../player/Player.h"
-
-#include <Protocol.gen.h>
+#include "../../../common/Protocol.h"
 
 
 ChatManager::ChatManager(asio::io_context &ctx)

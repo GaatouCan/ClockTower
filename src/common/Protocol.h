@@ -28,8 +28,8 @@ namespace protocol {
 
 } // protocol
 
-#include <Protocol.gen.h>
-#include "../../src/system/protocol/ProtocolSystem.h"
+#include "ProtoType.h"
+#include "../system/protocol/ProtocolSystem.h"
 
 inline void LoadProtocol(UProtocolSystem *sys) {
 

@@ -5,7 +5,7 @@
 #include "system/protocol/ProtocolSystem.h"
 #include "system/manager/ManagerSystem.h"
 #include "common/mgrdef.h"
-#include <Protocol.gen.h>
+#include "common/Protocol.h"
 
 auto main(int argc, char *argv[]) -> int {
     spdlog::set_level(spdlog::level::trace);

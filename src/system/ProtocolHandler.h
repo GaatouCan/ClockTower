@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ProtoType.gen.h>
+#include "../common/ProtoType.h"
 #include <asio.hpp>
 
 

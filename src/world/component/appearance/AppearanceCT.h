@@ -3,7 +3,8 @@
 #include "../../../system/database/Serializer.h"
 #include "../../../system/database/Deserializer.h"
 #include "../../../player/PlayerComponent.h"
-#include "../../struct/orm/appearance.orm.h"
+
+#include <orm/appearance.orm.h>
 
 class AppearanceCT final : public IPlayerComponent {
 

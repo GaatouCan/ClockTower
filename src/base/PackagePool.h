@@ -29,6 +29,9 @@ class UPackagePool final {
     static float collectRate;
     static float collectScale;
 
+    static std::function<IPackage*()> createPackage;
+    static std::function<void(IPackage*)> initPackage;
+
 public:
     explicit UPackagePool(size_t capacity = defaultCapacity);
     ~UPackagePool();
@@ -61,6 +64,10 @@ public:
 
     static void SetCollectRate(float rate);
     static void SetCollectScale(float scale);
+
+    static void SetPackageBuilder(const std::function<IPackage*()>& func);
+    static void SetPackageInitializer(const std::function<void(IPackage*)>& func);
+
 
 private:
     void Expanse();

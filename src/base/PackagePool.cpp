@@ -1,5 +1,6 @@
 ﻿#include "PackagePool.h"
-#include "../common/pkgdef.h"
+#include "../base/impl/Package.h"
+#include "../system/config/ConfigSystem.h"
 
 #include <spdlog/spdlog.h>
 
@@ -13,9 +14,43 @@ float UPackagePool::expanseScale = 1.f;
 float UPackagePool::collectRate = 1.f;
 float UPackagePool::collectScale = 0.7f;
 
+std::function<IPackage*()> UPackagePool::createPackage = nullptr;
+std::function<void(IPackage*)> UPackagePool::initPackage = nullptr;
+
+IPackage *DefaultPackage() {
+    return new FPackage();
+}
+
+void PackageDefaultInit(IPackage *pkg) {
+    const auto tmp = dynamic_cast<FPackage *>(pkg);
+    if (tmp == nullptr)
+        return;
+
+    const auto &cfg = GetServerConfig();
+
+    if (cfg["package"].IsNull())
+        return;
+
+    if (!cfg["package"]["magic"].IsNull())
+        tmp->SetMagic(cfg["package"]["magic"].as<uint32_t>());
+
+    if (!cfg["package"]["version"].IsNull())
+        tmp->SetVersion(cfg["package"]["version"].as<uint32_t>());
+
+    if (!cfg["package"]["method"].IsNull()) {
+        if (const auto method = cfg["package"]["method"].as<std::string>(); method == "LineBased")
+            tmp->ChangeMethod(ECodecMethod::LINE_BASED);
+        else if (method == "Protobuf")
+            tmp->ChangeMethod(ECodecMethod::PROTOBUF);
+    }
+}
+
 UPackagePool::UPackagePool(const size_t capacity) {
     for (size_t i = 0; i < capacity; i++) {
-        queue_.emplace(CreatePackage());
+        if (createPackage)
+            queue_.emplace(createPackage());
+        else
+            queue_.emplace(DefaultPackage());
     }
 }
 
@@ -34,7 +69,10 @@ IPackage *UPackagePool::Acquire() {
     queue_.pop();
     useCount_++;
 
-    InitPackage(pkg);
+    if (initPackage)
+        initPackage(pkg);
+    else
+        PackageDefaultInit(pkg);
 
     return pkg;
 }
@@ -98,6 +136,14 @@ void UPackagePool::SetCollectScale(const float scale) {
     collectScale = scale;
 }
 
+void UPackagePool::SetPackageBuilder(const std::function<IPackage *()> &func) {
+    createPackage = func;
+}
+
+void UPackagePool::SetPackageInitializer(const std::function<void(IPackage *)> &func) {
+    initPackage = func;
+}
+
 void UPackagePool::Expanse() {
     if (useCount_ == 0)
         return;
@@ -109,7 +155,10 @@ void UPackagePool::Expanse() {
     spdlog::trace("{} - Pool rest: {}, current using: {}, expand number: {}.", __func__, queue_.size(), useCount_, num);
 
     for (size_t i = 0; i < num; i++)
-        queue_.emplace(CreatePackage());
+        if (createPackage)
+            queue_.emplace(createPackage());
+        else
+            queue_.emplace(DefaultPackage());
 }
 
 void UPackagePool::Collect() {

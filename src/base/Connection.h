@@ -60,6 +60,8 @@ public:
 
     [[nodiscard]] bool IsSameThread() const;
 
+    [[nodiscard]] bool HasCodecSet() const;
+
     template<typename T>
     requires std::derived_from<T, IPackageCodec>
     UConnection &SetCodec() {
@@ -69,6 +71,8 @@ public:
         codec_ = std::make_unique<T>();
         return *this;
     }
+
+    [[nodiscard]] bool HasHandlerSet() const;
 
     template<typename T>
     requires std::derived_from<T, IConnectionHandler>

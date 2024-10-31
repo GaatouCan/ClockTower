@@ -110,6 +110,10 @@ UGameWorld &UGameWorld::Shutdown() {
     return *this;
 }
 
+void UGameWorld::HandleConnection(const std::function<void(const AConnectionPointer &)> &handler) {
+    connectionHandler_ = handler;
+}
+
 awaitable<void> UGameWorld::WaitForConnect() {
     const auto &config = GetServerConfig();
 
@@ -143,11 +147,18 @@ awaitable<void> UGameWorld::WaitForConnect() {
 
                 const std::string key = fmt::format("{} - {}", addr.to_string(), CurrentTimeCount());
 
-                conn->SetCodec<UPackageCodecImpl>()
-                        .SetHandler<UConnectionHandlerImpl>()
-                        .SetThreadID(tid)
-                        .SetKey(key)
-                        .ConnectToClient();
+                conn->SetThreadID(tid).SetKey(key);
+
+                if (connectionHandler_)
+                    connectionHandler_(conn);
+
+                if (!conn->HasCodecSet())
+                    conn->SetCodec<UPackageCodecImpl>();
+
+                if (!conn->HasHandlerSet())
+                    conn->SetHandler<UConnectionHandlerImpl>();
+
+                conn->ConnectToClient();
 
                 connMap_[key] = conn;
 

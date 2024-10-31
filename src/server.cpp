@@ -17,10 +17,16 @@ auto main(int argc, char *argv[]) -> int {
 
     if (const auto sys = GetSystem<UProtocolSystem>(); sys != nullptr) {
         LoadProtocol(sys);
+    } else {
+        spdlog::error("Failed to find UProtocolSystem");
+        exit(-1);
     }
 
     if (const auto sys = GetSystem<UManagerSystem>(); sys != nullptr) {
         LoadManager(sys);
+    } else {
+        spdlog::error("Failed to find UManagerSystem");
+        exit(-1);
     }
 
     GetWorld().Init();

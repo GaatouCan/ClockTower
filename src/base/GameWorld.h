@@ -37,6 +37,8 @@ class UGameWorld final {
     std::priority_queue<SystemPriority, std::vector<SystemPriority>, std::less<> > destPriority_;
     std::unordered_map<std::type_index, ISubSystem *> systemMap_;
 
+    std::function<void(const AConnectionPointer &)> connectionHandler_;
+
     AThreadID tid_;
 
     bool inited_;
@@ -51,6 +53,8 @@ public:
     UGameWorld &Init();
     UGameWorld &Run();
     UGameWorld &Shutdown();
+
+    void HandleConnection(const std::function<void(const AConnectionPointer &)> &handler);
 
     void RemoveConnection(const std::string &key);
 

@@ -87,6 +87,14 @@ bool UConnection::IsSameThread() const {
     return tid_ == std::this_thread::get_id();
 }
 
+bool UConnection::HasCodecSet() const {
+    return codec_ != nullptr;
+}
+
+bool UConnection::HasHandlerSet() const {
+    return handler_ != nullptr;
+}
+
 IPackage *UConnection::BuildPackage() const {
     return pool_.Acquire();
 }

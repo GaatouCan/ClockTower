@@ -4,7 +4,7 @@
 #include "../../../player/ComponentModule.h"
 #include "../../../player/Player.h"
 #include "../../../common/utils.h"
-#include "../../../common/Protocol.h"
+#include "../../../common/proto_def.h"
 
 #include <ranges>
 #include <utility>

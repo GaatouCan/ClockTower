@@ -80,6 +80,11 @@ file(GLOB_RECURSE SOURCE_DIR
         ${CMAKE_SOURCE_DIR}/src/*.cpp
 )
 
+file(GLOB_RECURSE COMMON_SRC ${CMAKE_SOURCE_DIR}/src/common/*.h ${CMAKE_SOURCE_DIR}/src/common/*.cpp)
+file(GLOB_RECURSE BASE_SRC ${CMAKE_SOURCE_DIR}/src/base/*.h ${CMAKE_SOURCE_DIR}/src/base/*.cpp)
+file(GLOB_RECURSE SUB_SYSTEM_SRC ${CMAKE_SOURCE_DIR}/src/system/*.h ${CMAKE_SOURCE_DIR}/src/system/*.cpp)
+file(GLOB_RECURSE PLAYER_SRC ${CMAKE_SOURCE_DIR}/src/player/*.h ${CMAKE_SOURCE_DIR}/src/player/*.cpp)
+
 add_executable(server src/server.cpp ${SOURCE_DIR})
 
 target_link_libraries(server PRIVATE spdlog::spdlog)

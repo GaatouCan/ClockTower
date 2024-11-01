@@ -13,12 +13,10 @@ class IConnectionHandler {
 public:
     virtual ~IConnectionHandler() = default;
 
-    virtual void OnConnected(const AConnectionPointer &) {
-    }
+    virtual void OnConnected(const AConnectionPointer &) {}
 
-    virtual awaitable<void> OnReadPackage(const AConnectionPointer &conn, IPackage *pkg) { co_return; }
+    virtual awaitable<void> OnReadPackage(const AConnectionPointer &, IPackage *) { co_return; }
     virtual awaitable<void> OnWritePackage(const AConnectionPointer &) { co_return; }
 
-    virtual void OnClosed(const AConnectionPointer &) {
-    }
+    virtual void OnClosed(const AConnectionPointer &) {}
 };

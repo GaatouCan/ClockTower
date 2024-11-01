@@ -11,31 +11,31 @@
 #include <spdlog/spdlog.h>
 #include <appearance.pb.h>
 
-AppearanceCT::AppearanceCT(UComponentModule *module)
+UAppearanceCT::UAppearanceCT(UComponentModule *module)
     : IPlayerComponent(module) {
 
-    SERIALIZE_COMPONENT(AppearanceCT, Appearance)
-    SERIALIZE_COMPONENT(AppearanceCT, Avatar)
-    SERIALIZE_COMPONENT(AppearanceCT, AvatarFrame)
+    SERIALIZE_COMPONENT(UAppearanceCT, Appearance)
+    SERIALIZE_COMPONENT(UAppearanceCT, Avatar)
+    SERIALIZE_COMPONENT(UAppearanceCT, AvatarFrame)
 }
 
-void AppearanceCT::Serialize_Appearance(USerializer &s) {
+void UAppearanceCT::Serialize_Appearance(USerializer &s) {
     s.Serialize(&appearance_);
 }
 
-void AppearanceCT::Deserialize_Appearance(UDeserializer &ds) {
+void UAppearanceCT::Deserialize_Appearance(UDeserializer &ds) {
     if (ds.HasMore()) {
         ds.Deserialize(&appearance_);
     }
 }
 
-void AppearanceCT::Serialize_Avatar(USerializer &s) {
+void UAppearanceCT::Serialize_Avatar(USerializer &s) {
     for (auto &avatar: std::views::values(avatarMap_)) {
         s.Serialize(&avatar);
     }
 }
 
-void AppearanceCT::Deserialize_Avatar(UDeserializer &ds) {
+void UAppearanceCT::Deserialize_Avatar(UDeserializer &ds) {
     while (ds.HasMore()) {
         orm::UDBTable_Avatar avatar;
         ds.Deserialize(&avatar);
@@ -43,13 +43,13 @@ void AppearanceCT::Deserialize_Avatar(UDeserializer &ds) {
     }
 }
 
-void AppearanceCT::Serialize_AvatarFrame(USerializer &s) {
+void UAppearanceCT::Serialize_AvatarFrame(USerializer &s) {
     for (auto &frame: std::views::values(avatarFrameMap_)) {
         s.Serialize(&frame);
     }
 }
 
-void AppearanceCT::Deserialize_AvatarFrame(UDeserializer &ds) {
+void UAppearanceCT::Deserialize_AvatarFrame(UDeserializer &ds) {
     while (ds.HasMore()) {
         orm::UDBTable_AvatarFrame frame;
         ds.Deserialize(&frame);
@@ -57,7 +57,7 @@ void AppearanceCT::Deserialize_AvatarFrame(UDeserializer &ds) {
     }
 }
 
-void AppearanceCT::SendInfo() const {
+void UAppearanceCT::SendInfo() const {
     Appearance::SC_AppearanceResponse res;
 
     res.set_current_avatar(appearance_.avatar);
@@ -90,7 +90,7 @@ awaitable<void> protocol::CS_AppearanceRequest(const std::shared_ptr<ICharacter>
     Appearance::CS_AppearanceRequest req;
     req.ParseFromString(package->GetData());
 
-    const auto ct = player->GetComponentModule().GetComponent<AppearanceCT>();
+    const auto ct = player->GetComponentModule().GetComponent<UAppearanceCT>();
     if (ct == nullptr)
         co_return;
 

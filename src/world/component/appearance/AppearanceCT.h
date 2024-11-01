@@ -6,14 +6,14 @@
 
 #include <orm/appearance.orm.h>
 
-class AppearanceCT final : public IPlayerComponent {
+class UAppearanceCT final : public IPlayerComponent {
 
     orm::UDBTable_Appearance appearance_;
     std::map<uint32_t, orm::UDBTable_Avatar> avatarMap_;
     std::map<uint32_t, orm::UDBTable_AvatarFrame> avatarFrameMap_;
 
 public:
-    explicit AppearanceCT(UComponentModule *module);
+    explicit UAppearanceCT(UComponentModule *module);
 
     void Serialize_Appearance(USerializer &s);
     void Deserialize_Appearance(UDeserializer &ds);

@@ -3,9 +3,9 @@
 #include "../../../system/manager/Manager.h"
 
 
-class ChatManager final : public IManager {
+class UChatManager final : public IManager {
 
 public:
-    explicit ChatManager(asio::io_context &ctx);
-    ~ChatManager() override;
+    explicit UChatManager(asio::io_context &ctx);
+    ~UChatManager() override;
 };

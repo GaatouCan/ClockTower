@@ -3,11 +3,11 @@
 #include "../../../common/proto_def.h"
 
 
-ChatManager::ChatManager(asio::io_context &ctx)
+UChatManager::UChatManager(asio::io_context &ctx)
     : IManager(ctx) {
 }
 
-ChatManager::~ChatManager() {
+UChatManager::~UChatManager() {
 }
 
 awaitable<void> protocol::CS_Chat_Room_Request(const std::shared_ptr<ICharacter> &plr, IPackage *pkg) {

@@ -3,8 +3,7 @@
 #include "base/GameWorld.h"
 #include "system/config/ConfigSystem.h"
 #include "system/protocol/ProtocolSystem.h"
-#include "system/manager/ManagerSystem.h"
-#include "common/mgr_def.h"
+
 #include "common/proto_def.h"
 
 auto main(int argc, char *argv[]) -> int {
@@ -19,13 +18,6 @@ auto main(int argc, char *argv[]) -> int {
         LoadProtocol(sys);
     } else {
         spdlog::error("Failed to find UProtocolSystem");
-        exit(-1);
-    }
-
-    if (const auto sys = GetSystem<UManagerSystem>(); sys != nullptr) {
-        LoadManager(sys);
-    } else {
-        spdlog::error("Failed to find UManagerSystem");
         exit(-1);
     }
 

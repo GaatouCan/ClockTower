@@ -1,10 +1,12 @@
 #include "ManagerSystem.h"
+#include "../../common/mgr_def.h"
 
 #include <spdlog/spdlog.h>
 
 
 UManagerSystem::UManagerSystem()
     : timer_(ctx_) {
+
 }
 
 UManagerSystem::~UManagerSystem() {
@@ -21,6 +23,8 @@ UManagerSystem::~UManagerSystem() {
 }
 
 void UManagerSystem::Init() {
+    LoadManager(this);
+
     mgrThread_ = std::thread([this] {
         tid_ = std::this_thread::get_id();
         asio::signal_set signals(ctx_, SIGINT, SIGTERM);

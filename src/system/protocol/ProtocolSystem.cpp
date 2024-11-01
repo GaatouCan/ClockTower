@@ -1,7 +1,12 @@
 #include "ProtocolSystem.h"
 #include "../impl/ProtocolHandlerImpl.h"
 #include "../../player/Player.h"
+#include "../../common/proto_def.h"
 
+
+UProtocolSystem::UProtocolSystem() {
+    LoadProtocol(this);
+}
 
 void UProtocolSystem::Init() {
     if (handler_ == nullptr)

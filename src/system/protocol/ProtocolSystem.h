@@ -11,6 +11,9 @@ class UConnection;
 class UProtocolSystem final : public ISubSystem {
 
     SUB_SYSTEM_BODY(ProtocolSystem)
+
+    UProtocolSystem();
+
     void Init() override;
 
 public:

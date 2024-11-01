@@ -2,9 +2,6 @@
 
 #include "base/GameWorld.h"
 #include "system/config/ConfigSystem.h"
-#include "system/protocol/ProtocolSystem.h"
-
-#include "common/proto_def.h"
 
 auto main(int argc, char *argv[]) -> int {
     spdlog::set_level(spdlog::level::trace);
@@ -12,13 +9,6 @@ auto main(int argc, char *argv[]) -> int {
 
     if (const auto sys = GetSystem<UConfigSystem>(); sys != nullptr) {
         sys->SetYAMLPath("../../config");
-    }
-
-    if (const auto sys = GetSystem<UProtocolSystem>(); sys != nullptr) {
-        LoadProtocol(sys);
-    } else {
-        spdlog::error("Failed to find UProtocolSystem");
-        exit(-1);
     }
 
     GetWorld().Init();

@@ -44,6 +44,9 @@ private:
     AThreadID tid_;
 };
 
+#define REGISTER_MANAGER(mgr) \
+sys->CreateManager<mgr>();
+
 template<MANAGER_TYPE T>
 T *GetManager() {
     const auto sys = GetSystem<UManagerSystem>();

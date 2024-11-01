@@ -30,7 +30,8 @@ def main(argv):
             config["protobuf"]["dir"],
             config["protobuf"]["gen"],
             config["protobuf"]["def"],
-            config["protobuf"]["except"]
+            config["protobuf"]["except"],
+            config["protobuf"]["include_dir"]
         )
 
         sql.generate_orm_clazz(

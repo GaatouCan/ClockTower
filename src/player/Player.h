@@ -71,7 +71,7 @@ public:
 
     template<typename FUNC, typename... ARGS>
     uint64_t SetTimer(const std::chrono::duration<uint32_t> expire, const bool repeat, FUNC &&func, ARGS &&... args) {
-        const uint64_t timerID = CurrentTimeCount();
+        const uint64_t timerID = UnixTime();
         if (auto [iter, res] = timerMap_.insert_or_assign(timerID, conn_->GetSocket().get_executor()); res) {
             iter->second
                     .SetTimerID(timerID)

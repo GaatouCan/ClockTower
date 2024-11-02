@@ -12,4 +12,12 @@ uint64_t ThreadIdToInt(std::thread::id threadID);
 
 std::string PascalToUnderline(const std::string &src);
 
-long long CurrentTimeCount();
+long long UnixTime();
+
+uint64_t SetBit(uint64_t, uint32_t);
+
+uint64_t ClearBit(uint64_t, uint32_t);
+
+uint64_t ToggleBit(uint64_t, uint32_t);
+
+bool CheckBit(uint64_t, uint32_t);

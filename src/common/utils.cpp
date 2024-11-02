@@ -1,5 +1,7 @@
 #include "utils.h"
 
+#include <assert.h>
+
 
 void TraverseFolder(const std::string &folder,
                     const std::function<void(const std::filesystem::directory_entry &)> &func) {
@@ -52,9 +54,31 @@ std::string PascalToUnderline(const std::string &src) {
     return res;
 }
 
-long long CurrentTimeCount() {
+long long UnixTime() {
     const auto now = std::chrono::system_clock::now();
     const auto durationSinceEpoch = now.time_since_epoch();
     const auto secondsSinceEpoch = std::chrono::duration_cast<std::chrono::seconds>(durationSinceEpoch);
     return secondsSinceEpoch.count();
 }
+
+uint64_t SetBit(const uint64_t number, const uint32_t n) {
+    assert(n < sizeof(uint64_t) * 8);
+    return number | (static_cast<uint64_t>(1) << n);
+}
+
+uint64_t ClearBit(const uint64_t number, const uint32_t n) {
+    assert(n < sizeof(uint64_t) * 8);
+    return number & ~(static_cast<uint64_t>(1) << n);
+}
+
+uint64_t ToggleBit(const uint64_t number, const uint32_t n) {
+    assert(n < sizeof(uint64_t) * 8);
+    return number ^ (static_cast<uint64_t>(1) << n);
+}
+
+bool CheckBit(const uint64_t number, const uint32_t n) {
+    assert(n < sizeof(uint64_t) * 8);
+    return number & (static_cast<uint64_t>(1) << n);
+}
+
+

@@ -145,7 +145,7 @@ awaitable<void> UGameWorld::WaitForConnect() {
                 const auto conn = std::make_shared<UConnection>(std::move(socket), pool);
                 spdlog::info("Accept connection from: {}", addr.to_string());
 
-                const std::string key = fmt::format("{} - {}", addr.to_string(), CurrentTimeCount());
+                const std::string key = fmt::format("{} - {}", addr.to_string(), UnixTime());
 
                 conn->SetThreadID(tid).SetKey(key);
 

@@ -1,8 +1,6 @@
 #include "ManagerSystem.h"
-#include "../../common/mgr_def.h"
 
 #include <spdlog/spdlog.h>
-
 
 UManagerSystem::UManagerSystem()
     : mTickTimer(mIOContext) {
@@ -23,8 +21,6 @@ UManagerSystem::~UManagerSystem() {
 }
 
 void UManagerSystem::Init() {
-    LoadManager(this);
-
     mManagerThread = std::thread([this] {
         mManagerThreadId = std::this_thread::get_id();
         asio::signal_set signals(mIOContext, SIGINT, SIGTERM);

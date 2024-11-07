@@ -1,11 +1,10 @@
 #pragma once
 
-#include "../../base/GameWorld.h"
-#include "../../base/SubSystem.h"
+#include "../../GameWorld.h"
+#include "../../SubSystem.h"
 #include "Manager.h"
 
 #include <typeindex>
-
 
 class UManagerSystem final : public ISubSystem {
 

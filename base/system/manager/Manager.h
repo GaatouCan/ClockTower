@@ -1,11 +1,10 @@
 ﻿#pragma once
 
-#include "../../base/common.h"
-#include "../../base/RepeatedTimer.h"
-#include "../../base/utils.h"
+#include "../../common.h"
+#include "../../RepeatedTimer.h"
+#include "../../utils.h"
 
 #include <spdlog/spdlog.h>
-
 
 class IManager : public UObject {
 
@@ -15,6 +14,7 @@ class IManager : public UObject {
     std::unordered_map<ATimerID, URepeatedTimer> mTimerMap;
 
 public:
+
     IManager() = delete;
 
     explicit IManager(asio::io_context &ctx);

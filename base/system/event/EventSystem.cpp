@@ -1,6 +1,5 @@
 ﻿#include "EventSystem.h"
-
-#include "../../base/GameWorld.h"
+#include "../../GameWorld.h"
 
 UEventSystem::UEventSystem() {
 }

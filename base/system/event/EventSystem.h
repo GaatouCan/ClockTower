@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../base/SubSystem.h"
+#include "../../SubSystem.h"
 #include "EventParam.h"
 #include "../../src/common/Event.h"
 

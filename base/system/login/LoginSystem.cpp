@@ -1,15 +1,10 @@
 #include "LoginSystem.h"
-
-#include "../../base/Connection.h"
-#include "../impl/LoginHandlerImpl.h"
+#include "../../Connection.h"
 
 #include <spdlog/spdlog.h>
 
-
 void ULoginSystem::Init() {
-    if (mHandler == nullptr) {
-        SetHandler<ULoginHandlerImpl>();
-    }
+
 }
 
 bool ULoginSystem::VerifyAddress(const asio::ip::address &addr) {

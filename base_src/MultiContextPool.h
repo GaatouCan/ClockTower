@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../common/common.h"
+#include "common.h"
 #include "PackagePool.h"
 
 /**
@@ -16,17 +16,17 @@ struct FContextNode {
  * 多线程池
  * 每个线程单独一个io_context和一个数据包池
  */
-class UMultiContextPool final {
+class UMultiContextPool final : public UObject {
 
-    std::vector<FContextNode> nodeVec_;
-    std::vector<asio::io_context::work> workVec_;
-    std::vector<std::thread> threadVec_;
+    std::vector<FContextNode> mNodeVec;
+    std::vector<asio::io_context::work> mWorkVec;
+    std::vector<std::thread> mThreadVec;
 
-    std::atomic_size_t nextIndex_;
+    std::atomic_size_t mNextIndex;
 
 public:
     UMultiContextPool();
-    ~UMultiContextPool();
+    ~UMultiContextPool() override;
 
     DISABLE_COPY_MOVE(UMultiContextPool)
 

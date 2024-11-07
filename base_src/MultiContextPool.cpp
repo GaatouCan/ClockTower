@@ -4,13 +4,13 @@
 
 
 UMultiContextPool::UMultiContextPool()
-    : nextIndex_(0) {
+    : mNextIndex(0) {
 }
 
 UMultiContextPool::~UMultiContextPool() {
-    workVec_.clear();
+    mWorkVec.clear();
 
-    for (auto &thread: threadVec_) {
+    for (auto &thread: mThreadVec) {
         if (thread.joinable()) {
             thread.join();
         }
@@ -18,10 +18,10 @@ UMultiContextPool::~UMultiContextPool() {
 }
 
 void UMultiContextPool::Start(const size_t num) {
-    nodeVec_ = std::vector<FContextNode>(num);
-    for (auto &node: nodeVec_) {
-        workVec_.emplace_back(node.ctx);
-        threadVec_.emplace_back([this, &node] {
+    mNodeVec = std::vector<FContextNode>(num);
+    for (auto &node: mNodeVec) {
+        mWorkVec.emplace_back(node.ctx);
+        mThreadVec.emplace_back([this, &node] {
             asio::signal_set signals(node.ctx, SIGINT, SIGTERM);
             signals.async_wait([&](auto, auto) {
                 node.ctx.stop();
@@ -35,10 +35,10 @@ void UMultiContextPool::Start(const size_t num) {
 }
 
 FContextNode &UMultiContextPool::NextContextNode() {
-    if (nodeVec_.empty())
+    if (mNodeVec.empty())
         throw std::runtime_error("No context node available");
 
-    auto &res = nodeVec_[nextIndex_++];
-    nextIndex_ = nextIndex_ % nodeVec_.size();
+    auto &res = mNodeVec[mNextIndex++];
+    mNextIndex = mNextIndex % mNodeVec.size();
     return res;
 }

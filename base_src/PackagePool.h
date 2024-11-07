@@ -70,7 +70,6 @@ public:
     static void SetPackageBuilder(const std::function<IPackage*()>& func);
     static void SetPackageInitializer(const std::function<void(IPackage*)>& func);
 
-
 private:
     void Expanse();
     void Collect();

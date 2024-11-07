@@ -11,37 +11,37 @@
 using namespace std::literals::chrono_literals;
 using namespace asio::experimental::awaitable_operators;
 
-constexpr static int NULL_CONTEXT_MAX_COUNT = 3;
+class UConnection final : public std::enable_shared_from_this<UConnection>, public UObject {
 
-class UConnection final : public std::enable_shared_from_this<UConnection> {
+    ATcpSocket mSocket;
+    UPackagePool &mPool;
 
-    ATcpSocket socket_;
-    UPackagePool &pool_;
+    TSDeque<IPackage *> mOutput;
 
-    TSDeque<IPackage *> output_;
+    std::unique_ptr<IPackageCodec> mCodec = nullptr;
+    std::unique_ptr<IConnectionHandler> mHandler = nullptr;
 
-    std::unique_ptr<IPackageCodec> codec_ = nullptr;
-    std::unique_ptr<IConnectionHandler> handler_ = nullptr;
+    std::string mKey;
 
-    std::string key_;
+    ASteadyTimer mWatchdogTimer;
+    ATimePoint mDeadline;
 
-    ASteadyTimer watchdogTimer_;
-    ATimePoint deadline_;
+    AThreadID mThreadId;
 
-    AThreadID tid_;
+    uint32_t mContextNullCount = 0;
+    std::any mContext;
 
-    uint32_t ctxNullCount_ = 0;
-    std::any ctx_;
+    static std::chrono::duration<uint32_t> sExpireTime;
+    static std::chrono::duration<uint32_t> sWriteTimeout;
+    static std::chrono::duration<uint32_t> sReadTimeout;
 
-    static std::chrono::duration<uint32_t> expireTime;
-    static std::chrono::duration<uint32_t> writeTimeout;
-    static std::chrono::duration<uint32_t> readTimeout;
+    static constexpr int kNullContextMaxCount = 3;
 
 public:
     UConnection() = delete;
 
     UConnection(ATcpSocket socket, UPackagePool &pool);
-    ~UConnection();
+    ~UConnection() override;
 
     void ConnectToClient();
     void Disconnect();
@@ -65,10 +65,10 @@ public:
     template<typename T>
     requires std::derived_from<T, IPackageCodec>
     UConnection &SetCodec() {
-        if (codec_ != nullptr)
-            codec_.reset();
+        if (mCodec != nullptr)
+            mCodec.reset();
 
-        codec_ = std::make_unique<T>();
+        mCodec = std::make_unique<T>();
         return *this;
     }
 
@@ -77,10 +77,10 @@ public:
     template<typename T>
     requires std::derived_from<T, IConnectionHandler>
     UConnection &SetHandler() {
-        if (handler_ != nullptr)
-            handler_.reset();
+        if (mHandler != nullptr)
+            mHandler.reset();
 
-        handler_ = std::make_unique<T>();
+        mHandler = std::make_unique<T>();
         return *this;
     }
 
@@ -88,11 +88,11 @@ public:
 
     void Send(IPackage *pkg);
 
-    [[nodiscard]] bool IsConnected() const { return socket_.is_open(); }
-    [[nodiscard]] std::string GetKey() const { return key_; }
-    [[nodiscard]] const std::any &GetContext() const { return ctx_; }
+    [[nodiscard]] bool IsConnected() const { return mSocket.is_open(); }
+    [[nodiscard]] std::string GetKey() const { return mKey; }
+    [[nodiscard]] const std::any &GetContext() const { return mContext; }
 
-    [[nodiscard]] ATcpSocket &GetSocket() { return socket_; }
+    [[nodiscard]] ATcpSocket &GetSocket() { return mSocket; }
 
     [[nodiscard]] asio::ip::address RemoteAddress() const;
 

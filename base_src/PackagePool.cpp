@@ -70,7 +70,7 @@ IPackage *UPackagePool::Acquire() {
     mUseCount++;
 
     if (sInitPackage)
-        sInitPackage(pkg);
+        std::invoke(sInitPackage, pkg);
     else
         PackageDefaultInit(pkg);
 

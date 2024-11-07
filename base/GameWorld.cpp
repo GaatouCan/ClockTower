@@ -4,21 +4,21 @@
 #include "impl/PackageCodecImpl.h"
 #include "impl/ConnectionHandlerImpl.h"
 
-// #include "../system/config/ConfigSystem.h"
-// #include "../system/protocol/ProtocolSystem.h"
-// #include "../system/manager/ManagerSystem.h"
-// #include "../system/database/DatabaseSystem.h"
-// #include "../system/login/LoginSystem.h"
-// #include "../system/event/EventSystem.h"
+#include "../system/config/ConfigSystem.h"
+#include "../system/protocol/ProtocolSystem.h"
+#include "../system/manager/ManagerSystem.h"
+#include "../system/database/DatabaseSystem.h"
+#include "../system/login/LoginSystem.h"
+#include "../system/event/EventSystem.h"
 
 #include <spdlog/spdlog.h>
 
-// REGISTER_SYSTEM(UConfigSystem, 0)
-// REGISTER_SYSTEM(UProtocolSystem, 1)
-// REGISTER_SYSTEM(ULoginSystem, 2)
-// // REGISTER_SYSTEM(UDatabaseSystem, 9)
-// REGISTER_SYSTEM(UManagerSystem, 10)
-// REGISTER_SYSTEM(UEventSystem, 11)
+REGISTER_SYSTEM(UConfigSystem, 0)
+REGISTER_SYSTEM(UProtocolSystem, 1)
+REGISTER_SYSTEM(ULoginSystem, 2)
+// REGISTER_SYSTEM(UDatabaseSystem, 9)
+REGISTER_SYSTEM(UManagerSystem, 10)
+REGISTER_SYSTEM(UEventSystem, 11)
 
 UGameWorld::UGameWorld()
     : mAcceptor(mContext),

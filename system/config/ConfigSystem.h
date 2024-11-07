@@ -25,11 +25,11 @@ public:
     std::optional<nlohmann::json> Find(const std::string &path, uint64_t id) const;
 
 private:
-    std::string YAMLPath_;
-    std::string JSONPath_;
+    std::string mYAMLPath;
+    std::string mJSONPath;
 
-    YAML::Node config_;
-    std::unordered_map<std::string, nlohmann::json> configMap_;
+    YAML::Node mConfig;
+    std::unordered_map<std::string, nlohmann::json> mConfigMap;
 };
 
 inline const YAML::Node &GetServerConfig() {

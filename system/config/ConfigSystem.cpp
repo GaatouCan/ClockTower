@@ -6,18 +6,18 @@
 
 
 void UConfigSystem::Init() {
-    spdlog::info("Using configuration file: {}.", YAMLPath_ + SERVER_CONFIG_FILE);
+    spdlog::info("Using configuration file: {}.", mYAMLPath + SERVER_CONFIG_FILE);
 
-    config_ = YAML::LoadFile(YAMLPath_ + SERVER_CONFIG_FILE);
+    mConfig = YAML::LoadFile(mYAMLPath + SERVER_CONFIG_FILE);
 
-    assert(!config_.IsNull());
+    assert(!mConfig.IsNull());
     spdlog::info("Checking configuration file.");
 
-    assert(!config_["server"].IsNull());
-    assert(!config_["server"]["port"].IsNull());
-    assert(!config_["server"]["work_thread"].IsNull());
+    assert(!mConfig["server"].IsNull());
+    assert(!mConfig["server"]["port"].IsNull());
+    assert(!mConfig["server"]["work_thread"].IsNull());
 
-    const std::string jsonPath = !JSONPath_.empty() ? JSONPath_ : YAMLPath_ + SERVER_CONFIG_JSON;
+    const std::string jsonPath = !mJSONPath.empty() ? mJSONPath : mYAMLPath + SERVER_CONFIG_JSON;
 
     TraverseFolder(jsonPath, [this, jsonPath](const std::filesystem::directory_entry &entry) {
         if (entry.path().extension().string() == ".json") {
@@ -30,26 +30,26 @@ void UConfigSystem::Init() {
 
             filepath = StringReplace(filepath, '\\', '.');
 
-            configMap_[filepath] = nlohmann::json::parse(fs);
+            mConfigMap[filepath] = nlohmann::json::parse(fs);
             spdlog::info("\tloaded {}.", filepath);
         }
     });
 }
 
 void UConfigSystem::SetYAMLPath(const std::string &path) {
-    YAMLPath_ = path;
+    mYAMLPath = path;
 }
 
 void UConfigSystem::SetJSONPath(const std::string &path) {
-    JSONPath_ = path;
+    mJSONPath = path;
 }
 
 const YAML::Node &UConfigSystem::GetConfig() const {
-    return config_;
+    return mConfig;
 }
 
 std::optional<nlohmann::json> UConfigSystem::Find(const std::string &path, const uint64_t id) const {
-    if (const auto it = configMap_.find(path); it != configMap_.end()) {
+    if (const auto it = mConfigMap.find(path); it != mConfigMap.end()) {
         if (it->second.contains(std::to_string(id)))
             return it->second[std::to_string(id)];
     }

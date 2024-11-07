@@ -14,16 +14,16 @@ public:
 
 template<class Callback>
 class TDBCallbackWrapper final : public IDBCallbackWrapper {
-    ADatabaseTask task_;
-    Callback cb_;
+    ADatabaseTask mTask;
+    Callback mCallback;
 
 public:
     TDBCallbackWrapper(ADatabaseTask task, Callback &&cb)
-        : task_(std::move(task)), cb_(std::forward<Callback>(cb)) {
+        : mTask(std::move(task)), mCallback(std::forward<Callback>(cb)) {
     }
 
     void Execute(mysqlx::Schema &schema) override {
-        std::invoke(task_, schema);
-        std::invoke(std::move(cb_));
+        std::invoke(mTask, schema);
+        std::invoke(std::move(mCallback));
     }
 };

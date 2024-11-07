@@ -2,60 +2,60 @@
 
 
 FPackage::FPackage()
-    : header_() {
-    memset(&header_, 0, sizeof(header_));
+    : mHeader() {
+    memset(&mHeader, 0, sizeof(mHeader));
 }
 
 FPackage::~FPackage() = default;
 
 FPackage::FPackage(const FPackage &rhs) : FPackage() {
     if (this != &rhs) {
-        memcpy(&header_, &rhs.header_, sizeof(header_));
+        memcpy(&mHeader, &rhs.mHeader, sizeof(mHeader));
 
-        data_.reserve(rhs.data_.size());
-        memcpy(data_.data(), rhs.data_.data(), rhs.data_.size());
+        mData.reserve(rhs.mData.size());
+        memcpy(mData.data(), rhs.mData.data(), rhs.mData.size());
 
-        header_.size = data_.size();
+        mHeader.size = mData.size();
     }
 }
 
 FPackage::FPackage(FPackage &&rhs) noexcept : FPackage() {
     if (this != &rhs) {
-        memcpy(&header_, &rhs.header_, sizeof(header_));
+        memcpy(&mHeader, &rhs.mHeader, sizeof(mHeader));
 
-        data_ = std::move(rhs.data_);
-        header_.size = data_.size();
+        mData = std::move(rhs.mData);
+        mHeader.size = mData.size();
     }
 }
 
 FPackage &FPackage::operator=(const FPackage &rhs) {
     if (this != &rhs) {
-        memcpy(&header_, &rhs.header_, sizeof(header_));
+        memcpy(&mHeader, &rhs.mHeader, sizeof(mHeader));
 
-        data_.reserve(rhs.data_.size());
-        memcpy(data_.data(), rhs.data_.data(), rhs.data_.size());
+        mData.reserve(rhs.mData.size());
+        memcpy(mData.data(), rhs.mData.data(), rhs.mData.size());
 
-        header_.size = data_.size();
+        mHeader.size = mData.size();
     }
     return *this;
 }
 
 FPackage &FPackage::operator=(FPackage &&rhs) noexcept {
     if (this != &rhs) {
-        memcpy(&header_, &rhs.header_, sizeof(header_));
+        memcpy(&mHeader, &rhs.mHeader, sizeof(mHeader));
 
-        data_ = std::move(rhs.data_);
-        header_.size = data_.size();
+        mData = std::move(rhs.mData);
+        mHeader.size = mData.size();
     }
     return *this;
 }
 
 FPackage::FPackage(const uint32_t id, const std::string_view data)
     : FPackage() {
-    data_.resize(data.size());
-    memcpy(data_.data(), data.data(), data.size());
-    header_.id = id;
-    header_.size = data_.size();
+    mData.resize(data.size());
+    memcpy(mData.data(), data.data(), data.size());
+    mHeader.id = id;
+    mHeader.size = mData.size();
 }
 
 FPackage::FPackage(const uint32_t id, const std::stringstream &ss)
@@ -63,34 +63,34 @@ FPackage::FPackage(const uint32_t id, const std::stringstream &ss)
 }
 
 void FPackage::Reset() {
-    memset(&header_, 0, sizeof(header_));
+    memset(&mHeader, 0, sizeof(mHeader));
 
-    data_.clear();
-    data_.shrink_to_fit();
+    mData.clear();
+    mData.shrink_to_fit();
 }
 
 void FPackage::Invalid() {
-    header_.id = UNAVAILABLE_PACKAGE_ID;
+    mHeader.id = kUnavailablePackageId;
 }
 
 bool FPackage::IsAvailable() const {
-    return header_.id > UNAVAILABLE_PACKAGE_ID;
+    return mHeader.id > kUnavailablePackageId;
 }
 
 FPackage &FPackage::ChangeMethod(const ECodecMethod method) {
-    header_.method = method;
+    mHeader.method = method;
     return *this;
 }
 
 FPackage &FPackage::SetPackageID(const uint32_t id) {
-    header_.id = id;
+    mHeader.id = id;
     return *this;
 }
 
 FPackage &FPackage::SetData(const std::string_view data) {
-    data_.resize(data.size());
-    memcpy(data_.data(), data.data(), data.size());
-    header_.size = data_.size();
+    mData.resize(data.size());
+    memcpy(mData.data(), data.data(), data.size());
+    mHeader.size = mData.size();
     return *this;
 }
 
@@ -99,39 +99,39 @@ FPackage &FPackage::SetData(const std::stringstream &ss) {
 }
 
 FPackage &FPackage::SetMagic(const uint32_t magic) {
-    header_.magic = magic;
+    mHeader.magic = magic;
     return *this;
 }
 
 FPackage &FPackage::SetVersion(const uint32_t version) {
-    header_.version = version;
+    mHeader.version = version;
     return *this;
 }
 
 uint32_t FPackage::GetMagic() const {
-    return header_.magic;
+    return mHeader.magic;
 }
 
 uint32_t FPackage::GetVersion() const {
-    return header_.version;
+    return mHeader.version;
 }
 
 ECodecMethod FPackage::GetMethod() const {
-    return header_.method;
+    return mHeader.method;
 }
 
 uint32_t FPackage::GetID() const {
-    return header_.id;
+    return mHeader.id;
 }
 
 size_t FPackage::GetDataLength() const {
-    return data_.size();
+    return mData.size();
 }
 
 std::string FPackage::GetData() const {
-    return {data_.begin(), data_.end()};
+    return {mData.begin(), mData.end()};
 }
 
 const std::vector<uint8_t> &FPackage::GetRawData() const {
-    return data_;
+    return mData;
 }

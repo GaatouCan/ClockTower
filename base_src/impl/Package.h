@@ -6,16 +6,17 @@
 #include <sstream>
 
 
-static constexpr uint32_t UNAVAILABLE_PACKAGE_ID = 1000;
+static constexpr uint32_t kUnavailablePackageId = 1000;
 
 enum class ECodecMethod : uint16_t {
     LINE_BASED,
     PROTOBUF
 };
 
-static constexpr auto DEFAULT_ENCODING_METHOD = ECodecMethod::PROTOBUF;
-
 class FPackage final : public IPackage {
+
+    static constexpr auto kDefaultEncodingMethod = ECodecMethod::PROTOBUF;
+
     friend class UPackageCodecImpl;
 
     struct FHeader {
@@ -29,8 +30,8 @@ class FPackage final : public IPackage {
         size_t size;
     };
 
-    FHeader header_;
-    std::vector<uint8_t> data_;
+    FHeader mHeader;
+    std::vector<uint8_t> mData;
 
 public:
     FPackage();

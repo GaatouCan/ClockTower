@@ -81,7 +81,7 @@ file(GLOB_RECURSE SOURCE_DIR
 )
 
 file(GLOB_RECURSE COMMON_SRC ${CMAKE_SOURCE_DIR}/src/common/*.h ${CMAKE_SOURCE_DIR}/src/common/*.cpp)
-file(GLOB_RECURSE BASE_SRC ${CMAKE_SOURCE_DIR}/base_src/*.h ${CMAKE_SOURCE_DIR}/base_src/*.cpp)
+file(GLOB_RECURSE BASE_SRC ${CMAKE_SOURCE_DIR}/base/*.h ${CMAKE_SOURCE_DIR}/base/*.cpp)
 file(GLOB_RECURSE SUB_SYSTEM_SRC ${CMAKE_SOURCE_DIR}/src/system/*.h ${CMAKE_SOURCE_DIR}/src/system/*.cpp)
 file(GLOB_RECURSE PLAYER_SRC ${CMAKE_SOURCE_DIR}/src/player/*.h ${CMAKE_SOURCE_DIR}/src/player/*.cpp)
 

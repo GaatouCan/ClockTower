@@ -2,7 +2,7 @@
 #include "../../base/impl/Package.h"
 #include "../../player/PlayerManager.h"
 #include "../manager/ManagerSystem.h"
-#include "../../common/ProtoType.h"
+#include "../ProtoType.h"
 
 #include <login.pb.h>
 #include <spdlog/spdlog.h>

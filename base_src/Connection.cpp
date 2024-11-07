@@ -21,8 +21,7 @@ UConnection::~UConnection() {
 void UConnection::ConnectToClient() {
     mDeadline = std::chrono::steady_clock::now() + sExpireTime;
 
-    spdlog::trace("{} - Connection from {} run in thread: {}", __func__, RemoteAddress().to_string(),
-                  ThreadIdToInt(mThreadId));
+    spdlog::trace("{} - Connection from {} run in thread: {}", __func__, RemoteAddress().to_string(), ThreadIdToInt(mThreadId));
     if (mHandler != nullptr)
         mHandler->OnConnected(shared_from_this());
 

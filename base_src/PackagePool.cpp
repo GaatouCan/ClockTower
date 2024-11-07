@@ -1,21 +1,21 @@
 ﻿#include "PackagePool.h"
-#include "../base/impl/Package.h"
-#include "../system/config/ConfigSystem.h"
+#include "impl/Package.h"
+#include "../src/system/config/ConfigSystem.h"
 
 #include <spdlog/spdlog.h>
 
 
-size_t UPackagePool::defaultCapacity = 64;
-size_t UPackagePool::minCapacity = 16;
+size_t UPackagePool::sDefaultCapacity = 64;
+size_t UPackagePool::sMinCapacity = 16;
 
-float UPackagePool::expanseRate = 0.3f;
-float UPackagePool::expanseScale = 1.f;
+float UPackagePool::sExpanseRate = 0.3f;
+float UPackagePool::sExpanseScale = 1.f;
 
-float UPackagePool::collectRate = 1.f;
-float UPackagePool::collectScale = 0.7f;
+float UPackagePool::sCollectRate = 1.f;
+float UPackagePool::sCollectScale = 0.7f;
 
-std::function<IPackage*()> UPackagePool::createPackage = nullptr;
-std::function<void(IPackage*)> UPackagePool::initPackage = nullptr;
+std::function<IPackage*()> UPackagePool::sCreatePackage = nullptr;
+std::function<void(IPackage*)> UPackagePool::sInitPackage = nullptr;
 
 IPackage *DefaultPackage() {
     return new FPackage();
@@ -47,17 +47,17 @@ void PackageDefaultInit(IPackage *pkg) {
 
 UPackagePool::UPackagePool(const size_t capacity) {
     for (size_t i = 0; i < capacity; i++) {
-        if (createPackage)
-            queue_.emplace(createPackage());
+        if (sCreatePackage)
+            mQueue.emplace(sCreatePackage());
         else
-            queue_.emplace(DefaultPackage());
+            mQueue.emplace(DefaultPackage());
     }
 }
 
 UPackagePool::~UPackagePool() {
-    while (!queue_.empty()) {
-        const auto pkg = queue_.front();
-        queue_.pop();
+    while (!mQueue.empty()) {
+        const auto pkg = mQueue.front();
+        mQueue.pop();
         delete pkg;
     }
 }
@@ -65,12 +65,12 @@ UPackagePool::~UPackagePool() {
 IPackage *UPackagePool::Acquire() {
     Expanse();
 
-    IPackage *pkg = queue_.front();
-    queue_.pop();
-    useCount_++;
+    IPackage *pkg = mQueue.front();
+    mQueue.pop();
+    mUseCount++;
 
-    if (initPackage)
-        initPackage(pkg);
+    if (sInitPackage)
+        sInitPackage(pkg);
     else
         PackageDefaultInit(pkg);
 
@@ -80,8 +80,8 @@ IPackage *UPackagePool::Acquire() {
 void UPackagePool::Recycle(IPackage *pkg) {
     if (pkg != nullptr) {
         pkg->Reset();
-        queue_.push(pkg);
-        useCount_--;
+        mQueue.push(pkg);
+        mUseCount--;
     }
 
     Collect();
@@ -113,72 +113,72 @@ void UPackagePool::LoadConfig(const YAML::Node &cfg) {
 }
 
 void UPackagePool::SetDefaultCapacity(const size_t capacity) {
-    defaultCapacity = capacity;
+    sDefaultCapacity = capacity;
 }
 
 void UPackagePool::SetMinimumCapacity(const size_t capacity) {
-    minCapacity = capacity;
+    sMinCapacity = capacity;
 }
 
 void UPackagePool::SetExpanseRate(const float rate) {
-    expanseRate = rate;
+    sExpanseRate = rate;
 }
 
 void UPackagePool::SetExpanseScale(const float scale) {
-    expanseScale = scale;
+    sExpanseScale = scale;
 }
 
 void UPackagePool::SetCollectRate(const float rate) {
-    collectRate = rate;
+    sCollectRate = rate;
 }
 
 void UPackagePool::SetCollectScale(const float scale) {
-    collectScale = scale;
+    sCollectScale = scale;
 }
 
 void UPackagePool::SetPackageBuilder(const std::function<IPackage *()> &func) {
-    createPackage = func;
+    sCreatePackage = func;
 }
 
 void UPackagePool::SetPackageInitializer(const std::function<void(IPackage *)> &func) {
-    initPackage = func;
+    sInitPackage = func;
 }
 
 void UPackagePool::Expanse() {
-    if (useCount_ == 0)
+    if (mUseCount == 0)
         return;
 
-    if (std::floor(queue_.size() / useCount_) >= expanseRate)
+    if (std::floor(mQueue.size() / mUseCount) >= sExpanseRate)
         return;
 
-    const auto num = static_cast<size_t>(std::ceil(static_cast<float>(useCount_) * expanseScale));
-    spdlog::trace("{} - Pool rest: {}, current using: {}, expand number: {}.", __func__, queue_.size(), useCount_, num);
+    const auto num = static_cast<size_t>(std::ceil(static_cast<float>(mUseCount) * sExpanseScale));
+    spdlog::trace("{} - Pool rest: {}, current using: {}, expand number: {}.", __func__, mQueue.size(), mUseCount, num);
 
     for (size_t i = 0; i < num; i++)
-        if (createPackage)
-            queue_.emplace(createPackage());
+        if (sCreatePackage)
+            mQueue.emplace(sCreatePackage());
         else
-            queue_.emplace(DefaultPackage());
+            mQueue.emplace(DefaultPackage());
 }
 
 void UPackagePool::Collect() {
     const auto now = std::chrono::steady_clock::now();
 
     // 不要太频繁
-    if (now - collectTime_ < std::chrono::seconds(3))
+    if (now - mCollectTime < std::chrono::seconds(3))
         return;
 
-    if (queue_.size() <= minCapacity || std::floor(queue_.size() / (useCount_ == 0 ? 1 : useCount_)) < collectRate)
+    if (mQueue.size() <= sMinCapacity || std::floor(mQueue.size() / (mUseCount == 0 ? 1 : mUseCount)) < sCollectRate)
         return;
 
-    collectTime_ = now;
+    mCollectTime = now;
 
-    const auto num = static_cast<size_t>(std::ceil(static_cast<float>(queue_.size()) * collectScale));
-    spdlog::trace("{} - Pool rest: {}, current using: {}, collect number: {}.", __func__, queue_.size(), useCount_, num);
+    const auto num = static_cast<size_t>(std::ceil(static_cast<float>(mQueue.size()) * sCollectScale));
+    spdlog::trace("{} - Pool rest: {}, current using: {}, collect number: {}.", __func__, mQueue.size(), mUseCount, num);
 
-    for (size_t i = 0; i < num && queue_.size() > minCapacity; i++) {
-        const auto pkg = queue_.front();
-        queue_.pop();
+    for (size_t i = 0; i < num && mQueue.size() > sMinCapacity; i++) {
+        const auto pkg = mQueue.front();
+        mQueue.pop();
         delete pkg;
     }
 }

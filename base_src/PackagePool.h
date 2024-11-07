@@ -1,6 +1,7 @@
 ﻿#pragma once
 
-#include "../common/common.h"
+#include "common.h"
+#include "Object.h"
 
 #include <queue>
 #include <yaml-cpp/yaml.h>
@@ -12,29 +13,30 @@ class IPackage;
  * 数据包池
  * @attention 单线程下使用 设计为一个数据包池对应一个线程下的io_context
  */
-class UPackagePool final {
-    std::queue<IPackage *> queue_;
-    size_t useCount_ = 0;
-    ATimePoint collectTime_;
+class UPackagePool final : public UObject {
+
+    std::queue<IPackage *> mQueue;
+    size_t mUseCount = 0;
+    ATimePoint mCollectTime;
 
     // 扩容和收缩临界点和比例
     // 每个线程下的数据包池行为目前设计为一致
 
-    static size_t defaultCapacity;
-    static size_t minCapacity;
+    static size_t sDefaultCapacity;
+    static size_t sMinCapacity;
 
-    static float expanseRate;
-    static float expanseScale;
+    static float sExpanseRate;
+    static float sExpanseScale;
 
-    static float collectRate;
-    static float collectScale;
+    static float sCollectRate;
+    static float sCollectScale;
 
-    static std::function<IPackage*()> createPackage;
-    static std::function<void(IPackage*)> initPackage;
+    static std::function<IPackage*()> sCreatePackage;
+    static std::function<void(IPackage*)> sInitPackage;
 
 public:
-    explicit UPackagePool(size_t capacity = defaultCapacity);
-    ~UPackagePool();
+    explicit UPackagePool(size_t capacity = sDefaultCapacity);
+    ~UPackagePool() override;
 
     DISABLE_COPY_MOVE(UPackagePool)
 

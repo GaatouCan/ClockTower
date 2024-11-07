@@ -1,22 +1,23 @@
 #pragma once
 
-#include "../common/common.h"
+#include "common.h"
 
 
 using ATimerID = uint64_t;
 using ATimerFunctor = std::function<void()>;
 
 class URepeatedTimer final {
-    asio::io_context &ctx_;
-    ASteadyTimer timer_;
 
-    ATimerID id_;
-    ATimerFunctor func_;
+    asio::io_context &mContext;
+    ASteadyTimer mTimer;
 
-    std::chrono::duration<uint32_t> expire_;
-    bool loop_;
+    ATimerID mTimerId;
+    ATimerFunctor mFunctor;
 
-    std::atomic<bool> running_;
+    std::chrono::duration<uint32_t> mExpire;
+    bool bLoop;
+
+    std::atomic<bool> bRunning;
 
 public:
     URepeatedTimer() = delete;
@@ -30,12 +31,16 @@ public:
     [[nodiscard]] ATimerID GetTimerID() const;
 
     URepeatedTimer &SetExpireTime(std::chrono::duration<uint32_t> expire);
-
     URepeatedTimer &SetLoop(bool loop);
 
-    template<typename FUNCTOR, typename... ARGS>
-    URepeatedTimer &SetCallback(FUNCTOR &&func, ARGS &&... args) {
-        func_ = [func = std::forward<FUNCTOR>(func), ...args = std::forward<ARGS>(args)] {
+    [[nodiscard]] bool IsLoop() const;
+    [[nodiscard]] bool IsRunning() const;
+
+    [[nodiscard]] bool IsLooping() const;
+
+    template<typename Functor, typename... Args>
+    URepeatedTimer &SetCallback(Functor &&func, Args &&... args) {
+        mFunctor = [func = std::forward<Functor>(func), ...args = std::forward<Args>(args)] {
             std::invoke(func, args...);
         };
         return *this;

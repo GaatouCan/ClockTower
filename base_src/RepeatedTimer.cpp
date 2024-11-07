@@ -4,12 +4,12 @@
 
 
 URepeatedTimer::URepeatedTimer(asio::io_context &ctx)
-    : ctx_(ctx),
-      timer_(ctx_),
-      id_(0),
-      expire_(std::chrono::seconds(0)),
-      loop_(false),
-      running_(false) {
+    : mContext(ctx),
+      mTimer(mContext),
+      mTimerId(0),
+      mExpire(std::chrono::seconds(0)),
+      bLoop(false),
+      bRunning(false) {
 }
 
 URepeatedTimer::~URepeatedTimer() {
@@ -17,48 +17,62 @@ URepeatedTimer::~URepeatedTimer() {
 }
 
 URepeatedTimer &URepeatedTimer::SetTimerID(const ATimerID id) {
-    id_ = id;
+    mTimerId = id;
     return *this;
 }
 
 ATimerID URepeatedTimer::GetTimerID() const {
-    return id_;
+    return mTimerId;
 }
 
 URepeatedTimer &URepeatedTimer::SetExpireTime(const std::chrono::duration<uint32_t> expire) {
-    expire_ = expire;
+    mExpire = expire;
     return *this;
 }
 
 URepeatedTimer &URepeatedTimer::SetLoop(const bool loop) {
-    loop_ = loop;
+    bLoop = loop;
     return *this;
 }
 
+bool URepeatedTimer::IsLoop() const {
+    return bLoop;
+}
+
+bool URepeatedTimer::IsRunning() const {
+    return bRunning;
+}
+
+bool URepeatedTimer::IsLooping() const {
+    return bLoop && bRunning;
+}
+
 URepeatedTimer &URepeatedTimer::Start() {
-    if (expire_.count() == 0)
+    if (mExpire.count() == 0)
         return *this;
 
-    if (running_)
+    if (bRunning)
         return *this;
 
-    if (!func_)
+    if (!mFunctor)
         return *this;
 
-    co_spawn(ctx_, [this]() mutable -> awaitable<void> {
+    co_spawn(mContext, [this]() mutable -> awaitable<void> {
         try {
-            running_ = true;
+            bRunning = true;
             ATimePoint point = std::chrono::steady_clock::now();
 
             do {
-                point += expire_;
-                timer_.expires_at(point);
-                co_await timer_.async_wait();
-                if (running_)
-                    std::invoke(func_);
-            } while (running_ && loop_);
+                point += mExpire;
+                mTimer.expires_at(point);
 
-            running_ = false;
+                co_await mTimer.async_wait();
+
+                if (bRunning)
+                    std::invoke(mFunctor);
+            } while (bRunning && bLoop);
+
+            bRunning = false;
         } catch (std::exception &e) {
             spdlog::warn("RepeatedTimer::Start: {}", e.what());
         }
@@ -68,10 +82,10 @@ URepeatedTimer &URepeatedTimer::Start() {
 }
 
 URepeatedTimer &URepeatedTimer::Stop() {
-    if (!running_)
+    if (!bRunning)
         return *this;
 
-    running_ = false;
-    timer_.cancel();
+    bRunning = false;
+    mTimer.cancel();
     return *this;
 }

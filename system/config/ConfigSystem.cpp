@@ -1,5 +1,5 @@
 #include "ConfigSystem.h"
-#include "../../common/utils.h"
+#include "../../base/utils.h"
 
 #include <fstream>
 #include <spdlog/spdlog.h>
@@ -31,7 +31,7 @@ void UConfigSystem::Init() {
             filepath = StringReplace(filepath, '\\', '.');
 
             mConfigMap[filepath] = nlohmann::json::parse(fs);
-            spdlog::info("\tloaded {}.", filepath);
+            spdlog::info("\tLoaded {}.", filepath);
         }
     });
 }

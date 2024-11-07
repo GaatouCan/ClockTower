@@ -2,7 +2,9 @@
 
 #include <memory>
 
-class ICharacter : public std::enable_shared_from_this<ICharacter> {
+#include "Object.h"
+
+class ICharacter : public std::enable_shared_from_this<ICharacter>, public UObject {
 public:
-    virtual ~ICharacter() = default;
+    ~ICharacter() override = default;
 };

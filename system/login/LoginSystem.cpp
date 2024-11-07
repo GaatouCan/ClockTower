@@ -7,7 +7,7 @@
 
 
 void ULoginSystem::Init() {
-    if (handler_ == nullptr) {
+    if (mHandler == nullptr) {
         SetHandler<ULoginHandlerImpl>();
     }
 }
@@ -23,12 +23,12 @@ uint64_t ULoginSystem::VerifyToken(uint64_t pid, const std::string &token) {
 }
 
 awaitable<void> ULoginSystem::OnLogin(const std::shared_ptr<UConnection> &conn, IPackage *pkg) {
-    if (handler_ == nullptr) {
+    if (mHandler == nullptr) {
         spdlog::critical("{} - handler not set.", __func__);
         co_return;
     }
 
-    const auto info = handler_->ParseLoginInfo(pkg);
+    const auto info = mHandler->ParseLoginInfo(pkg);
     if (info.pid == 0) {
         spdlog::warn("{} - Connection[{}] context is null but not receive the login request", conn->RemoteAddress().to_string(), __func__);
         co_return;
@@ -37,6 +37,6 @@ awaitable<void> ULoginSystem::OnLogin(const std::shared_ptr<UConnection> &conn, 
     spdlog::trace("{} - Player id: {}, token: {}", __func__, info.pid, info.token);
     if (const auto pid = VerifyToken(info.pid, info.token); pid != 0) {
         conn->SetContext(std::make_any<uint64_t>(pid));
-        co_await handler_->OnPlayerLogin(conn, info);
+        co_await mHandler->OnPlayerLogin(conn, info);
     }
 }

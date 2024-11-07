@@ -21,12 +21,12 @@ public:
     template<typename T>
     requires std::derived_from<T, ILoginHandler>
     void SetHandler() {
-        if (handler_ != nullptr) {
-            handler_.reset();
+        if (mHandler != nullptr) {
+            mHandler.reset();
         }
-        handler_ = std::make_unique<T>();
+        mHandler = std::make_unique<T>();
     }
 
 private:
-    std::unique_ptr<ILoginHandler> handler_;
+    std::unique_ptr<ILoginHandler> mHandler;
 };

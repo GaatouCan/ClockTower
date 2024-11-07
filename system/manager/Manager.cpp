@@ -2,31 +2,31 @@
 
 
 IManager::IManager(asio::io_context &ctx)
-    : ctx_(ctx) {
+    : mIOContext(ctx) {
 }
 
 void IManager::SetThreadID(const AThreadID tid) {
-    tid_ = tid;
+    mThreadId = tid;
 }
 
 AThreadID IManager::GetThreadID() const {
-    return tid_;
+    return mThreadId;
 }
 
 bool IManager::IsSameThread() const {
-    return tid_ == std::this_thread::get_id();
+    return mThreadId == std::this_thread::get_id();
 }
 
 void IManager::OnTick(ATimePoint now) {
 }
 
 asio::io_context &IManager::GetIOContext() const {
-    return ctx_;
+    return mIOContext;
 }
 
-void IManager::StopTimer(const uint64_t timerID) {
-    if (const auto iter = timerMap_.find(timerID); iter != timerMap_.end()) {
+void IManager::StopTimer(const ATimerID timerID) {
+    if (const auto iter = mTimerMap.find(timerID); iter != mTimerMap.end()) {
         iter->second.Stop();
-        timerMap_.erase(iter);
+        mTimerMap.erase(iter);
     }
 }

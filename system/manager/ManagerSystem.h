@@ -19,13 +19,13 @@ class UManagerSystem final : public ISubSystem {
 public:
     template<MANAGER_TYPE T>
         void CreateManager() {
-        mgrMap_[typeid(T)] = new T(ctx_);
+        mManagerMap[typeid(T)] = new T(mIOContext);
         spdlog::info("{} - Loaded Manager: {}", __func__, typeid(T).name());
     }
 
     template<MANAGER_TYPE T>
     T *GetManager() {
-        if (const auto it = mgrMap_.find(typeid(T)); it != mgrMap_.end()) {
+        if (const auto it = mManagerMap.find(typeid(T)); it != mManagerMap.end()) {
             return dynamic_cast<T *>(it->second);
         }
         return nullptr;
@@ -35,13 +35,13 @@ public:
     [[nodiscard]] bool InManagerThread() const;
 
 private:
-    std::unordered_map<std::type_index, IManager *> mgrMap_;
+    std::unordered_map<std::type_index, IManager *> mManagerMap;
 
-    asio::io_context ctx_;
-    ASteadyTimer timer_;
+    asio::io_context mIOContext;
+    ASteadyTimer mTickTimer;
 
-    std::thread mgrThread_;
-    AThreadID tid_;
+    std::thread mManagerThread;
+    AThreadID mManagerThreadId;
 };
 
 #define REGISTER_MANAGER(mgr) \

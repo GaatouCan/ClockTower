@@ -1,23 +1,24 @@
 ﻿#pragma once
 
-#include "../../common/common.h"
+#include "../../base/common.h"
 #include "../../base/RepeatedTimer.h"
-#include "../../common/utils.h"
+#include "../../base/utils.h"
 
 #include <spdlog/spdlog.h>
 
 
-class IManager {
-    asio::io_context &ctx_;
-    AThreadID tid_;
+class IManager : public UObject {
 
-    std::unordered_map<uint64_t, URepeatedTimer> timerMap_;
+    asio::io_context &mIOContext;
+    AThreadID mThreadId;
+
+    std::unordered_map<ATimerID, URepeatedTimer> mTimerMap;
 
 public:
     IManager() = delete;
 
     explicit IManager(asio::io_context &ctx);
-    virtual ~IManager() = default;
+    ~IManager() override = default;
 
     void SetThreadID(AThreadID tid);
     [[nodiscard]] AThreadID GetThreadID() const;
@@ -30,9 +31,9 @@ public:
 
     [[nodiscard]] asio::io_context &GetIOContext() const;
 
-    template<typename FUNC, typename... ARGS>
-    void RunInThread(FUNC &&func, ARGS &&... args) {
-        co_spawn(ctx_, [func = std::forward<FUNC>(func), ...args = std::forward<ARGS>(args)]() -> awaitable<void> {
+    template<typename Functor, typename... Args>
+    void RunInThread(Functor &&func, Args &&... args) {
+        co_spawn(mIOContext, [func = std::forward<Functor>(func), ...args = std::forward<Args>(args)]() -> awaitable<void> {
             try {
                 std::invoke(func, args...);
             } catch (std::exception &e) {
@@ -42,15 +43,15 @@ public:
         }, detached);
     }
 
-    template<typename FUNC, typename... ARGS>
-    uint64_t SetTimer(const std::chrono::duration<uint32_t> expire, const bool repeat, FUNC &&func, ARGS &&... args) {
+    template<typename Functor, typename... Args>
+    ATimerID SetTimer(const std::chrono::duration<uint32_t> expire, const bool repeat, Functor &&func, Args &&... args) {
         const uint64_t timerID = UnixTime();
-        if (auto [iter, res] = timerMap_.insert_or_assign(timerID, ctx_); res) {
+        if (auto [iter, res] = mTimerMap.insert_or_assign(timerID, mIOContext); res) {
             iter->second
                     .SetTimerID(timerID)
                     .SetExpireTime(expire)
                     .SetLoop(repeat)
-                    .SetCallback(std::forward<FUNC>(func), std::forward<ARGS>(args)...);
+                    .SetCallback(std::forward<Functor>(func), std::forward<Args>(args)...);
 
             iter->second.Start();
             return timerID;
@@ -58,7 +59,7 @@ public:
         return 0;
     }
 
-    void StopTimer(uint64_t timerID);
+    void StopTimer(ATimerID timerID);
 };
 
 template<typename T>

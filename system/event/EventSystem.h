@@ -2,9 +2,8 @@
 
 #include "../../base/SubSystem.h"
 #include "EventParam.h"
-#include "../../common/Event.h"
+#include "../../src/common/Event.h"
 
-#include <memory>
 #include <queue>
 #include <mutex>
 #include <shared_mutex>
@@ -49,16 +48,16 @@ public:
     void RemoveListener(EEvent event, void *ptr);
 
 private:
-    struct EventNode {
+    struct FEventNode {
         EEvent event = EEvent::UNAVAILABLE;
         IEventParam *param = nullptr;
     };
 
-    std::queue<EventNode> queue_;
-    std::mutex eventMutex_;
-    mutable std::shared_mutex sharedMutex_;
+    std::queue<FEventNode> mEventQueue;
+    std::mutex mEventMutex;
+    mutable std::shared_mutex mSharedMutex;
 
-    std::map<EEvent, std::map<void *, EventListener> > listenerMap_;
-    std::map<void *, EventListener> curListener_;
-    std::mutex listenerMutex_;
+    std::map<EEvent, std::map<void *, EventListener> > mListenerMap;
+    std::map<void *, EventListener> mCurrentListener;
+    std::mutex mListenerMutex;
 };

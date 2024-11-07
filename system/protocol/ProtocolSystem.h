@@ -24,17 +24,17 @@ public:
     template<typename T>
     requires std::derived_from<T, IProtocolHandler>
     void SetHandler() {
-        if (handler_ != nullptr)
-            handler_.reset();
+        if (mHandler != nullptr)
+            mHandler.reset();
 
-        handler_ = std::make_unique<T>();
+        mHandler = std::make_unique<T>();
     }
 
     awaitable<void> OnReadPackage(const std::shared_ptr<UConnection> &conn, IPackage *pkg) const;
 
 private:
-    std::unordered_map<EProtoType, AProtoFunctor> protoMap_;
-    std::unique_ptr<IProtocolHandler> handler_;
+    std::unordered_map<EProtoType, AProtoFunctor> mProtoMap;
+    std::unique_ptr<IProtocolHandler> mHandler;
 };
 
 #define REGISTER_PROTOCOL(proto) \

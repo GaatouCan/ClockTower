@@ -7,11 +7,11 @@ UEventSystem::UEventSystem() {
 
 
 UEventSystem::~UEventSystem() {
-    listenerMap_.clear();
+    mListenerMap.clear();
 
-    while (!queue_.empty()) {
-        auto &[event, param] = queue_.front();
-        queue_.pop();
+    while (!mEventQueue.empty()) {
+        auto &[event, param] = mEventQueue.front();
+        mEventQueue.pop();
         delete param;
     }
 }
@@ -21,10 +21,10 @@ void UEventSystem::Init() {
 
 awaitable<void> UEventSystem::HandleEvent() {
     while (!IsQueueEmpty()) {
-        EventNode node; {
-            std::scoped_lock lock(eventMutex_);
-            node = queue_.front();
-            queue_.pop();
+        FEventNode node; {
+            std::scoped_lock lock(mEventMutex);
+            node = mEventQueue.front();
+            mEventQueue.pop();
         }
 
         if (node.event == EEvent::UNAVAILABLE) {
@@ -32,17 +32,17 @@ awaitable<void> UEventSystem::HandleEvent() {
             continue;
         }
 
-        curListener_.clear();
+        mCurrentListener.clear();
 
         // 拷贝一份map 减少锁的范围 可以在调用事件处理函数时修改注册map
         {
-            std::scoped_lock lock(listenerMutex_);
-            if (const auto iter = listenerMap_.find(node.event); iter != listenerMap_.end()) {
-                curListener_ = iter->second;
+            std::scoped_lock lock(mListenerMutex);
+            if (const auto iter = mListenerMap.find(node.event); iter != mListenerMap.end()) {
+                mCurrentListener = iter->second;
             }
         }
 
-        for (const auto &listener: std::views::values(curListener_)) {
+        for (const auto &listener: std::views::values(mCurrentListener)) {
             std::invoke(listener, node.param);
         }
 
@@ -53,14 +53,14 @@ awaitable<void> UEventSystem::HandleEvent() {
 }
 
 bool UEventSystem::IsQueueEmpty() const {
-    std::shared_lock lock(sharedMutex_);
-    return queue_.empty();
+    std::shared_lock lock(mSharedMutex);
+    return mEventQueue.empty();
 }
 
 void UEventSystem::Dispatch(const EEvent event, IEventParam *parma) {
     const bool empty = IsQueueEmpty(); {
-        std::scoped_lock lock(eventMutex_);
-        queue_.emplace(event, parma);
+        std::scoped_lock lock(mEventMutex);
+        mEventQueue.emplace(event, parma);
     }
 
     if (empty)
@@ -71,24 +71,24 @@ void UEventSystem::RegisterListener(const EEvent event, void *ptr, const EventLi
     if (event == EEvent::UNAVAILABLE || ptr == nullptr)
         return;
 
-    std::scoped_lock lock(listenerMutex_);
-    if (!listenerMap_.contains(event))
-        listenerMap_[event] = std::map<void *, EventListener>();
+    std::scoped_lock lock(mListenerMutex);
+    if (!mListenerMap.contains(event))
+        mListenerMap[event] = std::map<void *, EventListener>();
 
-    listenerMap_[event][ptr] = listener;
+    mListenerMap[event][ptr] = listener;
 }
 
 void UEventSystem::RemoveListener(const EEvent event, void *ptr) {
     if (ptr == nullptr)
         return;
 
-    std::scoped_lock lock(listenerMutex_);
+    std::scoped_lock lock(mListenerMutex);
     if (event == EEvent::UNAVAILABLE) {
-        for (auto &val: std::views::values(listenerMap_)) {
+        for (auto &val: std::views::values(mListenerMap)) {
             val.erase(ptr);
         }
     } else {
-        if (const auto iter = listenerMap_.find(event); iter != listenerMap_.end()) {
+        if (const auto iter = mListenerMap.find(event); iter != mListenerMap.end()) {
             iter->second.erase(ptr);
         }
     }

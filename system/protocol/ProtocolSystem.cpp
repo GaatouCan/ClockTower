@@ -9,23 +9,23 @@ UProtocolSystem::UProtocolSystem() {
 }
 
 void UProtocolSystem::Init() {
-    if (handler_ == nullptr)
+    if (mHandler == nullptr)
         SetHandler<ProtocolHandlerImpl>();
 }
 
 void UProtocolSystem::RegisterProtocol(const EProtoType type, const AProtoFunctor &func) {
-    protoMap_[type] = func;
+    mProtoMap[type] = func;
 }
 
 AProtoFunctor UProtocolSystem::Find(const EProtoType proto) const {
-    if (const auto it = protoMap_.find(proto); it != protoMap_.end()) {
+    if (const auto it = mProtoMap.find(proto); it != mProtoMap.end()) {
         return it->second;
     }
     return AProtoFunctor();
 }
 
 awaitable<void> UProtocolSystem::OnReadPackage(const std::shared_ptr<UConnection> &conn, IPackage *pkg) const {
-    if (handler_ == nullptr) {
+    if (mHandler == nullptr) {
         spdlog::critical("{} - handler not set.", __func__);
         co_return;
     }
@@ -42,7 +42,7 @@ awaitable<void> UProtocolSystem::OnReadPackage(const std::shared_ptr<UConnection
 
 
     if (const auto func = Find(static_cast<EProtoType>(pkg->GetID())); func) {
-        co_await handler_->Execute(func, conn, pkg);
+        co_await mHandler->Execute(func, conn, pkg);
     } else {
         spdlog::warn("{} - Package[{}] Protocol functor unavailable.", __func__, pkg->GetID());
     }

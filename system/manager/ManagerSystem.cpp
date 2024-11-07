@@ -5,50 +5,50 @@
 
 
 UManagerSystem::UManagerSystem()
-    : timer_(ctx_) {
+    : mTickTimer(mIOContext) {
 
 }
 
 UManagerSystem::~UManagerSystem() {
-    if (mgrThread_.joinable())
-        mgrThread_.join();
+    if (mManagerThread.joinable())
+        mManagerThread.join();
 
-    timer_.cancel();
+    mTickTimer.cancel();
 
-    if (!ctx_.stopped())
-        ctx_.stop();
+    if (!mIOContext.stopped())
+        mIOContext.stop();
 
-    for (const auto mgr: std::views::values(mgrMap_))
+    for (const auto mgr: std::views::values(mManagerMap))
         delete mgr;
 }
 
 void UManagerSystem::Init() {
     LoadManager(this);
 
-    mgrThread_ = std::thread([this] {
-        tid_ = std::this_thread::get_id();
-        asio::signal_set signals(ctx_, SIGINT, SIGTERM);
+    mManagerThread = std::thread([this] {
+        mManagerThreadId = std::this_thread::get_id();
+        asio::signal_set signals(mIOContext, SIGINT, SIGTERM);
         signals.async_wait([&](auto, auto) {
-            ctx_.stop();
+            mIOContext.stop();
         });
 
-        for (const auto mgr: std::views::values(mgrMap_))
-            mgr->SetThreadID(tid_);
+        for (const auto mgr: std::views::values(mManagerMap))
+            mgr->SetThreadID(mManagerThreadId);
 
-        ctx_.run();
+        mIOContext.run();
     });
 
-    co_spawn(ctx_, [this]() mutable -> awaitable<void> {
+    co_spawn(mIOContext, [this]() mutable -> awaitable<void> {
         try {
             ATimePoint point = std::chrono::steady_clock::now();
             point = std::chrono::floor<std::chrono::seconds>(point);
 
-            while (!ctx_.stopped()) {
+            while (!mIOContext.stopped()) {
                 point += std::chrono::seconds(1);
-                timer_.expires_at(point);
-                co_await timer_.async_wait();
+                mTickTimer.expires_at(point);
+                co_await mTickTimer.async_wait();
 
-                for (const auto mgr: std::views::values(mgrMap_))
+                for (const auto mgr: std::views::values(mManagerMap))
                     mgr->OnTick(point);
             }
         } catch (std::exception &e) {
@@ -58,9 +58,9 @@ void UManagerSystem::Init() {
 }
 
 AThreadID UManagerSystem::GetThreadID() const {
-    return tid_;
+    return mManagerThreadId;
 }
 
 bool UManagerSystem::InManagerThread() const {
-    return tid_ == std::this_thread::get_id();
+    return mManagerThreadId == std::this_thread::get_id();
 }

@@ -3,13 +3,12 @@
 #include <cassert>
 
 
-void TraverseFolder(const std::string &folder,
-                    const std::function<void(const std::filesystem::directory_entry &)> &func) {
+void TraverseFolder(const std::string &folder, const std::function<void(const std::filesystem::directory_entry &)> &func) {
     for (const auto &entry: std::filesystem::directory_iterator(folder)) {
         if (entry.is_directory()) {
             TraverseFolder(entry.path().string(), func);
         } else {
-            func(entry);
+            std::invoke(func, entry);
         }
     }
 }

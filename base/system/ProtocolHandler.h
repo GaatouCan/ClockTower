@@ -3,7 +3,7 @@
 #include <asio.hpp>
 
 #include "ProtoType.h"
-#include "../base/Object.h"
+#include "../Object.h"
 
 class IPackage;
 class UConnection;

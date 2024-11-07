@@ -1,15 +1,15 @@
 #pragma once
 
-#include "../../base/SubSystem.h"
-#include "../../base/GameWorld.h"
+#include "../../SubSystem.h"
+#include "../../GameWorld.h"
 
 #include <spdlog/spdlog.h>
 #include <yaml-cpp/yaml.h>
 #include <nlohmann/json.hpp>
 
 
-constexpr auto SERVER_CONFIG_FILE = "/server.yaml";
-constexpr auto SERVER_CONFIG_JSON = "/json";
+constexpr auto kServerConfigFile = "/server.yaml";
+constexpr auto kServerConfigJSON = "/json";
 
 class UConfigSystem final : public ISubSystem {
 

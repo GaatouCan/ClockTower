@@ -1,14 +1,14 @@
 #include "ConfigSystem.h"
-#include "../../base/utils.h"
+#include "../../utils.h"
 
 #include <fstream>
 #include <spdlog/spdlog.h>
 
 
 void UConfigSystem::Init() {
-    spdlog::info("Using configuration file: {}.", mYAMLPath + SERVER_CONFIG_FILE);
+    spdlog::info("Using configuration file: {}.", mYAMLPath + kServerConfigFile);
 
-    mConfig = YAML::LoadFile(mYAMLPath + SERVER_CONFIG_FILE);
+    mConfig = YAML::LoadFile(mYAMLPath + kServerConfigFile);
 
     assert(!mConfig.IsNull());
     spdlog::info("Checking configuration file.");
@@ -17,7 +17,7 @@ void UConfigSystem::Init() {
     assert(!mConfig["server"]["port"].IsNull());
     assert(!mConfig["server"]["work_thread"].IsNull());
 
-    const std::string jsonPath = !mJSONPath.empty() ? mJSONPath : mYAMLPath + SERVER_CONFIG_JSON;
+    const std::string jsonPath = !mJSONPath.empty() ? mJSONPath : mYAMLPath + kServerConfigJSON;
 
     TraverseFolder(jsonPath, [this, jsonPath](const std::filesystem::directory_entry &entry) {
         if (entry.path().extension().string() == ".json") {

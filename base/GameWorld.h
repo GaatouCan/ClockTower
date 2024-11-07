@@ -7,6 +7,7 @@
 
 #include <typeindex>
 
+using AConnectionFilter = std::function<void(const AConnectionPointer&)>;
 
 UGameWorld &GetWorld();
 
@@ -37,7 +38,7 @@ class UGameWorld final {
     std::priority_queue<FSystemPriority, std::vector<FSystemPriority>, std::less<> > mDestPriority;
     std::unordered_map<std::type_index, ISubSystem *> mSystemMap;
 
-    std::function<void(const AConnectionPointer &)> mConnectionFilter;
+    AConnectionFilter mConnectionFilter;
 
     AThreadID mMainThreadId;
 
@@ -54,7 +55,7 @@ public:
     UGameWorld &Run();
     UGameWorld &Shutdown();
 
-    void HandleConnection(const std::function<void(const AConnectionPointer &)> &handler);
+    void FilterConnection(AConnectionFilter filter);
 
     void RemoveConnection(const std::string &key);
 
@@ -64,22 +65,6 @@ public:
 
     AThreadID GetThreadID() const;
 
-    template<SYSTEM_TYPE T>
-    T *GetSystem() noexcept {
-        if (const auto iter = mSystemMap.find(typeid(T)); iter != mSystemMap.end())
-            return dynamic_cast<T *>(iter->second);
-        return nullptr;
-    }
-
-    template<SYSTEM_TYPE T>
-    class TSystemRegister {
-    public:
-        explicit TSystemRegister(const int priority = 0) {
-            GetWorld().CreateSystem<T>(priority);
-        }
-    };
-
-private:
     template<SYSTEM_TYPE T>
     T *CreateSystem(const int priority = 0) {
         if (bInited)
@@ -94,16 +79,16 @@ private:
         return res;
     }
 
+    template<SYSTEM_TYPE T>
+    T *GetSystem() noexcept {
+        if (const auto iter = mSystemMap.find(typeid(T)); iter != mSystemMap.end())
+            return dynamic_cast<T *>(iter->second);
+        return nullptr;
+    }
+
+private:
     awaitable<void> WaitForConnect();
 };
-
-/**
- * 在GameWorld初始化之前注册子系统
- * @param sys 子系统类型
- * @param priority 值越低约先初始化
- */
-#define REGISTER_SYSTEM(sys, priority) \
-    static UGameWorld::TSystemRegister<sys> g_##sys##_register(priority);
 
 inline UGameWorld &GetWorld() {
     static UGameWorld world;

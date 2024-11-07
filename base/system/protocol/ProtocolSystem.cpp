@@ -1,16 +1,15 @@
 #include "ProtocolSystem.h"
-#include "../impl/ProtocolHandlerImpl.h"
-#include "../../player/Player.h"
-#include "../../common/proto_def.h"
+#include "../../Package.h"
 
+// #include "../impl/ProtocolHandlerImpl.h"
+// #include "../../player/Player.h"
+// #include "../../common/proto_def.h"
 
-UProtocolSystem::UProtocolSystem() {
-    LoadProtocol(this);
-}
+#include <spdlog/spdlog.h>
+
 
 void UProtocolSystem::Init() {
-    if (mHandler == nullptr)
-        SetHandler<ProtocolHandlerImpl>();
+
 }
 
 void UProtocolSystem::RegisterProtocol(const EProtoType type, const AProtoFunctor &func) {

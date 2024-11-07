@@ -1,30 +1,33 @@
 ﻿#include "GameWorld.h"
 
 #include "utils.h"
-#include "impl/PackageCodecImpl.h"
-#include "impl/ConnectionHandlerImpl.h"
+// #include "impl/PackageCodecImpl.h"
+// #include "impl/ConnectionHandlerImpl.h"
 
-#include "../system/config/ConfigSystem.h"
-#include "../system/protocol/ProtocolSystem.h"
-#include "../system/manager/ManagerSystem.h"
-#include "../system/database/DatabaseSystem.h"
-#include "../system/login/LoginSystem.h"
-#include "../system/event/EventSystem.h"
+#include "system/config/ConfigSystem.h"
+#include "system/protocol/ProtocolSystem.h"
+#include "system/manager/ManagerSystem.h"
+#include "system/database/DatabaseSystem.h"
+#include "system/login/LoginSystem.h"
+#include "system/event/EventSystem.h"
 
 #include <spdlog/spdlog.h>
 
-REGISTER_SYSTEM(UConfigSystem, 0)
-REGISTER_SYSTEM(UProtocolSystem, 1)
-REGISTER_SYSTEM(ULoginSystem, 2)
-// REGISTER_SYSTEM(UDatabaseSystem, 9)
-REGISTER_SYSTEM(UManagerSystem, 10)
-REGISTER_SYSTEM(UEventSystem, 11)
 
 UGameWorld::UGameWorld()
     : mAcceptor(mContext),
       mFullTimer(mContext),
+      mConnectionFilter(nullptr),
       bInited(false),
       bRunning(false) {
+
+    // Create Necessary Sub System
+    CreateSystem<UConfigSystem>(0);
+    CreateSystem<UProtocolSystem>(1);
+    CreateSystem<ULoginSystem>(2);
+    CreateSystem<UDatabaseSystem>(9);
+    CreateSystem<UManagerSystem>(10);
+    CreateSystem<UEventSystem>(11);
 }
 
 UGameWorld::~UGameWorld() {
@@ -110,8 +113,8 @@ UGameWorld &UGameWorld::Shutdown() {
     return *this;
 }
 
-void UGameWorld::HandleConnection(const std::function<void(const AConnectionPointer &)> &handler) {
-    mConnectionFilter = handler;
+void UGameWorld::FilterConnection(const AConnectionFilter filter) {
+    mConnectionFilter = filter;
 }
 
 awaitable<void> UGameWorld::WaitForConnect() {
@@ -150,13 +153,13 @@ awaitable<void> UGameWorld::WaitForConnect() {
                 conn->SetThreadID(tid).SetKey(key);
 
                 if (mConnectionFilter)
-                    mConnectionFilter(conn);
+                    std::invoke(mConnectionFilter, conn);
 
-                if (!conn->HasCodecSet())
-                    conn->SetCodec<UPackageCodecImpl>();
-
-                if (!conn->HasHandlerSet())
-                    conn->SetHandler<UConnectionHandlerImpl>();
+                // if (!conn->HasCodecSet())
+                //     conn->SetCodec<UPackageCodecImpl>();
+                //
+                // if (!conn->HasHandlerSet())
+                //     conn->SetHandler<UConnectionHandlerImpl>();
 
                 conn->ConnectToClient();
 

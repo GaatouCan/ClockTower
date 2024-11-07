@@ -1,18 +1,15 @@
 #pragma once
 
-#include "../../base/SubSystem.h"
+#include "../../SubSystem.h"
 #include "../ProtocolHandler.h"
 
 #include <concepts>
-
 
 class UConnection;
 
 class UProtocolSystem final : public ISubSystem {
 
     SUB_SYSTEM_BODY(ProtocolSystem)
-
-    UProtocolSystem();
 
     void Init() override;
 

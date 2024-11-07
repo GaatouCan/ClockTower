@@ -26,7 +26,7 @@ using asio::awaitable;
 
 using asio::as_tuple_t;
 using asio::use_awaitable_t;
-using default_token = as_tuple_t<use_awaitable_t<> >;
+using default_token = as_tuple_t<use_awaitable_t<>>;
 
 using ATcpSocket = default_token::as_default_on_t<tcp::socket>;
 using ASteadyTimer = default_token::as_default_on_t<asio::steady_timer>;

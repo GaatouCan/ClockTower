@@ -1,6 +1,6 @@
 #include "utils.h"
 
-#include <assert.h>
+#include <cassert>
 
 
 void TraverseFolder(const std::string &folder,

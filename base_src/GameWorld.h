@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../common/common.h"
+#include "common.h"
 #include "MultiContextPool.h"
 #include "Connection.h"
 #include "SubSystem.h"
@@ -12,37 +12,37 @@ UGameWorld &GetWorld();
 
 class UGameWorld final {
 
-    asio::io_context ctx_;
-    ATcpAcceptor acceptor_;
+    asio::io_context mContext;
+    ATcpAcceptor mAcceptor;
 
-    UMultiContextPool pool_;
+    UMultiContextPool mPool;
 
-    std::map<std::string, AConnectionPointer> connMap_;
-    ASteadyTimer fullTimer_;
+    std::map<std::string, AConnectionPointer> mConnectionMap;
+    ASteadyTimer mFullTimer;
 
-    struct SystemPriority {
+    struct FSystemPriority {
         int priority;
         std::type_index type;
 
-        bool operator<(const SystemPriority &other) const {
+        bool operator<(const FSystemPriority &other) const {
             return priority < other.priority;
         }
 
-        bool operator>(const SystemPriority &other) const {
+        bool operator>(const FSystemPriority &other) const {
             return priority > other.priority;
         }
     };
 
-    std::priority_queue<SystemPriority, std::vector<SystemPriority>, std::greater<> > initPriority_;
-    std::priority_queue<SystemPriority, std::vector<SystemPriority>, std::less<> > destPriority_;
-    std::unordered_map<std::type_index, ISubSystem *> systemMap_;
+    std::priority_queue<FSystemPriority, std::vector<FSystemPriority>, std::greater<> > mInitPriority;
+    std::priority_queue<FSystemPriority, std::vector<FSystemPriority>, std::less<> > mDestPriority;
+    std::unordered_map<std::type_index, ISubSystem *> mSystemMap;
 
-    std::function<void(const AConnectionPointer &)> connectionHandler_;
+    std::function<void(const AConnectionPointer &)> mConnectionFilter;
 
-    AThreadID tid_;
+    AThreadID mMainThreadId;
 
-    bool inited_;
-    std::atomic_bool running_;
+    bool bInited;
+    std::atomic_bool bRunning;
 
 public:
     UGameWorld();
@@ -66,7 +66,7 @@ public:
 
     template<SYSTEM_TYPE T>
     T *GetSystem() noexcept {
-        if (const auto iter = systemMap_.find(typeid(T)); iter != systemMap_.end())
+        if (const auto iter = mSystemMap.find(typeid(T)); iter != mSystemMap.end())
             return dynamic_cast<T *>(iter->second);
         return nullptr;
     }
@@ -82,14 +82,14 @@ public:
 private:
     template<SYSTEM_TYPE T>
     T *CreateSystem(const int priority = 0) {
-        if (inited_)
+        if (bInited)
             return nullptr;
 
         const auto res = new T();
 
-        systemMap_.insert_or_assign(typeid(T), res);
-        initPriority_.push({priority, typeid(T)});
-        destPriority_.push({priority, typeid(T)});
+        mSystemMap.insert_or_assign(typeid(T), res);
+        mInitPriority.push({priority, typeid(T)});
+        mDestPriority.push({priority, typeid(T)});
 
         return res;
     }

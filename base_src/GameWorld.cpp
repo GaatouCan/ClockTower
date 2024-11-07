@@ -1,51 +1,51 @@
 ﻿#include "GameWorld.h"
 
-#include "../common/utils.h"
+#include "utils.h"
 #include "impl/PackageCodecImpl.h"
 #include "impl/ConnectionHandlerImpl.h"
 
-#include "../system/config/ConfigSystem.h"
-#include "../system/protocol/ProtocolSystem.h"
-#include "../system/manager/ManagerSystem.h"
-#include "../system/database/DatabaseSystem.h"
-#include "../system/login/LoginSystem.h"
-#include "../system/event/EventSystem.h"
+// #include "../system/config/ConfigSystem.h"
+// #include "../system/protocol/ProtocolSystem.h"
+// #include "../system/manager/ManagerSystem.h"
+// #include "../system/database/DatabaseSystem.h"
+// #include "../system/login/LoginSystem.h"
+// #include "../system/event/EventSystem.h"
 
 #include <spdlog/spdlog.h>
 
-REGISTER_SYSTEM(UConfigSystem, 0)
-REGISTER_SYSTEM(UProtocolSystem, 1)
-REGISTER_SYSTEM(ULoginSystem, 2)
-// REGISTER_SYSTEM(UDatabaseSystem, 9)
-REGISTER_SYSTEM(UManagerSystem, 10)
-REGISTER_SYSTEM(UEventSystem, 11)
+// REGISTER_SYSTEM(UConfigSystem, 0)
+// REGISTER_SYSTEM(UProtocolSystem, 1)
+// REGISTER_SYSTEM(ULoginSystem, 2)
+// // REGISTER_SYSTEM(UDatabaseSystem, 9)
+// REGISTER_SYSTEM(UManagerSystem, 10)
+// REGISTER_SYSTEM(UEventSystem, 11)
 
 UGameWorld::UGameWorld()
-    : acceptor_(ctx_),
-      fullTimer_(ctx_),
-      inited_(false),
-      running_(false) {
+    : mAcceptor(mContext),
+      mFullTimer(mContext),
+      bInited(false),
+      bRunning(false) {
 }
 
 UGameWorld::~UGameWorld() {
     Shutdown();
 
-    while (!destPriority_.empty()) {
-        auto [priority, type] = destPriority_.top();
-        destPriority_.pop();
+    while (!mDestPriority.empty()) {
+        auto [priority, type] = mDestPriority.top();
+        mDestPriority.pop();
 
-        const auto iter = systemMap_.find(type);
-        if (iter == systemMap_.end())
+        const auto iter = mSystemMap.find(type);
+        if (iter == mSystemMap.end())
             continue;
 
         delete iter->second;
         spdlog::info("{} destroyed.", type.name());
 
-        systemMap_.erase(iter);
+        mSystemMap.erase(iter);
     }
 
     // 正常情况下map应该是空了 但以防万一还是再遍历一次
-    for (const auto sys: std::views::values(systemMap_)) {
+    for (const auto sys: std::views::values(mSystemMap)) {
         delete sys;
     }
 
@@ -53,12 +53,12 @@ UGameWorld::~UGameWorld() {
 }
 
 UGameWorld &UGameWorld::Init() {
-    while (!initPriority_.empty()) {
-        auto [priority, type] = initPriority_.top();
-        initPriority_.pop();
+    while (!mInitPriority.empty()) {
+        auto [priority, type] = mInitPriority.top();
+        mInitPriority.pop();
 
-        const auto iter = systemMap_.find(type);
-        if (iter == systemMap_.end())
+        const auto iter = mSystemMap.find(type);
+        if (iter == mSystemMap.end())
             continue;
 
         iter->second->Init();
@@ -70,57 +70,57 @@ UGameWorld &UGameWorld::Init() {
     // Set PackagePool static option
     UPackagePool::LoadConfig(config);
 
-    pool_.Start(config["server"]["work_thread"].as<size_t>());
+    mPool.Start(config["server"]["work_thread"].as<size_t>());
 
-    tid_ = std::this_thread::get_id();
-    inited_ = true;
+    mMainThreadId = std::this_thread::get_id();
+    bInited = true;
 
     return *this;
 }
 
 UGameWorld &UGameWorld::Run() {
-    running_ = true;
+    bRunning = true;
 
-    asio::signal_set signals(ctx_, SIGINT, SIGTERM);
+    asio::signal_set signals(mContext, SIGINT, SIGTERM);
     signals.async_wait([&](auto, auto) {
         Shutdown();
     });
 
-    co_spawn(ctx_, WaitForConnect(), detached);
-    ctx_.run();
+    co_spawn(mContext, WaitForConnect(), detached);
+    mContext.run();
 
     return *this;
 }
 
 UGameWorld &UGameWorld::Shutdown() {
-    if (!inited_)
+    if (!bInited)
         return *this;
 
-    if (!running_)
+    if (!bRunning)
         return *this;
 
     spdlog::info("Server shutting down...");
-    running_ = false;
+    bRunning = false;
 
-    if (!ctx_.stopped())
-        ctx_.stop();
+    if (!mContext.stopped())
+        mContext.stop();
 
-    connMap_.clear();
+    mConnectionMap.clear();
 
     return *this;
 }
 
 void UGameWorld::HandleConnection(const std::function<void(const AConnectionPointer &)> &handler) {
-    connectionHandler_ = handler;
+    mConnectionFilter = handler;
 }
 
 awaitable<void> UGameWorld::WaitForConnect() {
     const auto &config = GetServerConfig();
 
     try {
-        acceptor_.open(tcp::v4());
-        acceptor_.bind({tcp::v4(), config["server"]["port"].as<uint16_t>()});
-        acceptor_.listen();
+        mAcceptor.open(tcp::v4());
+        mAcceptor.bind({tcp::v4(), config["server"]["port"].as<uint16_t>()});
+        mAcceptor.listen();
 
         const auto loginSys = GetSystem<ULoginSystem>();
         if (loginSys == nullptr) {
@@ -129,11 +129,11 @@ awaitable<void> UGameWorld::WaitForConnect() {
 
         spdlog::info("Waiting for client to connect - server port: {}", config["server"]["port"].as<uint16_t>());
 
-        while (running_) {
+        while (bRunning) {
             // PackagePool and io_context in per sub thread
-            auto &[pool, ctx, tid] = pool_.NextContextNode();
+            auto &[pool, ctx, tid] = mPool.NextContextNode();
 
-            if (auto [ec, socket] = co_await acceptor_.async_accept(ctx); socket.is_open()) {
+            if (auto socket = co_await mAcceptor.async_accept(ctx); socket.is_open()) {
                 const auto addr = socket.remote_endpoint().address();
                 spdlog::info("New connection from: {}", addr.to_string());
 
@@ -149,8 +149,8 @@ awaitable<void> UGameWorld::WaitForConnect() {
 
                 conn->SetThreadID(tid).SetKey(key);
 
-                if (connectionHandler_)
-                    connectionHandler_(conn);
+                if (mConnectionFilter)
+                    mConnectionFilter(conn);
 
                 if (!conn->HasCodecSet())
                     conn->SetCodec<UPackageCodecImpl>();
@@ -160,11 +160,11 @@ awaitable<void> UGameWorld::WaitForConnect() {
 
                 conn->ConnectToClient();
 
-                connMap_[key] = conn;
+                mConnectionMap[key] = conn;
 
-                if (connMap_.size() >= 1'000'000'000) {
-                    fullTimer_.expires_after(10s);
-                    co_await fullTimer_.async_wait();
+                if (mConnectionMap.size() >= 1'000'000'000) {
+                    mFullTimer.expires_after(10s);
+                    co_await mFullTimer.async_wait();
                 }
             }
         }
@@ -175,24 +175,24 @@ awaitable<void> UGameWorld::WaitForConnect() {
 }
 
 void UGameWorld::RemoveConnection(const std::string &key) {
-    if (std::this_thread::get_id() != tid_) {
-        co_spawn(ctx_, [this, key]() mutable -> awaitable<void> {
-            connMap_.erase(key);
+    if (std::this_thread::get_id() != mMainThreadId) {
+        co_spawn(mContext, [this, key]() mutable -> awaitable<void> {
+            mConnectionMap.erase(key);
             co_return;
         }, detached);
         return;
     }
-    connMap_.erase(key);
+    mConnectionMap.erase(key);
 }
 
 FContextNode &UGameWorld::NextContextNode() {
-    return pool_.NextContextNode();
+    return mPool.NextContextNode();
 }
 
 asio::io_context &UGameWorld::GetIOContext() {
-    return ctx_;
+    return mContext;
 }
 
 AThreadID UGameWorld::GetThreadID() const {
-    return tid_;
+    return mMainThreadId;
 }

@@ -35,4 +35,4 @@ private:
 };
 
 #define REGISTER_PROTOCOL(proto) \
-    sys->RegisterProtocol(EProtoType::proto, &proto);
+    sys->RegisterProtocol(static_cast<uint32_t>(EProtoType::proto), &proto);

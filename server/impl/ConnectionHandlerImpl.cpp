@@ -1,9 +1,11 @@
 #include "ConnectionHandlerImpl.h"
-#include "../GameWorld.h"
-#include "../../system/protocol/ProtocolSystem.h"
-#include "../../system/login/LoginSystem.h"
-#include "../../player/PlayerManager.h"
-#include "../../system/manager/ManagerSystem.h"
+
+#include "../../base/GameWorld.h"
+#include "../../base/system/protocol/ProtocolSystem.h"
+#include "../../base/system/login/LoginSystem.h"
+#include "../../base/system/manager/ManagerSystem.h"
+#include "../player/PlayerManager.h"
+#include "../common/ProtoType.h"
 
 
 void UConnectionHandlerImpl::OnConnected(const AConnectionPointer &conn) {
@@ -25,7 +27,7 @@ void UConnectionHandlerImpl::OnClosed(const AConnectionPointer &conn) {
 }
 
 awaitable<void> UConnectionHandlerImpl::OnReadPackage(const AConnectionPointer &conn, IPackage *pkg) {
-    spdlog::trace("{} - Receive Package[{}] From {}.", __func__, protocol::ProtoTypeToString(static_cast<protocol::EProtoType>(pkg->GetID())), conn->RemoteAddress().to_string());
+    spdlog::trace("{} - Receive Package[{}] From {}.", __func__, ProtoTypeToString(static_cast<protocol::EProtoType>(pkg->GetID())), conn->RemoteAddress().to_string());
 
     if (!conn->GetContext().has_value()) {
         if (const auto sys = GetSystem<ULoginSystem>(); sys != nullptr) {

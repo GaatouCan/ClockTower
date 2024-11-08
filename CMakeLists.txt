@@ -75,17 +75,18 @@ link_directories(${CMAKE_SOURCE_DIR}/struct/lib/Debug)
 
 include_directories(${CMAKE_SOURCE_DIR}/struct)
 
-file(GLOB_RECURSE SOURCE_DIR
-        ${CMAKE_SOURCE_DIR}/src/*.h
-        ${CMAKE_SOURCE_DIR}/src/*.cpp
+file(GLOB_RECURSE BASE_SRC
+        ${CMAKE_SOURCE_DIR}/base/*.h
+        ${CMAKE_SOURCE_DIR}/base/*.cpp
 )
 
-file(GLOB_RECURSE COMMON_SRC ${CMAKE_SOURCE_DIR}/src/common/*.h ${CMAKE_SOURCE_DIR}/src/common/*.cpp)
-file(GLOB_RECURSE BASE_SRC ${CMAKE_SOURCE_DIR}/base/*.h ${CMAKE_SOURCE_DIR}/base/*.cpp)
-file(GLOB_RECURSE SUB_SYSTEM_SRC ${CMAKE_SOURCE_DIR}/system/*.h ${CMAKE_SOURCE_DIR}/system/*.cpp)
-file(GLOB_RECURSE PLAYER_SRC ${CMAKE_SOURCE_DIR}/src/player/*.h ${CMAKE_SOURCE_DIR}/src/player/*.cpp)
+file(GLOB_RECURSE COMMON_SRC ${CMAKE_SOURCE_DIR}/server/common/*.h ${CMAKE_SOURCE_DIR}/server/common/*.cpp)
+file(GLOB_RECURSE IMPL_SRC ${CMAKE_SOURCE_DIR}/server/impl/*.h ${CMAKE_SOURCE_DIR}/server/impl/*.cpp)
+file(GLOB_RECURSE PLAYER_SRC ${CMAKE_SOURCE_DIR}/server/player/*.h ${CMAKE_SOURCE_DIR}/server/player/*.cpp)
 
-add_executable(server server/server.cpp ${BASE_SRC} ${SUB_SYSTEM_SRC} ${SOURCE_DIR})
+file(GLOB_RECURSE WORLD_SRC ${CMAKE_SOURCE_DIR}/server/world/*.h ${CMAKE_SOURCE_DIR}/server/world/*.cpp)
+
+add_executable(server server/server.cpp ${BASE_SRC} ${COMMON_SRC} ${IMPL_SRC} ${PLAYER_SRC})
 
 target_link_libraries(server PRIVATE spdlog::spdlog)
 target_link_libraries(server PRIVATE asio::asio)

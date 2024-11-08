@@ -1,10 +1,8 @@
 #pragma once
 
-#include "../ProtocolHandler.h"
-#include "../protocol/ProtocolSystem.h"
-
+#include "../../base/ProtocolHandler.h"
 
 class ProtocolHandlerImpl final : public IProtocolHandler {
 public:
-    awaitable<void> Execute(const AProtoFunctor &, const std::shared_ptr<class UConnection> &, IPackage *) override;
+    asio::awaitable<void> Execute(const AProtoFunctor &, const std::shared_ptr<UConnection> &, IPackage *) override;
 };

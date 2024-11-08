@@ -2,7 +2,6 @@
 
 #include "../../SubSystem.h"
 #include "EventParam.h"
-#include "../../src/common/Event.h"
 
 #include <queue>
 #include <mutex>
@@ -15,7 +14,6 @@ class UEventSystem final : public ISubSystem {
 
     SUB_SYSTEM_BODY(EventSystem)
 
-    UEventSystem();
     ~UEventSystem() override;
 
     void Init() override;
@@ -25,11 +23,11 @@ class UEventSystem final : public ISubSystem {
 public:
     [[nodiscard]] bool IsQueueEmpty() const;
 
-    void Dispatch(EEvent event, IEventParam *parma);
+    void Dispatch(uint32_t event, IEventParam *parma);
 
     template<typename TARGET, typename CALLABLE>
-    void RegisterListenerT(const EEvent event, void *ptr, void *target, CALLABLE &&func) {
-        if (event == EEvent::UNAVAILABLE || ptr == nullptr || target == nullptr)
+    void RegisterListenerT(const uint32_t event, void *ptr, void *target, CALLABLE &&func) {
+        if (ptr == nullptr || target == nullptr)
             return;
 
         this->RegisterListener(event, ptr, [target, func = std::forward<CALLABLE>(func)](IEventParam *param) {
@@ -43,13 +41,13 @@ public:
         });
     }
 
-    void RegisterListener(EEvent event, void *ptr, const EventListener &listener);
+    void RegisterListener(uint32_t event, void *ptr, const EventListener &listener);
 
-    void RemoveListener(EEvent event, void *ptr);
+    void RemoveListener(uint32_t event, void *ptr);
 
 private:
     struct FEventNode {
-        EEvent event = EEvent::UNAVAILABLE;
+        uint32_t event = 0;
         IEventParam *param = nullptr;
     };
 
@@ -57,7 +55,7 @@ private:
     std::mutex mEventMutex;
     mutable std::shared_mutex mSharedMutex;
 
-    std::map<EEvent, std::map<void *, EventListener> > mListenerMap;
+    std::map<uint32_t, std::map<void *, EventListener> > mListenerMap;
     std::map<void *, EventListener> mCurrentListener;
     std::mutex mListenerMutex;
 };

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "DBTable.h"
-#include "../../common/common.h"
+#include "../../common.h"
 
 #include <mysqlx/xdevapi.h>
 #include <utility>

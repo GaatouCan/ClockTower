@@ -1,8 +1,8 @@
 #pragma once
 
-#include <asio.hpp>
+#include "Object.h"
 
-#include "../Object.h"
+#include <asio.hpp>
 
 class IPackage;
 class UConnection;

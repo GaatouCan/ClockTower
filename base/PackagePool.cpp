@@ -1,6 +1,6 @@
 ﻿#include "PackagePool.h"
 #include "impl/Package.h"
-#include "../src/system/config/ConfigSystem.h"
+#include "system/config/ConfigSystem.h"
 
 #include <spdlog/spdlog.h>
 

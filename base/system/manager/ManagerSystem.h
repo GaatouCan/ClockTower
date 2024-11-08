@@ -16,8 +16,10 @@ class UManagerSystem final : public ISubSystem {
     void Init() override;
 
 public:
+    void SetManagerLoader(const std::function<void(UManagerSystem *)> &loader);
+
     template<MANAGER_TYPE T>
-        void CreateManager() {
+    void CreateManager() {
         mManagerMap[typeid(T)] = new T(mIOContext);
         spdlog::info("{} - Loaded Manager: {}", __func__, typeid(T).name());
     }
@@ -35,6 +37,7 @@ public:
 
 private:
     std::unordered_map<std::type_index, IManager *> mManagerMap;
+    std::function<void(UManagerSystem *)> mLoader;
 
     asio::io_context mIOContext;
     ASteadyTimer mTickTimer;

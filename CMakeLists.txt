@@ -85,7 +85,7 @@ file(GLOB_RECURSE BASE_SRC ${CMAKE_SOURCE_DIR}/base/*.h ${CMAKE_SOURCE_DIR}/base
 file(GLOB_RECURSE SUB_SYSTEM_SRC ${CMAKE_SOURCE_DIR}/system/*.h ${CMAKE_SOURCE_DIR}/system/*.cpp)
 file(GLOB_RECURSE PLAYER_SRC ${CMAKE_SOURCE_DIR}/src/player/*.h ${CMAKE_SOURCE_DIR}/src/player/*.cpp)
 
-add_executable(server src/server.cpp ${BASE_SRC} ${SUB_SYSTEM_SRC} ${SOURCE_DIR})
+add_executable(server server/server.cpp ${BASE_SRC} ${SUB_SYSTEM_SRC} ${SOURCE_DIR})
 
 target_link_libraries(server PRIVATE spdlog::spdlog)
 target_link_libraries(server PRIVATE asio::asio)

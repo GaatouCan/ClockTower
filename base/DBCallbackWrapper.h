@@ -3,7 +3,7 @@
 #include <mysqlx/xdevapi.h>
 #include <utility>
 
-#include "../Object.h"
+#include "Object.h"
 
 using ADatabaseTask = std::function<void(mysqlx::Schema &)>;
 

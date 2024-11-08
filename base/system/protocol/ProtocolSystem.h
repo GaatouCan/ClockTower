@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../SubSystem.h"
-#include "../ProtocolHandler.h"
+#include "../../ProtocolHandler.h"
 
 #include <concepts>
 
@@ -14,9 +14,9 @@ class UProtocolSystem final : public ISubSystem {
     void Init() override;
 
 public:
-    void RegisterProtocol(EProtoType type, const AProtoFunctor &func);
+    void RegisterProtocol(uint32_t type, const AProtoFunctor &func);
 
-    [[nodiscard]] AProtoFunctor Find(EProtoType proto) const;
+    [[nodiscard]] AProtoFunctor Find(uint32_t proto) const;
 
     template<typename T>
     requires std::derived_from<T, IProtocolHandler>
@@ -30,7 +30,7 @@ public:
     awaitable<void> OnReadPackage(const std::shared_ptr<UConnection> &conn, IPackage *pkg) const;
 
 private:
-    std::unordered_map<EProtoType, AProtoFunctor> mProtoMap;
+    std::unordered_map<uint32_t, AProtoFunctor> mProtoMap;
     std::unique_ptr<IProtocolHandler> mHandler;
 };
 

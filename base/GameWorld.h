@@ -7,8 +7,6 @@
 
 #include <typeindex>
 
-using AConnectionFilter = std::function<void(const AConnectionPointer&)>;
-
 UGameWorld &GetWorld();
 
 class UGameWorld final {
@@ -38,7 +36,7 @@ class UGameWorld final {
     std::priority_queue<FSystemPriority, std::vector<FSystemPriority>, std::less<> > mDestPriority;
     std::unordered_map<std::type_index, ISubSystem *> mSystemMap;
 
-    AConnectionFilter mConnectionFilter;
+    std::function<void(const AConnectionPointer&)> mConnectionFilter;
 
     AThreadID mMainThreadId;
 
@@ -55,7 +53,7 @@ public:
     UGameWorld &Run();
     UGameWorld &Shutdown();
 
-    void FilterConnection(AConnectionFilter filter);
+    void FilterConnection(const std::function<void(const AConnectionPointer&)> &filter);
 
     void RemoveConnection(const std::string &key);
 

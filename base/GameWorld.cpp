@@ -1,7 +1,7 @@
 ﻿#include "GameWorld.h"
 
 #include "utils.h"
-// #include "impl/PackageCodecImpl.h"
+#include "impl/PackageCodecImpl.h"
 // #include "impl/ConnectionHandlerImpl.h"
 
 #include "system/config/ConfigSystem.h"
@@ -113,7 +113,7 @@ UGameWorld &UGameWorld::Shutdown() {
     return *this;
 }
 
-void UGameWorld::FilterConnection(const AConnectionFilter filter) {
+void UGameWorld::FilterConnection(const std::function<void(const AConnectionPointer&)> &filter) {
     mConnectionFilter = filter;
 }
 
@@ -155,9 +155,9 @@ awaitable<void> UGameWorld::WaitForConnect() {
                 if (mConnectionFilter)
                     std::invoke(mConnectionFilter, conn);
 
-                // if (!conn->HasCodecSet())
-                //     conn->SetCodec<UPackageCodecImpl>();
-                //
+                if (!conn->HasCodecSet())
+                    conn->SetCodec<UPackageCodecImpl>();
+
                 // if (!conn->HasHandlerSet())
                 //     conn->SetHandler<UConnectionHandlerImpl>();
 

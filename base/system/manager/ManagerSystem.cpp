@@ -3,8 +3,8 @@
 #include <spdlog/spdlog.h>
 
 UManagerSystem::UManagerSystem()
-    : mTickTimer(mIOContext) {
-
+    : mLoader(nullptr),
+      mTickTimer(mIOContext) {
 }
 
 UManagerSystem::~UManagerSystem() {
@@ -21,6 +21,10 @@ UManagerSystem::~UManagerSystem() {
 }
 
 void UManagerSystem::Init() {
+    if (mLoader) {
+        std::invoke(mLoader, this);
+    }
+
     mManagerThread = std::thread([this] {
         mManagerThreadId = std::this_thread::get_id();
         asio::signal_set signals(mIOContext, SIGINT, SIGTERM);
@@ -51,6 +55,10 @@ void UManagerSystem::Init() {
             spdlog::warn("{}", e.what());
         }
     }, detached);
+}
+
+void UManagerSystem::SetManagerLoader(const std::function<void(UManagerSystem *)> &loader) {
+    mLoader = loader;
 }
 
 AThreadID UManagerSystem::GetThreadID() const {

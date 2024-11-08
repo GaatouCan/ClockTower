@@ -1,6 +1,6 @@
 #include "DatabaseSystem.h"
 #include "../config/ConfigSystem.h"
-#include "../../common/utils.h"
+#include "../../utils.h"
 
 #include <spdlog/spdlog.h>
 

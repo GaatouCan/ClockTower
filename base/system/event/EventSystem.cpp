@@ -1,9 +1,6 @@
 ﻿#include "EventSystem.h"
 #include "../../GameWorld.h"
 
-UEventSystem::UEventSystem() {
-}
-
 
 UEventSystem::~UEventSystem() {
     mListenerMap.clear();
@@ -26,7 +23,7 @@ awaitable<void> UEventSystem::HandleEvent() {
             mEventQueue.pop();
         }
 
-        if (node.event == EEvent::UNAVAILABLE) {
+        if (node.event == 0) {
             delete node.param;
             continue;
         }
@@ -56,7 +53,7 @@ bool UEventSystem::IsQueueEmpty() const {
     return mEventQueue.empty();
 }
 
-void UEventSystem::Dispatch(const EEvent event, IEventParam *parma) {
+void UEventSystem::Dispatch(const uint32_t event, IEventParam *parma) {
     const bool empty = IsQueueEmpty(); {
         std::scoped_lock lock(mEventMutex);
         mEventQueue.emplace(event, parma);
@@ -66,8 +63,8 @@ void UEventSystem::Dispatch(const EEvent event, IEventParam *parma) {
         co_spawn(GetWorld().GetIOContext(), HandleEvent(), detached);
 }
 
-void UEventSystem::RegisterListener(const EEvent event, void *ptr, const EventListener &listener) {
-    if (event == EEvent::UNAVAILABLE || ptr == nullptr)
+void UEventSystem::RegisterListener(const uint32_t event, void *ptr, const EventListener &listener) {
+    if (event == 0 || ptr == nullptr)
         return;
 
     std::scoped_lock lock(mListenerMutex);
@@ -77,12 +74,12 @@ void UEventSystem::RegisterListener(const EEvent event, void *ptr, const EventLi
     mListenerMap[event][ptr] = listener;
 }
 
-void UEventSystem::RemoveListener(const EEvent event, void *ptr) {
+void UEventSystem::RemoveListener(const uint32_t event, void *ptr) {
     if (ptr == nullptr)
         return;
 
     std::scoped_lock lock(mListenerMutex);
-    if (event == EEvent::UNAVAILABLE) {
+    if (event == 0) {
         for (auto &val: std::views::values(mListenerMap)) {
             val.erase(ptr);
         }

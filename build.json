@@ -2,14 +2,14 @@
     "only_xlsx": false,
     "protobuf": {
         "dir": "protobuf/def",
-        "gen": "src/common",
+        "gen": "server/common",
         "def": [
             "login",
             "appearance",
             "chat"
         ],
         "except": ["CS_LoginRequest"],
-        "include_dir": "../system/protocol/ProtocolSystem.h"
+        "include_dir": "../base/system/protocol/ProtocolSystem.h"
     },
     "sql": {
         "sql": "struct/sql",

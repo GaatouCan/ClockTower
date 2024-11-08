@@ -86,13 +86,13 @@ file(GLOB_RECURSE PLAYER_SRC ${CMAKE_SOURCE_DIR}/server/player/*.h ${CMAKE_SOURC
 
 file(GLOB_RECURSE WORLD_SRC ${CMAKE_SOURCE_DIR}/server/world/*.h ${CMAKE_SOURCE_DIR}/server/world/*.cpp)
 
-add_library(base_lib STATIC ${BASE_SRC})
-target_link_libraries(base_lib PUBLIC spdlog::spdlog)
-target_link_libraries(base_lib PUBLIC asio::asio)
-target_link_libraries(base_lib PUBLIC nlohmann_json::nlohmann_json)
-target_link_libraries(base_lib PUBLIC protobuf::libprotobuf)
-target_link_libraries(base_lib PUBLIC yaml-cpp::yaml-cpp)
-target_link_libraries(base_lib PUBLIC mysql::concpp)
+add_library(libbase STATIC ${BASE_SRC})
+target_link_libraries(libbase PUBLIC spdlog::spdlog)
+target_link_libraries(libbase PUBLIC asio::asio)
+target_link_libraries(libbase PUBLIC nlohmann_json::nlohmann_json)
+target_link_libraries(libbase PUBLIC protobuf::libprotobuf)
+target_link_libraries(libbase PUBLIC yaml-cpp::yaml-cpp)
+target_link_libraries(libbase PUBLIC mysql::concpp)
 
 add_executable(server server/server.cpp ${BASE_SRC} ${COMMON_SRC} ${IMPL_SRC} ${PLAYER_SRC})
 

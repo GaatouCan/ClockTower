@@ -68,11 +68,10 @@ void UPlayer::OnLogin() {
 
     SendPackage(SC_LoginResponse, response);
 
-    if (const auto sys = GetSystem<UEventSystem>(); sys != nullptr) {
-        const auto param = new FEP_PlayerLogin;
-        param->pid = id_;
-        sys->DispatchEvent(PLAYER_LOGIN, param);
-    }
+    const auto param = new FEP_PlayerLogin;
+    param->pid = id_;
+
+    DispatchEvent(PLAYER_LOGIN, param);
 }
 
 void UPlayer::OnLogout() {
@@ -86,11 +85,9 @@ void UPlayer::OnLogout() {
     componentModule_.OnLogout();
     spdlog::info("{} - Player[{}] logout.", __func__, GetPlayerID());
 
-    if (const auto sys = GetSystem<UEventSystem>(); sys != nullptr) {
-        const auto param = new FEP_PlayerLogout;
-        param->pid = id_;
-        sys->DispatchEvent(PLAYER_LOGOUT, param);
-    }
+    const auto param = new FEP_PlayerLogout;
+    param->pid = id_;
+    DispatchEvent(PLAYER_LOGOUT, param);
 }
 
 bool UPlayer::IsLogin() const {

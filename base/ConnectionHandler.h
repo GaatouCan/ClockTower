@@ -9,8 +9,10 @@ class UConnection;
 using AConnectionPointer = std::shared_ptr<UConnection>;
 using asio::awaitable;
 
-class IConnectionHandler : public UObject {
+class IConnectionHandler {
 public:
+    virtual ~IConnectionHandler() = default;
+
     virtual void OnConnected(const AConnectionPointer &) {}
 
     virtual awaitable<void> OnReadPackage(const AConnectionPointer &, IPackage *) { co_return; }

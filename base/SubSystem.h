@@ -1,16 +1,15 @@
 #pragma once
 
 #include "common.h"
-#include "Object.h"
 
 
-class ISubSystem : public UObject {
+class ISubSystem {
 
     friend class UGameWorld;
 
 protected:
     ISubSystem() = default;
-    ~ISubSystem() override = default;
+    virtual ~ISubSystem() = default;
 
     virtual void Init() = 0;
 

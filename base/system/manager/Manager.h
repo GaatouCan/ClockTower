@@ -6,7 +6,7 @@
 
 #include <spdlog/spdlog.h>
 
-class IManager : public UObject {
+class IManager {
 
     asio::io_context &mIOContext;
     AThreadID mThreadId;
@@ -18,7 +18,7 @@ public:
     IManager() = delete;
 
     explicit IManager(asio::io_context &ctx);
-    ~IManager() override = default;
+    virtual ~IManager() = default;
 
     void SetThreadID(AThreadID tid);
     [[nodiscard]] AThreadID GetThreadID() const;

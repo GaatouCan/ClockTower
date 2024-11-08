@@ -1,15 +1,13 @@
 ﻿#pragma once
 
-#include "Object.h"
-
 #include <concepts>
 
 /**
  * 抽象数据包基类
  */
-class IPackage : public UObject {
+class IPackage {
 public:
-    ~IPackage() override = default;
+    virtual ~IPackage() = default;
 
     /**
      * 获取数据包ID

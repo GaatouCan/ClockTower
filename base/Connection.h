@@ -11,7 +11,7 @@
 using namespace std::literals::chrono_literals;
 using namespace asio::experimental::awaitable_operators;
 
-class UConnection final : public std::enable_shared_from_this<UConnection>, public UObject {
+class UConnection final : public std::enable_shared_from_this<UConnection> {
 
     ATcpSocket mSocket;
     UPackagePool &mPool;
@@ -41,7 +41,7 @@ public:
     UConnection() = delete;
 
     UConnection(ATcpSocket socket, UPackagePool &pool);
-    ~UConnection() override;
+    ~UConnection();
 
     void ConnectToClient();
     void Disconnect();

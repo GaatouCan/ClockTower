@@ -3,12 +3,11 @@
 #include <mysqlx/xdevapi.h>
 #include <utility>
 
-#include "Object.h"
-
 using ADatabaseTask = std::function<void(mysqlx::Schema &)>;
 
-class IDBCallbackWrapper : public UObject {
+class IDBCallbackWrapper {
 public:
+    virtual ~IDBCallbackWrapper() = default;
     virtual void Execute(mysqlx::Schema &) = 0;
 };
 

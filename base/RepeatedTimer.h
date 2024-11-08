@@ -1,12 +1,11 @@
 #pragma once
 
 #include "common.h"
-#include "Object.h"
 
 using ATimerID = uint64_t;
 using ATimerFunctor = std::function<void()>;
 
-class URepeatedTimer final : public UObject {
+class URepeatedTimer final {
 
     asio::io_context &mContext;
     ASteadyTimer mTimer;
@@ -23,7 +22,7 @@ public:
     URepeatedTimer() = delete;
 
     explicit URepeatedTimer(asio::io_context &ctx);
-    ~URepeatedTimer() override;
+    ~URepeatedTimer();
 
     DISABLE_COPY_MOVE(URepeatedTimer)
 

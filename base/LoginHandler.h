@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Object.h"
-
 #include <asio.hpp>
 
 class IPackage;
@@ -12,8 +10,9 @@ struct FLoginInfo {
     std::string token;
 };
 
-class ILoginHandler : public UObject {
+class ILoginHandler {
 public:
+    virtual ~ILoginHandler() = default;
     virtual FLoginInfo ParseLoginInfo(IPackage *) = 0;
     virtual asio::awaitable<void> OnPlayerLogin(const std::shared_ptr<UConnection>&, const FLoginInfo&) = 0;
 };

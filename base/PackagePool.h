@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "common.h"
-#include "Object.h"
 
 #include <queue>
 #include <yaml-cpp/yaml.h>
@@ -13,7 +12,7 @@ class IPackage;
  * 数据包池
  * @attention 单线程下使用 设计为一个数据包池对应一个线程下的io_context
  */
-class UPackagePool final : public UObject {
+class UPackagePool final {
 
     std::queue<IPackage *> mQueue;
     size_t mUseCount = 0;
@@ -36,7 +35,7 @@ class UPackagePool final : public UObject {
 
 public:
     explicit UPackagePool(size_t capacity = sDefaultCapacity);
-    ~UPackagePool() override;
+    ~UPackagePool();
 
     DISABLE_COPY_MOVE(UPackagePool)
 

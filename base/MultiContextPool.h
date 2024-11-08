@@ -16,7 +16,7 @@ struct FContextNode {
  * 多线程池
  * 每个线程单独一个io_context和一个数据包池
  */
-class UMultiContextPool final : public UObject {
+class UMultiContextPool final {
 
     std::vector<FContextNode> mNodeVec;
     std::vector<asio::io_context::work> mWorkVec;
@@ -26,7 +26,7 @@ class UMultiContextPool final : public UObject {
 
 public:
     UMultiContextPool();
-    ~UMultiContextPool() override;
+    ~UMultiContextPool();
 
     DISABLE_COPY_MOVE(UMultiContextPool)
 

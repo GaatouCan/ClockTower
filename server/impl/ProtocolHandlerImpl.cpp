@@ -6,7 +6,7 @@
 #include <spdlog/spdlog.h>
 
 
-awaitable<void> ProtocolHandlerImpl::Execute(const AProtoFunctor &func, const std::shared_ptr<UConnection> &conn, IPackage *pkg) {
+awaitable<void> UProtocolHandlerImpl::Execute(const AProtoFunctor &func, const std::shared_ptr<UConnection> &conn, IPackage *pkg) {
     const auto plrMgr = GetManager<UPlayerManager>();
     if (plrMgr == nullptr) {
         spdlog::warn("{} - PlayerManager not found", __func__);

@@ -71,7 +71,7 @@ void UPlayer::OnLogin() {
     if (const auto sys = GetSystem<UEventSystem>(); sys != nullptr) {
         const auto param = new FEP_PlayerLogin;
         param->pid = id_;
-        sys->Dispatch(static_cast<uint32_t>(EEvent::PLAYER_LOGIN), param);
+        sys->DispatchEvent(PLAYER_LOGIN, param);
     }
 }
 
@@ -89,7 +89,7 @@ void UPlayer::OnLogout() {
     if (const auto sys = GetSystem<UEventSystem>(); sys != nullptr) {
         const auto param = new FEP_PlayerLogout;
         param->pid = id_;
-        sys->Dispatch(static_cast<uint32_t>(EEvent::PLAYER_LOGOUT), param);
+        sys->DispatchEvent(PLAYER_LOGOUT, param);
     }
 }
 

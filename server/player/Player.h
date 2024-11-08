@@ -3,20 +3,20 @@
 #include "../base/Character.h"
 #include "../base/Connection.h"
 #include "../base/RepeatedTimer.h"
-#include "../system/login/PlatformInfo.h"
-#include "../system/event/EventParam.h"
-#include "../common/utils.h"
+#include "../base/system/login/PlatformInfo.h"
+#include "../base/system/event/EventParam.h"
+#include "../base/utils.h"
 
 #include "ComponentModule.h"
 #include "EventModule.h"
 
 #include <spdlog/spdlog.h>
 
-struct FEventParam_PlayerLogin final : IEventParam {
+struct FEP_PlayerLogin final : IEventParam {
     uint64_t pid;
 };
 
-struct FEventParam_PlayerLogout final : IEventParam {
+struct FEP_PlayerLogout final : IEventParam {
     uint64_t pid;
 };
 

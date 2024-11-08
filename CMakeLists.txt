@@ -94,8 +94,9 @@ target_link_libraries(libbase PUBLIC protobuf::libprotobuf)
 target_link_libraries(libbase PUBLIC yaml-cpp::yaml-cpp)
 target_link_libraries(libbase PUBLIC mysql::concpp)
 
-add_executable(server server/server.cpp ${BASE_SRC} ${COMMON_SRC} ${IMPL_SRC} ${PLAYER_SRC})
-
+include_directories(${BASE_SRC})
+add_executable(server server/server.cpp ${COMMON_SRC} ${IMPL_SRC} ${PLAYER_SRC})
+target_link_libraries(server PRIVATE libbase)
 target_link_libraries(server PRIVATE spdlog::spdlog)
 target_link_libraries(server PRIVATE asio::asio)
 target_link_libraries(server PRIVATE nlohmann_json::nlohmann_json)

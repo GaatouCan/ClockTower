@@ -1,11 +1,11 @@
 #include "ComponentModule.h"
 #include "Player.h"
 
-#include "../world/component/appearance/AppearanceCT.h"
+// #include "../world/component/appearance/AppearanceCT.h"
 
 UComponentModule::UComponentModule(UPlayer *plr)
     : owner_(plr){
-    CreateComponent<UAppearanceCT>();
+    // CreateComponent<UAppearanceCT>();
 }
 
 UComponentModule::~UComponentModule() {

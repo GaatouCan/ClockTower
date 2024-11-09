@@ -25,7 +25,7 @@ UGameWorld::UGameWorld()
     CreateSystem<UConfigSystem>(0);
     CreateSystem<UProtocolSystem>(1);
     CreateSystem<ULoginSystem>(2);
-    CreateSystem<UDatabaseSystem>(9);
+    // CreateSystem<UDatabaseSystem>(9);
     CreateSystem<UManagerSystem>(10);
     CreateSystem<UEventSystem>(11);
 }
@@ -127,7 +127,9 @@ awaitable<void> UGameWorld::WaitForConnect() {
 
         const auto loginSys = GetSystem<ULoginSystem>();
         if (loginSys == nullptr) {
-            throw std::runtime_error("Failed to get login system");
+            spdlog::critical("{} - Failed to get login system.", __func__);
+            Shutdown();
+            exit(-1);
         }
 
         spdlog::info("Waiting for client to connect - server port: {}", config["server"]["port"].as<uint16_t>());

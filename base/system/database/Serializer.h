@@ -8,11 +8,11 @@
 
 
 class USerializer final {
-    mysqlx::Table table_;
+    mysqlx::Table mTable;
 
 public:
     explicit USerializer(mysqlx::Table table)
-        : table_(std::move(table)) {
+        : mTable(std::move(table)) {
     }
 
     DISABLE_COPY_MOVE(USerializer)
@@ -24,6 +24,6 @@ public:
     }
 
     void Serialize(IDBTable *table) {
-        table->Write(table_);
+        table->Write(mTable);
     }
 };

@@ -9,9 +9,9 @@ void UDatabaseSystem::Init() {
     const auto &cfg = GetServerConfig();
     const auto schemaName = cfg["database"]["mysql"]["schema"].as<std::string>();
 
-    nodeVec_ = std::vector<FDatabaseNode>(cfg["database"]["pool"].as<uint64_t>());
+    mNodeList = std::vector<FDatabaseNode>(cfg["database"]["pool"].as<uint64_t>());
 
-    for (auto &node: nodeVec_) {
+    for (auto &node: mNodeList) {
         node.sess = std::make_unique<mysqlx::Session>(
             cfg["database"]["mysql"]["host"].as<std::string>(),
             cfg["database"]["mysql"]["port"].as<uint16_t>(),
@@ -43,25 +43,25 @@ void UDatabaseSystem::Init() {
 }
 
 UDatabaseSystem::~UDatabaseSystem() {
-    for (const auto &[th, sess, queue, tid]: nodeVec_) {
+    for (const auto &[th, sess, queue, tid]: mNodeList) {
         if (th->joinable()) {
             th->join();
         }
     }
 
-    for (const auto &[th, sess, queue, tid]: nodeVec_) {
+    for (const auto &[th, sess, queue, tid]: mNodeList) {
         queue->Quit();
     }
 }
 
 void UDatabaseSystem::SyncSelect(const std::string &tableName, const std::string &where,
                                 const std::function<void(mysqlx::Row)> &cb) {
-    if (nodeVec_.empty()) {
+    if (mNodeList.empty()) {
         spdlog::error("{} - {}", __func__, __LINE__);
         return;
     }
 
-    const auto &[th, sess, queue, tid] = nodeVec_.front();
+    const auto &[th, sess, queue, tid] = mNodeList.front();
     const auto &cfg = GetServerConfig();
 
     auto schema = sess->getSchema(cfg["database"]["mysql"]["schema"].as<std::string>());

@@ -34,8 +34,8 @@ public:
 
     template<typename Callback>
     void PushTask(const ADatabaseTask &task, Callback &&cb) {
-        const auto &[th, sess, queue, tid] = nodeVec_[nextNodeIdx_++];
-        nextNodeIdx_ = nextNodeIdx_ % nodeVec_.size();
+        const auto &[th, sess, queue, tid] = mNodeList[mNextNodeIndex++];
+        mNextNodeIndex = mNextNodeIndex % mNodeList.size();
 
         queue->PushBack(new TDBCallbackWrapper<Callback>(task, std::forward<Callback>(cb)));
     }
@@ -57,6 +57,6 @@ public:
     }
 
 private:
-    std::vector<FDatabaseNode> nodeVec_;
-    std::atomic_size_t nextNodeIdx_ = 0;
+    std::vector<FDatabaseNode> mNodeList;
+    std::atomic_size_t mNextNodeIndex = 0;
 };

@@ -14,14 +14,14 @@ void UPlayerCache::OnTick(ATimePoint now) {
 }
 
 void UPlayerCache::SyncCache(FCacheNode node) {
-    std::unique_lock lock(blockMutex_);
-    cacheMap_.insert_or_assign(node.pid, node);
+    std::unique_lock lock(mBlockMutex);
+    mCacheMap.insert_or_assign(node.pid, node);
 }
 
 awaitable<std::optional<FCacheNode>> UPlayerCache::FindCacheNode(const uint64_t pid) const {
     {
-        std::shared_lock lock(sharedMutex_);
-        if (const auto iter = cacheMap_.find(pid); iter != cacheMap_.end()) {
+        std::shared_lock lock(mSharedMutex);
+        if (const auto iter = mCacheMap.find(pid); iter != mCacheMap.end()) {
             co_return iter->second;
         }
     }
@@ -35,8 +35,8 @@ awaitable<std::optional<FCacheNode>> UPlayerCache::FindCacheNode(const uint64_t 
         // TODO
     }, asio::use_awaitable);
 
-    std::shared_lock lock(sharedMutex_);
-    if (const auto iter = cacheMap_.find(pid); iter != cacheMap_.end()) {
+    std::shared_lock lock(mSharedMutex);
+    if (const auto iter = mCacheMap.find(pid); iter != mCacheMap.end()) {
         co_return iter->second;
     }
     co_return std::nullopt;

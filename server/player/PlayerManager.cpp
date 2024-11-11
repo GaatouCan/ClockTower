@@ -7,7 +7,7 @@ UPlayerManager::UPlayerManager(asio::io_context &ctx)
 }
 
 UPlayerManager::~UPlayerManager() {
-    playerMap_.clear();
+    mPlayerMap.clear();
 }
 
 awaitable<void> UPlayerManager::OnPlayerLogin(const std::shared_ptr<UConnection> &conn, const uint64_t pid) {
@@ -69,23 +69,23 @@ void UPlayerManager::PushPlayer(const std::shared_ptr<UPlayer>& plr) {
         return;
     }
 
-    std::scoped_lock lock(mutex_);
-    playerMap_[plr->GetPlayerID()] = plr;
+    std::scoped_lock lock(mMutex);
+    mPlayerMap[plr->GetPlayerID()] = plr;
 }
 
 std::shared_ptr<UPlayer> UPlayerManager::FindPlayer(const uint64_t pid) {
-    std::shared_lock lock(sharedMutex_);
-    if (const auto it = playerMap_.find(pid); it != playerMap_.end()) {
+    std::shared_lock lock(mSharedMutex);
+    if (const auto it = mPlayerMap.find(pid); it != mPlayerMap.end()) {
         return it->second;
     }
     return nullptr;
 }
 
 std::shared_ptr<UPlayer> UPlayerManager::RemovePlayer(const uint64_t pid) {
-    std::scoped_lock lock(mutex_);
-    if (const auto it = playerMap_.find(pid); it != playerMap_.end()) {
+    std::scoped_lock lock(mMutex);
+    if (const auto it = mPlayerMap.find(pid); it != mPlayerMap.end()) {
         auto res = it->second;
-        playerMap_.erase(it);
+        mPlayerMap.erase(it);
         return res;
     }
     return nullptr;

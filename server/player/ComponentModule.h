@@ -7,7 +7,7 @@
 
 class UComponentModule final {
 
-    class UPlayer *owner_;
+    class UPlayer *mOwner;
 
     using ASerializeHandler = std::function<void(IPlayerComponent *, mysqlx::Table)>;
     using ADeserializeHandler = std::function<void(IPlayerComponent *, mysqlx::RowResult)>;
@@ -22,7 +22,7 @@ class UComponentModule final {
         std::map<std::string, FSerializeNode> serializers;
     };
 
-    std::map<std::type_index, FComponentNode> componentMap_;
+    std::map<std::type_index, FComponentNode> mComponentMap;
 
 public:
     UComponentModule() = delete;
@@ -35,16 +35,16 @@ public:
     template<typename T>
     requires std::derived_from<T, IPlayerComponent>
     T *CreateComponent() {
-        componentMap_.insert_or_assign(typeid(T),  FComponentNode{});
+        mComponentMap.insert_or_assign(typeid(T),  FComponentNode{});
         auto comp = new T(this);
-        componentMap_[typeid(T)].comp = comp;
+        mComponentMap[typeid(T)].comp = comp;
         return comp;
     }
 
     template<typename T>
     requires std::derived_from<T, IPlayerComponent>
     T *GetComponent() {
-        if (const auto it = componentMap_.find(typeid(T)); it != componentMap_.end()) {
+        if (const auto it = mComponentMap.find(typeid(T)); it != mComponentMap.end()) {
             return dynamic_cast<T *>(it->second.comp);
         }
         return nullptr;
@@ -53,19 +53,19 @@ public:
     template<typename T>
     requires std::derived_from<T, IPlayerComponent>
     void RegisterSerializer(const std::string &table, const ASerializeHandler &handler) {
-        if (!componentMap_[typeid(T)].serializers.contains(table)) {
-            componentMap_[typeid(T)].serializers[table] = FSerializeNode{};
+        if (!mComponentMap[typeid(T)].serializers.contains(table)) {
+            mComponentMap[typeid(T)].serializers[table] = FSerializeNode{};
         }
-        componentMap_[typeid(T)].serializers[table].serializer = handler;
+        mComponentMap[typeid(T)].serializers[table].serializer = handler;
     }
 
     template<typename T>
     requires std::derived_from<T, IPlayerComponent>
     void RegisterDeserializer(const std::string &table, const ADeserializeHandler &handler) {
-        if (!componentMap_[typeid(T)].serializers.contains(table)) {
-            componentMap_[typeid(T)].serializers[table] = FSerializeNode{};
+        if (!mComponentMap[typeid(T)].serializers.contains(table)) {
+            mComponentMap[typeid(T)].serializers[table] = FSerializeNode{};
         }
-        componentMap_[typeid(T)].serializers[table].deserializer = handler;
+        mComponentMap[typeid(T)].serializers[table].deserializer = handler;
     }
 
     void Serialize(mysqlx::Schema &schema);

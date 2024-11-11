@@ -22,16 +22,16 @@ struct FEP_PlayerLogout final : IEventParam {
 
 class UPlayer final : public ICharacter, public std::enable_shared_from_this<UPlayer> {
 
-    AConnectionPointer conn_;
-    uint64_t id_;
+    AConnectionPointer mConn;
+    uint64_t mId;
 
-    UComponentModule componentModule_;
-    UEventModule eventModule_;
+    UComponentModule mComponentModule;
+    UEventModule mEventModule;
 
-    ATimePoint loginTime_;
-    FPlatformInfo platform_;
+    ATimePoint mLoginTime;
+    FPlatformInfo mPlatform;
 
-    std::map<uint64_t, URepeatedTimer> timerMap_;
+    std::map<uint64_t, URepeatedTimer> mTimerMap;
 
 public:
     UPlayer() = delete;
@@ -51,7 +51,7 @@ public:
 
     template<typename FUNC, typename... ARGS>
     void RunInThread(FUNC &&func, ARGS &&... args) {
-        co_spawn(conn_->GetSocket().get_executor(), [func = std::forward<FUNC>(func), ...args = std::forward<ARGS>(args)]() -> awaitable<void> {
+        co_spawn(mConn->GetSocket().get_executor(), [func = std::forward<FUNC>(func), ...args = std::forward<ARGS>(args)]() -> awaitable<void> {
             try {
                 std::invoke(func, args...);
             } catch (std::exception &e) {
@@ -72,7 +72,7 @@ public:
     template<typename FUNC, typename... ARGS>
     uint64_t SetTimer(const std::chrono::duration<uint32_t> expire, const bool repeat, FUNC &&func, ARGS &&... args) {
         const uint64_t timerID = UnixTime();
-        if (auto [iter, res] = timerMap_.insert_or_assign(timerID, conn_->GetSocket().get_executor()); res) {
+        if (auto [iter, res] = mTimerMap.insert_or_assign(timerID, mConn->GetSocket().get_executor()); res) {
             iter->second
                     .SetTimerID(timerID)
                     .SetExpireTime(expire)

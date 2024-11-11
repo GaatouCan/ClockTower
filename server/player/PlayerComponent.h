@@ -2,7 +2,7 @@
 
 class IPlayerComponent {
 
-    class UComponentModule *module_;
+    class UComponentModule *mModule;
 
 public:
     IPlayerComponent() = delete;

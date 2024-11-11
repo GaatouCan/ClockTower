@@ -14,20 +14,20 @@
 
 class UEventModule final {
 
-    class UPlayer *owner_;
+    class UPlayer *mOwner;
 
     struct FEventNode {
         EEvent event = EEvent::UNAVAILABLE;
         IEventParam *param = nullptr;
     };
 
-    std::queue<FEventNode> queue_;
-    std::mutex eventMutex_;
-    mutable std::shared_mutex sharedMutex_;
+    std::queue<FEventNode> mQueue;
+    std::mutex mEventMutex;
+    mutable std::shared_mutex mSharedMutex;
 
-    std::map<EEvent, std::map<void *, EventListener>> listenerMap_;
-    std::map<void *, EventListener> curListener_;
-    std::mutex listenerMutex_;
+    std::map<EEvent, std::map<void *, EventListener>> mListenerMap;
+    std::map<void *, EventListener> mCurListener;
+    std::mutex mListenerMutex;
 
 public:
     UEventModule() = delete;

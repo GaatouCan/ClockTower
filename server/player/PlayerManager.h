@@ -9,9 +9,9 @@
 
 class UPlayerManager final : public IManager {
 
-    std::unordered_map<uint64_t, std::shared_ptr<UPlayer>> playerMap_;
-    std::mutex mutex_;
-    std::shared_mutex sharedMutex_;
+    std::unordered_map<uint64_t, std::shared_ptr<UPlayer>> mPlayerMap;
+    std::mutex mMutex;
+    std::shared_mutex mSharedMutex;
 
 public:
     explicit UPlayerManager(asio::io_context &ctx);

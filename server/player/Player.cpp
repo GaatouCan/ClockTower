@@ -9,34 +9,34 @@
 
 
 UPlayer::UPlayer(AConnectionPointer conn)
-    : conn_(std::move(conn)),
-      id_(0),
-      componentModule_(this),
-      eventModule_(this) {
+    : mConn(std::move(conn)),
+      mId(0),
+      mComponentModule(this),
+      mEventModule(this) {
 }
 
 UPlayer::~UPlayer() {
 }
 
 UPlayer &UPlayer::SetPlayerId(const uint64_t id) {
-    id_ = id;
+    mId = id;
     return *this;
 }
 
 uint64_t UPlayer::GetPlayerID() const {
-    return id_;
+    return mId;
 }
 
 AConnectionPointer UPlayer::GetConnection() const {
-    return conn_;
+    return mConn;
 }
 
 void UPlayer::SetConnection(const AConnectionPointer &conn) {
-    conn_ = conn;
+    mConn = conn;
 }
 
 AThreadID UPlayer::GetThreadID() const {
-    return conn_->GetThreadID();
+    return mConn->GetThreadID();
 }
 
 bool UPlayer::IsSameThread() const {
@@ -44,11 +44,11 @@ bool UPlayer::IsSameThread() const {
 }
 
 UComponentModule &UPlayer::GetComponentModule() {
-    return componentModule_;
+    return mComponentModule;
 }
 
 UEventModule &UPlayer::GetEventModule() {
-    return eventModule_;
+    return mEventModule;
 }
 
 void UPlayer::OnLogin() {
@@ -58,8 +58,8 @@ void UPlayer::OnLogin() {
     }
     spdlog::info("{} - Player[{}] login succeed.", __func__, GetPlayerID());
 
-    loginTime_ = std::chrono::steady_clock::now();
-    componentModule_.OnLogin();
+    mLoginTime = std::chrono::steady_clock::now();
+    mComponentModule.OnLogin();
 
     Login::SC_LoginResponse response;
     response.set_result(true);
@@ -69,7 +69,7 @@ void UPlayer::OnLogin() {
     SendPackage(SC_LoginResponse, response);
 
     const auto param = new FEP_PlayerLogin;
-    param->pid = id_;
+    param->pid = mId;
 
     DispatchEvent(PLAYER_LOGIN, param);
 }
@@ -80,49 +80,49 @@ void UPlayer::OnLogout() {
         return;
     }
 
-    timerMap_.clear();
+    mTimerMap.clear();
 
-    componentModule_.OnLogout();
+    mComponentModule.OnLogout();
     spdlog::info("{} - Player[{}] logout.", __func__, GetPlayerID());
 
     const auto param = new FEP_PlayerLogout;
-    param->pid = id_;
+    param->pid = mId;
     DispatchEvent(PLAYER_LOGOUT, param);
 }
 
 bool UPlayer::IsLogin() const {
-    return loginTime_.time_since_epoch().count() > 0;
+    return mLoginTime.time_since_epoch().count() > 0;
 }
 
 void UPlayer::StopTimer(const uint64_t timerID) {
-    if (const auto iter = timerMap_.find(timerID); iter != timerMap_.end()) {
+    if (const auto iter = mTimerMap.find(timerID); iter != mTimerMap.end()) {
         iter->second.Stop();
-        timerMap_.erase(iter);
+        mTimerMap.erase(iter);
     }
 }
 
 IPackage *UPlayer::BuildPackage() const {
-    return conn_->BuildPackage();
+    return mConn->BuildPackage();
 }
 
 void UPlayer::Send(IPackage *pkg) const {
-    conn_->Send(pkg);
+    mConn->Send(pkg);
 }
 
 void UPlayer::Send(const uint32_t id, const std::string_view data) const {
-    const auto pkg = dynamic_cast<FPackage *>(conn_->BuildPackage());
+    const auto pkg = dynamic_cast<FPackage *>(mConn->BuildPackage());
     pkg->SetPackageID(id).SetData(data);
     Send(pkg);
 }
 
 void UPlayer::Send(const uint32_t id, const std::stringstream &ss) const {
-    const auto pkg = dynamic_cast<FPackage *>(conn_->BuildPackage());
+    const auto pkg = dynamic_cast<FPackage *>(mConn->BuildPackage());
     pkg->SetPackageID(id).SetData(ss.str());
     Send(pkg);
 }
 
 void UPlayer::SyncCache(FCacheNode *node) {
-    componentModule_.SyncCache(node);
+    mComponentModule.SyncCache(node);
 }
 
 std::shared_ptr<UPlayer> CreatePlayer(const AConnectionPointer &conn, const uint64_t pid) {

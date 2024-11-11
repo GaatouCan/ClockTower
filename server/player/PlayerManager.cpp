@@ -49,7 +49,7 @@ void UPlayerManager::OnPlayerLogout(const uint64_t pid) {
 
         if (const auto sys = GetSystem<UDatabaseSystem>(); sys != nullptr) {
             sys->PushTask([plr](mysqlx::Schema &schema) {
-            plr->GetComponentModule().Serialize(schema);
+                plr->GetComponentModule().Serialize(schema);
             });
         } else {
             spdlog::error("{} - Failed to get DatabaseSystem", __func__);

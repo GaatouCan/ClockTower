@@ -19,9 +19,10 @@ public:
     void SetManagerLoader(const std::function<void(UManagerSystem *)> &loader);
 
     template<MANAGER_TYPE T>
-    void CreateManager() {
-        mManagerMap[typeid(T)] = new T(mIOContext);
-        spdlog::info("{} - Loaded Manager: {}", __func__, typeid(T).name());
+    T* CreateManager() {
+        auto mgr = new T(mIOContext);
+        mManagerMap[typeid(T)] = mgr;
+        return mgr;
     }
 
     template<MANAGER_TYPE T>
@@ -50,7 +51,10 @@ private:
 };
 
 #define REGISTER_MANAGER(mgr) \
-sys->CreateManager<mgr>();
+{ \
+    const auto res = sys->CreateManager<mgr>(); \
+    spdlog::info("{} - Loaded {}", __func__, res->GetManagerName()); \
+}
 
 template<MANAGER_TYPE T>
 T *GetManager() {

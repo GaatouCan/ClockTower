@@ -10,7 +10,7 @@
 
 UPlayer::UPlayer(AConnectionPointer conn)
     : mConn(std::move(conn)),
-      mId(0),
+      mId(std::any_cast<uint64_t>(mConn->GetContext())),
       mComponentModule(this),
       mEventModule(this) {
 }
@@ -127,7 +127,7 @@ void UPlayer::SyncCache(FCacheNode *node) {
 
 std::shared_ptr<UPlayer> CreatePlayer(const AConnectionPointer &conn, const uint64_t pid) {
     auto plr = std::make_shared<UPlayer>(conn);
-    plr->SetPlayerId(pid);
+    // plr->SetPlayerId(pid);
 
     return plr;
 }

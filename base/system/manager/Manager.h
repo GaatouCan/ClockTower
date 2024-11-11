@@ -13,12 +13,17 @@ class IManager {
 
     std::unordered_map<ATimerID, URepeatedTimer> mTimerMap;
 
-public:
+protected:
 
-    IManager() = delete;
+    friend class UManagerSystem;
 
     explicit IManager(asio::io_context &ctx);
     virtual ~IManager() = default;
+
+public:
+    IManager() = delete;
+
+    [[nodiscard]] virtual const char *GetManagerName() const = 0;
 
     void SetThreadID(AThreadID tid);
     [[nodiscard]] AThreadID GetThreadID() const;
@@ -64,3 +69,11 @@ public:
 
 template<typename T>
 concept MANAGER_TYPE = std::derived_from<T, IManager>;
+
+#define MANAGER_BODY(mgr) \
+    friend UManagerSystem; \
+public: \
+    [[nodiscard]] constexpr const char * GetManagerName() const override { \
+        return #mgr; \
+    } \
+private:

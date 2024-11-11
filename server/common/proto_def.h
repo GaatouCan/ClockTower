@@ -24,7 +24,7 @@ namespace protocol {
 	awaitable<void> CS_AppearanceRequest(const std::shared_ptr<ICharacter> &plr, IPackage *pkg);
 
 	// Chat
-	awaitable<void> CS_Chat_Room_Request(const std::shared_ptr<ICharacter> &plr, IPackage *pkg);
+	awaitable<void> CS_ChatRoomRequest(const std::shared_ptr<ICharacter> &plr, IPackage *pkg);
 
 } // protocol
 
@@ -41,6 +41,6 @@ inline void LoadProtocol(UProtocolSystem *sys) {
 	REGISTER_PROTOCOL(CS_AppearanceRequest)
 
 	// Chat
-	REGISTER_PROTOCOL(CS_Chat_Room_Request)
+	REGISTER_PROTOCOL(CS_ChatRoomRequest)
 
 }

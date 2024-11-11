@@ -2,11 +2,11 @@ syntax = "proto3";
 
 package Chat;
 
-message CS_Chat_Room_Request {
+message CS_ChatRoomRequest {
   uint64 roomId = 1;
 }
 
-message SC_Chat_Room_Response {
+message SC_ChatRoomResponse {
   uint64 roomId = 1;
   uint64 leader = 2;
 

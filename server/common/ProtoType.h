@@ -21,8 +21,8 @@ namespace protocol {
 		SC_AppearanceResponse = 2002,
 
 		// Chat
-		CS_Chat_Room_Request = 3001,
-		SC_Chat_Room_Response = 3002,
+		CS_ChatRoomRequest = 3001,
+		SC_ChatRoomResponse = 3002,
 
 		PROTO_TYPE_MAX,
 	}; // EProtoType
@@ -39,8 +39,8 @@ namespace protocol {
 			case EProtoType::SC_AppearanceResponse: return "SC_AppearanceResponse";
 
 			// Chat
-			case EProtoType::CS_Chat_Room_Request: return "CS_Chat_Room_Request";
-			case EProtoType::SC_Chat_Room_Response: return "SC_Chat_Room_Response";
+			case EProtoType::CS_ChatRoomRequest: return "CS_ChatRoomRequest";
+			case EProtoType::SC_ChatRoomResponse: return "SC_ChatRoomResponse";
 
 			default: return "UNDEFINED";
 		} // switch

@@ -1,10 +1,10 @@
 #pragma once
 
 #include "../PackageCodec.h"
+#include "Package.h"
 
-
-class UPackageCodecImpl final : public IPackageCodec {
+class UPackageCodecImpl final : public TPackageCodec<FPackage> {
 public:
-    awaitable<void> Encode(ATcpSocket &socket, IPackage *pkg) override;
-    awaitable<void> Decode(ATcpSocket &socket, IPackage *pkg) override;
+    awaitable<void> EncodeT(ATcpSocket &socket, FPackage *pkg) override;
+    awaitable<void> DecodeT(ATcpSocket &socket, FPackage *pkg) override;
 };

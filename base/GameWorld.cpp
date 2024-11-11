@@ -11,8 +11,6 @@
 #include "system/login/LoginSystem.h"
 #include "system/event/EventSystem.h"
 
-#include <spdlog/spdlog.h>
-
 
 UGameWorld::UGameWorld()
     : mAcceptor(mContext),

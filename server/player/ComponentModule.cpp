@@ -1,11 +1,11 @@
 #include "ComponentModule.h"
 #include "Player.h"
 
-// #include "../world/component/appearance/AppearanceCT.h"
+#include "../world/component/appearance/AppearanceCT.h"
 
 UComponentModule::UComponentModule(UPlayer *plr)
     : mOwner(plr){
-    // CreateComponent<UAppearanceCT>();
+    CreateComponent<UAppearanceCT>();
 }
 
 UComponentModule::~UComponentModule() {
@@ -23,7 +23,7 @@ void UComponentModule::Serialize(mysqlx::Schema &schema) {
         for (const auto& [tableName, node] : serialize) {
             if (mysqlx::Table table = schema.getTable(tableName); table.existsInDatabase()) {
                 if (node.serializer) {
-                    node.serializer(comp, std::move(table));
+                    node.serializer(comp, table);
                 }
             }
         }

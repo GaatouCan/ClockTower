@@ -9,7 +9,7 @@ class UComponentModule final {
 
     class UPlayer *mOwner;
 
-    using ASerializeHandler = std::function<void(IPlayerComponent *, mysqlx::Table)>;
+    using ASerializeHandler = std::function<void(IPlayerComponent *, const mysqlx::Table &)>;
     using ADeserializeHandler = std::function<void(IPlayerComponent *, mysqlx::RowResult)>;
 
     struct FSerializeNode {
@@ -84,7 +84,7 @@ public:
  */
 #define SERIALIZE_COMPONENT(comp, tb) \
 { \
-    GetModule()->RegisterSerializer<comp>(PascalToUnderline(#tb), [](IPlayerComponent *ct, mysqlx::Table table) { \
+    GetModule()->RegisterSerializer<comp>(PascalToUnderline(#tb), [](IPlayerComponent *ct, const mysqlx::Table &table) { \
         try { \
             USerializer serializer(std::move(table)); \
             dynamic_cast<comp *>(ct)->Serialize_##tb(serializer); \

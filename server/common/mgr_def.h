@@ -4,12 +4,12 @@
 
 #include "../player/PlayerManager.h"
 #include "../player/PlayerCache.h"
-// #include "../world/manager/chat/ChatManager.h"
+#include "../world/manager/chat/ChatManager.h"
 
 inline void LoadManager(UManagerSystem * sys) {
     assert(sys->IsTimeToLoadManager());
 
     REGISTER_MANAGER(UPlayerManager)
     REGISTER_MANAGER(UPlayerCache)
-    // REGISTER_MANAGER(UChatManager)
+    REGISTER_MANAGER(UChatManager)
 }

@@ -8,11 +8,17 @@
 
 class UAppearanceCT final : public IPlayerComponent {
 
-    COMPONENT_BODY(UAppearanceCT)
-
-    explicit UAppearanceCT(UComponentModule *module);
+    orm::UDBTable_Appearance appearance_;
+    std::map<uint32_t, orm::UDBTable_Avatar> avatarMap_;
+    std::map<uint32_t, orm::UDBTable_AvatarFrame> avatarFrameMap_;
 
 public:
+    explicit UAppearanceCT(UComponentModule *module);
+
+    [[nodiscard]] constexpr const char * GetComponentName() const override {
+        return "UAppearanceCT";
+    }
+
     void Serialize_Appearance(USerializer &s);
     void Deserialize_Appearance(UDeserializer &ds);
 
@@ -23,10 +29,5 @@ public:
     void Deserialize_AvatarFrame(UDeserializer &ds);
 
     void SendInfo() const;
-
-private:
-    orm::UDBTable_Appearance appearance_;
-    std::map<uint32_t, orm::UDBTable_Avatar> avatarMap_;
-    std::map<uint32_t, orm::UDBTable_AvatarFrame> avatarFrameMap_;
 };
 

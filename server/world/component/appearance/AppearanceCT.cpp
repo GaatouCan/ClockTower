@@ -17,8 +17,6 @@ UAppearanceCT::UAppearanceCT(UComponentModule *module)
     SERIALIZE_COMPONENT(UAppearanceCT, Appearance)
     SERIALIZE_COMPONENT(UAppearanceCT, Avatar)
     SERIALIZE_COMPONENT(UAppearanceCT, AvatarFrame)
-
-    spdlog::trace("{} - Player[{}] load component - {}", __func__, GetOwner()->GetPlayerID(), "UAppearanceCT");
 }
 
 void UAppearanceCT::Serialize_Appearance(USerializer &s) {

@@ -22,6 +22,7 @@ public:
     T* CreateManager() {
         auto mgr = new T(mIOContext);
         mManagerMap[typeid(T)] = mgr;
+        spdlog::info("{} - Loaded {}", __func__, mgr->GetManagerName());
         return mgr;
     }
 
@@ -49,12 +50,6 @@ private:
     AThreadID mManagerThreadId;
     bool bCouldLoad = false;
 };
-
-#define REGISTER_MANAGER(mgr) \
-{ \
-    const auto res = sys->CreateManager<mgr>(); \
-    spdlog::info("{} - Loaded {}", __func__, res->GetManagerName()); \
-}
 
 template<MANAGER_TYPE T>
 T *GetManager() {

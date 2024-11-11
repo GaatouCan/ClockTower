@@ -9,7 +9,7 @@
 inline void LoadManager(UManagerSystem * sys) {
     assert(sys->IsTimeToLoadManager());
 
-    REGISTER_MANAGER(UPlayerManager)
-    REGISTER_MANAGER(UPlayerCache)
-    REGISTER_MANAGER(UChatManager)
+    sys->CreateManager<UPlayerManager>();
+    sys->CreateManager<UPlayerCache>();
+    sys->CreateManager<UChatManager>();
 }

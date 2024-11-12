@@ -5,7 +5,7 @@
 
 
 void UProtocolSystem::Init() {
-
+    bInitialized = true;
 }
 
 void UProtocolSystem::RegisterProtocol(const uint32_t type, const AProtoFunctor &func) {

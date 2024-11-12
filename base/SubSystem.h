@@ -17,6 +17,12 @@ public:
     DISABLE_COPY_MOVE(ISubSystem)
 
     [[nodiscard]] virtual const char *GetSystemName() const = 0;
+    [[nodiscard]] bool IsInitialized() const {
+        return bInitialized;
+    }
+
+protected:
+    bool bInitialized = false;
 };
 
 template<class T>

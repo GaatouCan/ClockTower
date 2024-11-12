@@ -40,6 +40,7 @@ void UDatabaseSystem::Init() {
             node.sess->close();
         });
     }
+    bInitialized = true;
 }
 
 UDatabaseSystem::~UDatabaseSystem() {

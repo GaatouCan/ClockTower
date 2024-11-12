@@ -4,7 +4,7 @@
 #include <spdlog/spdlog.h>
 
 void ULoginSystem::Init() {
-
+    bInitialized = true;
 }
 
 bool ULoginSystem::VerifyAddress(const asio::ip::address &addr) {

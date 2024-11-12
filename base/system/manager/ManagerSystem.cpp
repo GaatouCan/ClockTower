@@ -21,7 +21,7 @@ UManagerSystem::~UManagerSystem() {
 }
 
 void UManagerSystem::Init() {
-    bCouldLoad = true;
+    bInitialized = true;
 
     if (mLoader) {
         std::invoke(mLoader, this);
@@ -57,8 +57,6 @@ void UManagerSystem::Init() {
             spdlog::warn("{}", e.what());
         }
     }, detached);
-
-    bCouldLoad = false;
 }
 
 void UManagerSystem::SetManagerLoader(const std::function<void(UManagerSystem *)> &loader) {
@@ -71,8 +69,4 @@ AThreadID UManagerSystem::GetThreadID() const {
 
 bool UManagerSystem::InManagerThread() const {
     return mManagerThreadId == std::this_thread::get_id();
-}
-
-bool UManagerSystem::IsTimeToLoadManager() const {
-    return bCouldLoad;
 }

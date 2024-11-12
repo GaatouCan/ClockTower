@@ -5,8 +5,12 @@
 #include <spdlog/spdlog.h>
 
 
+UConfigSystem::UConfigSystem()
+    : mLoader(nullptr) {
+}
+
 UConfigSystem::~UConfigSystem() {
-    for (const auto &loader : std::views::values(mLoaderMap)) {
+    for (const auto &loader: std::views::values(mLoaderMap)) {
         delete loader;
     }
 }
@@ -40,6 +44,10 @@ void UConfigSystem::Init() {
             spdlog::info("\tLoaded {}.", filepath);
         }
     });
+
+    bInitialized = true;
+    if (mLoader)
+        std::invoke(mLoader, this);
 }
 
 void UConfigSystem::SetYAMLPath(const std::string &path) {
@@ -48,6 +56,10 @@ void UConfigSystem::SetYAMLPath(const std::string &path) {
 
 void UConfigSystem::SetJSONPath(const std::string &path) {
     mJSONPath = path;
+}
+
+void UConfigSystem::SetLoaderFunctor(const std::function<void(UConfigSystem *)> &func) {
+    mLoader = func;
 }
 
 const YAML::Node &UConfigSystem::GetConfig() const {

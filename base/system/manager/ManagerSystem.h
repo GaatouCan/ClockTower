@@ -37,8 +37,6 @@ public:
     [[nodiscard]] AThreadID GetThreadID() const;
     [[nodiscard]] bool InManagerThread() const;
 
-    [[nodiscard]] bool IsTimeToLoadManager() const;
-
 private:
     std::unordered_map<std::type_index, IManager *> mManagerMap;
     std::function<void(UManagerSystem *)> mLoader;
@@ -48,7 +46,6 @@ private:
 
     std::thread mManagerThread;
     AThreadID mManagerThreadId;
-    bool bCouldLoad = false;
 };
 
 template<MANAGER_TYPE T>

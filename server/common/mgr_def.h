@@ -7,7 +7,7 @@
 #include "../world/manager/chat/ChatManager.h"
 
 inline void LoadManager(UManagerSystem * sys) {
-    assert(sys->IsTimeToLoadManager());
+    assert(sys->IsInitialized());
 
     sys->CreateManager<UPlayerManager>();
     sys->CreateManager<UPlayerCache>();

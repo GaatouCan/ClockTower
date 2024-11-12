@@ -5,6 +5,12 @@
 #include <spdlog/spdlog.h>
 
 
+UConfigSystem::~UConfigSystem() {
+    for (const auto &loader : std::views::values(mLoaderMap)) {
+        delete loader;
+    }
+}
+
 void UConfigSystem::Init() {
     spdlog::info("Using configuration file: {}.", mYAMLPath + kServerConfigFile);
 

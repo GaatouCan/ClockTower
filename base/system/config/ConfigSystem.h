@@ -2,6 +2,7 @@
 
 #include "../../SubSystem.h"
 #include "../../GameWorld.h"
+#include "ConfigLoader.h"
 
 #include <spdlog/spdlog.h>
 #include <yaml-cpp/yaml.h>
@@ -14,6 +15,9 @@ constexpr auto kServerConfigJSON = "/json";
 class UConfigSystem final : public ISubSystem {
 
     SUB_SYSTEM_BODY(ConfigSystem)
+
+    ~UConfigSystem() override;
+
     void Init() override;
 
 public:
@@ -30,6 +34,7 @@ private:
 
     YAML::Node mConfig;
     std::unordered_map<std::string, nlohmann::json> mConfigMap;
+    std::unordered_map<std::type_index, IConfigLoader *> mLoaderMap;
 };
 
 inline const YAML::Node &GetServerConfig() {

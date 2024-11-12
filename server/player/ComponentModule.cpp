@@ -3,15 +3,10 @@
 
 #include "../world/component/appearance/AppearanceCT.h"
 
-#include <spdlog/spdlog.h>
-
 UComponentModule::UComponentModule(UPlayer *plr)
     : mOwner(plr){
 
-    {
-        const auto comp = CreateComponent<UAppearanceCT>();
-        spdlog::trace("{} - Player[{}] load {}", __func__, mOwner->GetPlayerID(), comp->GetComponentName());
-    }
+    CreateComponent<UAppearanceCT>();
 }
 
 UComponentModule::~UComponentModule() {

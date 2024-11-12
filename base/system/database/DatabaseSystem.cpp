@@ -55,8 +55,7 @@ UDatabaseSystem::~UDatabaseSystem() {
     }
 }
 
-void UDatabaseSystem::SyncSelect(const std::string &tableName, const std::string &where,
-                                const std::function<void(mysqlx::Row)> &cb) {
+void UDatabaseSystem::SyncSelect(const std::string &tableName, const std::string &where, const std::function<void(mysqlx::Row)> &cb) {
     if (mNodeList.empty()) {
         spdlog::error("{} - {}", __func__, __LINE__);
         return;

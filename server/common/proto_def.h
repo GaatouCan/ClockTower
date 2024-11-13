@@ -21,10 +21,10 @@ namespace protocol {
 	// Login
 
 	// Appearance
-	awaitable<void> CS_AppearanceRequest(const std::shared_ptr<UCharacter> &plr, IPackage *pkg);
+	awaitable<void> CS_AppearanceRequest(const std::shared_ptr<UCharacter> &character, IPackage *pkg);
 
 	// Chat
-	awaitable<void> CS_ChatRoomRequest(const std::shared_ptr<UCharacter> &plr, IPackage *pkg);
+	awaitable<void> CS_ChatRoomRequest(const std::shared_ptr<UCharacter> &character, IPackage *pkg);
 
 } // protocol
 

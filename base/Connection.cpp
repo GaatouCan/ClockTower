@@ -134,7 +134,7 @@ awaitable<void> UConnection::Watchdog() {
             Disconnect();
         }
     } catch (std::exception &e) {
-        spdlog::error("{} - {}", __func__, e.what());
+        spdlog::warn("{} - {}", __func__, e.what());
     }
 }
 

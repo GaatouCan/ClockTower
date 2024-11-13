@@ -1,5 +1,3 @@
-#include <spdlog/spdlog.h>
-
 #include "../base/GameWorld.h"
 #include "../base/system/config/ConfigSystem.h"
 #include "../base/system/protocol/ProtocolSystem.h"
@@ -13,11 +11,21 @@
 #include "common/loader_def.h"
 #include "common/proto_def.h"
 #include "common/mgr_def.h"
-
+#include "common/logger_def.h"
 
 auto main(int argc, char *argv[]) -> int {
-    spdlog::set_level(spdlog::level::trace);
-    spdlog::info("Welcome to ClockTower!");
+    spdlog::info("Welcome to the ClockTower!");
+
+    InitLogger();
+
+    set_default_logger(spdlog::get("base_logger"));
+
+#ifdef _DEBUG
+    { // logger test
+        const auto gBaseLogger = spdlog::get("base_logger");
+        gBaseLogger->info("Hello World, This is a logger test.");
+    }
+#endif
 
     if (const auto sys = GetSystem<UConfigSystem>(); sys != nullptr) {
         sys->SetYAMLPath("../../config");

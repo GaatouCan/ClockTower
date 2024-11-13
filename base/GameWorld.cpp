@@ -2,7 +2,6 @@
 
 #include "utils.h"
 #include "impl/PackageCodecImpl.h"
-// #include "impl/ConnectionHandlerImpl.h"
 
 #include "system/config/ConfigSystem.h"
 #include "system/protocol/ProtocolSystem.h"
@@ -51,6 +50,7 @@ UGameWorld::~UGameWorld() {
     }
 
     spdlog::info("Game world destroyed.");
+    spdlog::drop_all();
 }
 
 UGameWorld &UGameWorld::Init() {

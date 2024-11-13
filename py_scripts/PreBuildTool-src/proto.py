@@ -117,7 +117,7 @@ def generate_protobuf_define(src: str, dist: str, proto: list, expt: list, inclu
 
         file.write('class IPackage;\n')
         file.write('using AConnectionPointer = std::shared_ptr<class UConnection>;\n')
-        file.write('class ICharacter;\n\n')
+        file.write('class UCharacter;\n\n')
 
         file.write('namespace protocol {\n\n')
         file.write('\t using asio::awaitable;\n\n')
@@ -127,7 +127,7 @@ def generate_protobuf_define(src: str, dist: str, proto: list, expt: list, inclu
 
             for proto in package['list']:
                 if proto['callback'] == 1:
-                    file.write('\tawaitable<void> %s(const std::shared_ptr<ICharacter> &plr, IPackage *pkg);\n' % proto['proto'])
+                    file.write('\tawaitable<void> %s(const std::shared_ptr<UCharacter> &character, IPackage *pkg);\n' % proto['proto'])
 
             file.write('\n')
 

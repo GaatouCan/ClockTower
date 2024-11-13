@@ -12,7 +12,7 @@
 
 class IPackage;
 using AConnectionPointer = std::shared_ptr<class UConnection>;
-class ICharacter;
+class UCharacter;
 
 namespace protocol {
 
@@ -21,10 +21,10 @@ namespace protocol {
 	// Login
 
 	// Appearance
-	awaitable<void> CS_AppearanceRequest(const std::shared_ptr<ICharacter> &plr, IPackage *pkg);
+	awaitable<void> CS_AppearanceRequest(const std::shared_ptr<UCharacter> &plr, IPackage *pkg);
 
 	// Chat
-	awaitable<void> CS_ChatRoomRequest(const std::shared_ptr<ICharacter> &plr, IPackage *pkg);
+	awaitable<void> CS_ChatRoomRequest(const std::shared_ptr<UCharacter> &plr, IPackage *pkg);
 
 } // protocol
 

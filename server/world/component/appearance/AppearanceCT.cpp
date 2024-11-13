@@ -80,7 +80,7 @@ void UAppearanceCT::SendInfo() const {
     // GetOwner()->SendPackage(SC_AppearanceResponse, res);
 }
 
-awaitable<void> protocol::CS_AppearanceRequest(const std::shared_ptr<ICharacter> &plr, IPackage *pkg) {
+awaitable<void> protocol::CS_AppearanceRequest(const std::shared_ptr<UCharacter> &plr, IPackage *pkg) {
     if (plr == nullptr)
         co_return;
 

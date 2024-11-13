@@ -5,9 +5,9 @@
 
 class IPackage;
 class UConnection;
-class ICharacter;
+class UCharacter;
 
-using AProtoFunctor = asio::awaitable<void>(*)(const std::shared_ptr<ICharacter> &, IPackage *);
+using AProtoFunctor = asio::awaitable<void>(*)(const std::shared_ptr<UCharacter> &, IPackage *);
 
 class IProtocolHandler {
 public:

@@ -2,6 +2,7 @@
 
 #include <typeindex>
 #include <mysqlx/xdevapi.h>
+#include <spdlog/spdlog.h>
 
 #include "PlayerComponent.h"
 
@@ -38,6 +39,9 @@ public:
         mComponentMap.insert_or_assign(typeid(T),  FComponentNode{});
         auto comp = new T(this);
         mComponentMap[typeid(T)].comp = comp;
+
+        spdlog::trace("{} - Player[{}] Load {}", __func__, GetPlayerId(), comp->GetComponentName());
+
         return comp;
     }
 
@@ -73,6 +77,8 @@ public:
 
     void OnLogin();
     void OnLogout();
+
+    [[nodiscard]] uint64_t GetPlayerId() const;
 
     void SyncCache(FCacheNode *node);
 };

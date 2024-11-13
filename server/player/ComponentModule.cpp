@@ -56,6 +56,12 @@ void UComponentModule::OnLogout() {
     }
 }
 
+uint64_t UComponentModule::GetPlayerId() const {
+    if (mOwner)
+        return mOwner->GetPlayerID();
+    return 0;
+}
+
 void UComponentModule::SyncCache(FCacheNode *node) {
     for (const auto& [comp, serialize] : std::views::values(mComponentMap)) {
         comp->SyncCache(node);

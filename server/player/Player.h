@@ -20,7 +20,7 @@ struct FEP_PlayerLogout final : IEventParam {
     uint64_t pid;
 };
 
-class UPlayer final : public ICharacter, public std::enable_shared_from_this<UPlayer> {
+class UPlayer final : public UCharacter, public std::enable_shared_from_this<UPlayer> {
 
     AConnectionPointer mConn;
     uint64_t mId;

@@ -1,8 +1,9 @@
 #pragma once
 
+#include "Actor.h"
 #include <memory>
 
-class ICharacter : public std::enable_shared_from_this<ICharacter> {
+class UCharacter : public UActor, public std::enable_shared_from_this<UCharacter> {
 public:
-    virtual ~ICharacter() = default;
+    ~UCharacter() override = default;
 };

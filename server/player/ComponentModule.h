@@ -40,7 +40,7 @@ public:
         auto comp = new T(this);
         mComponentMap[typeid(T)].comp = comp;
 
-        spdlog::trace("{} - Player[{}] load {}", __func__, GetPlayerID(), comp->GetComponentName());
+        spdlog::debug("{} - Player[{}] load {}", __func__, GetPlayerID(), comp->GetComponentName());
 
         return comp;
     }

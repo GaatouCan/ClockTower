@@ -56,7 +56,7 @@ void UComponentModule::OnLogout() {
     }
 }
 
-uint64_t UComponentModule::GetPlayerId() const {
+uint64_t UComponentModule::GetPlayerID() const {
     if (mOwner)
         return mOwner->GetPlayerID();
     return 0;

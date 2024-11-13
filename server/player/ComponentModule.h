@@ -40,7 +40,7 @@ public:
         auto comp = new T(this);
         mComponentMap[typeid(T)].comp = comp;
 
-        spdlog::trace("{} - Player[{}] Load {}", __func__, GetPlayerId(), comp->GetComponentName());
+        spdlog::trace("{} - Player[{}] load {}", __func__, GetPlayerID(), comp->GetComponentName());
 
         return comp;
     }
@@ -78,7 +78,7 @@ public:
     void OnLogin();
     void OnLogout();
 
-    [[nodiscard]] uint64_t GetPlayerId() const;
+    [[nodiscard]] uint64_t GetPlayerID() const;
 
     void SyncCache(FCacheNode *node);
 };

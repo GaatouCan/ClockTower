@@ -12,6 +12,7 @@ UPlayerManager::~UPlayerManager() {
 
 awaitable<void> UPlayerManager::OnPlayerLogin(const std::shared_ptr<UConnection> &conn, const uint64_t pid) {
     if (const auto plr = FindPlayer(pid); plr != nullptr) {
+        spdlog::info("{} - Player[{}] over login", __func__, pid);
 
         // 首先断开旧连接
         plr->GetConnection()->ResetContext();
@@ -21,15 +22,18 @@ awaitable<void> UPlayerManager::OnPlayerLogin(const std::shared_ptr<UConnection>
         if (plr->IsLogin()) {
             plr->SetConnection(conn);
             plr->OnLogin();
+
+            spdlog::info("{} - Player[{}] rebind new connection", __func__, pid);
             co_return;
         }
 
         // 否则直接删掉该对象并执行下面登录逻辑
         RemovePlayer(pid);
+        spdlog::info("{} - Remove old player[{}]", __func__, pid);
     }
 
     const auto plr = EmplacePlayer(conn, pid);
-    spdlog::info("{} - New player login: {}", __func__, pid);
+    spdlog::info("{} - New player[{}] login", __func__, pid);
 
     if (const auto sys = GetSystem<UDatabaseSystem>(); sys != nullptr) {
         co_await sys->AsyncPushTask([plr](mysqlx::Schema &schema) {
@@ -43,7 +47,7 @@ awaitable<void> UPlayerManager::OnPlayerLogin(const std::shared_ptr<UConnection>
 }
 
 void UPlayerManager::OnPlayerLogout(const uint64_t pid) {
-    spdlog::info("{} - Player Logout: {}", __func__, pid);
+    spdlog::info("{} - Player[{}] logout", __func__, pid);
     if (const auto plr = RemovePlayer(pid); plr != nullptr) {
         plr->OnLogout();
 

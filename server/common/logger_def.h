@@ -5,8 +5,7 @@
 #include <spdlog/sinks/daily_file_sink.h>
 #include <yaml-cpp/yaml.h>
 
-
-inline void CreateDefaultLogger(const spdlog::sink_ptr &consoleSink, const std::string &logName, const std::string &path) {
+inline std::shared_ptr<spdlog::logger> CreateDefaultLogger(const spdlog::sink_ptr &consoleSink, const std::string &logName, const std::string &path) {
     const auto fileSink = std::make_shared<spdlog::sinks::daily_file_sink_mt>(path, 2, 30);
     fileSink->set_level(spdlog::level::trace);
 
@@ -15,6 +14,7 @@ inline void CreateDefaultLogger(const spdlog::sink_ptr &consoleSink, const std::
     const auto logger = std::make_shared<spdlog::logger>(logName, sinks.begin(), sinks.end());
     logger->set_level(spdlog::level::trace);
     register_logger(logger);
+    return logger;
 }
 
 inline void InitLogger(const YAML::Node& config) {

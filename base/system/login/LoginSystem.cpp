@@ -1,6 +1,6 @@
 #include "LoginSystem.h"
 #include "../../Connection.h"
-#include "../GameWorld.h"
+#include "../base/GameWorld.h"
 
 #include <spdlog/spdlog.h>
 

@@ -1,6 +1,6 @@
 #include "PlayerCache.h"
-#include "../system/manager/ManagerSystem.h"
-#include "../system/database/DatabaseSystem.h"
+#include "../base/system/manager/ManagerSystem.h"
+#include "../base/system/database/DatabaseSystem.h"
 #include "../base/GameWorld.h"
 
 

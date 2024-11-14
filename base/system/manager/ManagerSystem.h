@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../../GameWorld.h"
 #include "../../SubSystem.h"
 #include "Manager.h"
 
@@ -24,7 +23,9 @@ public:
     class TManagerRegister {
     public:
         TManagerRegister() {
+            spdlog::info("TManagerRegister - {}", typeid(T).name());
             gManagerCreatorVector.emplace_back([](UManagerSystem *sys) {
+                spdlog::info("Registering manager type: {}", typeid(T).name());
                 return sys->CreateManager<T>();
             });
         }
@@ -62,15 +63,16 @@ private:
 
 template<MANAGER_TYPE T>
 T *GetManager() {
-    const auto sys = GetSystem<UManagerSystem>();
-    if (sys == nullptr) {
-        spdlog::critical("{} - Failed to found ManagerSystem.", __func__);
-        GetWorld().Shutdown();
-        exit(-1);
-    }
-
-    return sys->GetManager<T>();
+    // const auto sys = GetSystem<UManagerSystem>();
+    // if (sys == nullptr) {
+    //     spdlog::critical("{} - Failed to found ManagerSystem.", __func__);
+    //     GetWorld().Shutdown();
+    //     exit(-1);
+    // }
+    //
+    // return sys->GetManager<T>();
+    return nullptr;
 }
 
 #define REGISTER_MANAGER(mgr) \
-static UManagerSystem::TManagerRegister<mgr> g_Manager_##mgr##_Register();
+static UManagerSystem::TManagerRegister<mgr> g_Manager_##mgr##_Register;

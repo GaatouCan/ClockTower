@@ -1,8 +1,9 @@
 #include "ManagerSystem.h"
+#include "../../GameWorld.h"
 
 #include <spdlog/spdlog.h>
 
-REGISTER_SUBSYSTEM(UManagerSystem, 10)
+REGISTER_SUBSYSTEM(UManagerSystem, 9)
 
 UManagerSystem::UManagerSystem()
     : mTickTimer(mIOContext) {
@@ -22,6 +23,8 @@ UManagerSystem::~UManagerSystem() {
 }
 
 void UManagerSystem::Init() {
+    spdlog::info("{} - {}", __func__, gManagerCreatorVector.size());
+
     for (auto &val : gManagerCreatorVector)
         std::invoke(val, this);
 

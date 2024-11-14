@@ -51,6 +51,7 @@ public:
     class TSubSystemRegister {
     public:
         explicit TSubSystemRegister(const int priority) {
+            spdlog::info("TSubSystemRegister - {}", priority);
             gSubSystemCreatorVector.emplace_back([priority](UGameWorld &world) {
                 return world.CreateSystem<T>(priority);
             });

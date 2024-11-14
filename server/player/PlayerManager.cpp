@@ -1,7 +1,7 @@
 ﻿#include "PlayerManager.h"
 #include "../base/GameWorld.h"
-#include "../system/database/DatabaseSystem.h"
-#include "../system/manager/ManagerSystem.h"
+#include "../base/system/database/DatabaseSystem.h"
+#include "../base/system/manager/ManagerSystem.h"
 
 
 REGISTER_MANAGER(UPlayerManager)

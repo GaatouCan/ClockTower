@@ -24,6 +24,6 @@ inline void InitLogger(const YAML::Node& config) {
     const auto logRootDir = config["log_dir"].as<std::string>();
 
 #ifdef _DEBUG
-    CreateDefaultLogger(consoleSink, logRootDir + "base_logger", "base.log");
+    CreateDefaultLogger(consoleSink, "base_logger", logRootDir + "base.log");
 #endif
 }

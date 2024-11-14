@@ -1,8 +1,8 @@
 #include "../base/GameWorld.h"
+
 #include "../base/system/config/ConfigSystem.h"
 #include "../base/system/protocol/ProtocolSystem.h"
 #include "../base/system/login/LoginSystem.h"
-#include "../base/system/manager/ManagerSystem.h"
 
 #include "impl/ConnectionHandlerImpl.h"
 #include "impl/ProtocolHandlerImpl.h"

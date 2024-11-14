@@ -94,7 +94,7 @@ target_link_libraries(base_static PUBLIC protobuf::libprotobuf)
 target_link_libraries(base_static PUBLIC yaml-cpp::yaml-cpp)
 target_link_libraries(base_static PUBLIC mysql::concpp)
 
-include_directories(${BASE_SRC})
+#include_directories(${BASE_SRC})
 add_executable(server server/server.cpp ${COMMON_SRC} ${IMPL_SRC} ${PLAYER_SRC} ${WORLD_SRC})
 target_link_libraries(server PRIVATE base_static)
 target_link_libraries(server PRIVATE ${PROTOBUF_LIBS})

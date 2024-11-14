@@ -23,8 +23,6 @@ UManagerSystem::~UManagerSystem() {
 }
 
 void UManagerSystem::Init() {
-    bInitialized = true;
-
     if (mLoader) {
         std::invoke(mLoader, this);
     }

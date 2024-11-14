@@ -5,33 +5,15 @@
 
 class ISubSystem {
 
-    friend class UGameWorld;
-
-protected:
+public:
     ISubSystem() = default;
     virtual ~ISubSystem() = default;
 
-    virtual void Init() = 0;
-
-public:
     DISABLE_COPY_MOVE(ISubSystem)
 
+    virtual void Init() = 0;
     [[nodiscard]] virtual const char *GetSystemName() const = 0;
-    [[nodiscard]] bool IsInitialized() const {
-        return bInitialized;
-    }
-
-protected:
-    bool bInitialized = false;
 };
 
 template<class T>
 concept SYSTEM_TYPE = std::derived_from<T, ISubSystem>;
-
-#define SUB_SYSTEM_BODY(sys) \
-    friend UGameWorld; \
-public: \
-    [[nodiscard]] constexpr const char *GetSystemName() const override { \
-        return #sys; \
-    } \
-private:

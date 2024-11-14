@@ -57,8 +57,6 @@ void UConfigSystem::Init() {
         }
     });
 
-    bInitialized = true;
-
     for (auto &val : gConfigLoaderVector)
         std::invoke(val, this);
 }

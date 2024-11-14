@@ -9,11 +9,14 @@ class UConnection;
 
 class UProtocolSystem final : public ISubSystem {
 
-    SUB_SYSTEM_BODY(ProtocolSystem)
-
-    void Init() override;
+    std::unordered_map<uint32_t, AProtoFunctor> mProtoMap;
+    std::unique_ptr<IProtocolHandler> mHandler;
 
 public:
+    void Init() override;
+
+    [[nodiscard]] constexpr const char *GetSystemName() const override { return "UProtocolSystem"; }
+
     void RegisterProtocol(uint32_t type, const AProtoFunctor &func);
 
     [[nodiscard]] AProtoFunctor Find(uint32_t proto) const;
@@ -28,10 +31,6 @@ public:
     }
 
     awaitable<void> OnReadPackage(const std::shared_ptr<UConnection> &conn, IPackage *pkg) const;
-
-private:
-    std::unordered_map<uint32_t, AProtoFunctor> mProtoMap;
-    std::unique_ptr<IProtocolHandler> mHandler;
 };
 
 #define REGISTER_PROTOCOL(proto) \

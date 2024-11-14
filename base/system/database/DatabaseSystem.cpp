@@ -5,6 +5,18 @@
 #include <spdlog/spdlog.h>
 
 
+UDatabaseSystem::~UDatabaseSystem() {
+    for (const auto &[th, sess, queue, tid]: mNodeList) {
+        if (th->joinable()) {
+            th->join();
+        }
+    }
+
+    for (const auto &[th, sess, queue, tid]: mNodeList) {
+        queue->Quit();
+    }
+}
+
 void UDatabaseSystem::Init() {
     const auto &cfg = GetServerConfig();
     const auto schemaName = cfg["database"]["mysql"]["schema"].as<std::string>();
@@ -40,19 +52,6 @@ void UDatabaseSystem::Init() {
             node.sess->close();
         });
     }
-    bInitialized = true;
-}
-
-UDatabaseSystem::~UDatabaseSystem() {
-    for (const auto &[th, sess, queue, tid]: mNodeList) {
-        if (th->joinable()) {
-            th->join();
-        }
-    }
-
-    for (const auto &[th, sess, queue, tid]: mNodeList) {
-        queue->Quit();
-    }
 }
 
 void UDatabaseSystem::SyncSelect(const std::string &tableName, const std::string &where, const std::function<void(mysqlx::Row)> &cb) {
@@ -82,6 +81,5 @@ void UDatabaseSystem::SyncSelect(const std::string &tableName, const std::string
 }
 
 void UDatabaseSystem::PushTask(const ADatabaseTask &task) {
-    PushTask(task, [] {
-    });
+    PushTask(task, [] {});
 }

@@ -3,6 +3,7 @@
 #include "../system/manager/Manager.h"
 #include "CacheNode.h"
 
+#include <map>
 #include <mutex>
 #include <shared_mutex>
 
@@ -10,7 +11,7 @@ class UPlayerCache final : public IManager {
 
     MANAGER_BODY(UPlayerCache)
 
-    std::unordered_map<uint64_t, FCacheNode> mCacheMap;
+    std::map<uint64_t, FCacheNode> mCacheMap;
     std::mutex mBlockMutex;
     mutable std::shared_mutex mSharedMutex;
 

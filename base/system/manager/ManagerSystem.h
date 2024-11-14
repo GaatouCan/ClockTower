@@ -8,14 +8,25 @@
 
 class UManagerSystem final : public ISubSystem {
 
-    SUB_SYSTEM_BODY(ManagerSystem)
+    std::unordered_map<std::type_index, IManager *> mManagerMap;
+    std::function<void(UManagerSystem *)> mLoader;
 
+    asio::io_context mIOContext;
+    ASteadyTimer mTickTimer;
+
+    std::thread mManagerThread;
+    AThreadID mManagerThreadId;
+
+public:
     UManagerSystem();
     ~UManagerSystem() override;
 
     void Init() override;
 
-public:
+    [[nodiscard]] constexpr const char * GetSystemName() const override {
+        return "UManagerSystem";
+    }
+
     void SetManagerLoader(const std::function<void(UManagerSystem *)> &loader);
 
     template<MANAGER_TYPE T>
@@ -36,16 +47,6 @@ public:
 
     [[nodiscard]] AThreadID GetThreadID() const;
     [[nodiscard]] bool InManagerThread() const;
-
-private:
-    std::unordered_map<std::type_index, IManager *> mManagerMap;
-    std::function<void(UManagerSystem *)> mLoader;
-
-    asio::io_context mIOContext;
-    ASteadyTimer mTickTimer;
-
-    std::thread mManagerThread;
-    AThreadID mManagerThreadId;
 };
 
 template<MANAGER_TYPE T>

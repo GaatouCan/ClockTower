@@ -12,16 +12,27 @@
 
 class UEventSystem final : public ISubSystem {
 
-    SUB_SYSTEM_BODY(EventSystem)
+    struct FEventNode {
+        uint32_t event = 0;
+        IEventParam *param = nullptr;
+    };
 
+    std::queue<FEventNode> mEventQueue;
+    std::mutex mEventMutex;
+    mutable std::shared_mutex mSharedMutex;
+
+    std::map<uint32_t, std::map<void *, EventListener> > mListenerMap;
+    std::map<void *, EventListener> mCurrentListener;
+    std::mutex mListenerMutex;
+
+public:
     ~UEventSystem() override;
 
     void Init() override;
 
-    awaitable<void> HandleEvent();
-
-public:
-    [[nodiscard]] bool IsQueueEmpty() const;
+    [[nodiscard]] constexpr const char * GetSystemName() const override {
+        return "UEventSystem";
+    }
 
     void Dispatch(uint32_t event, IEventParam *parma);
 
@@ -46,16 +57,7 @@ public:
     void RemoveListener(uint32_t event, void *ptr);
 
 private:
-    struct FEventNode {
-        uint32_t event = 0;
-        IEventParam *param = nullptr;
-    };
+    awaitable<void> HandleEvent();
 
-    std::queue<FEventNode> mEventQueue;
-    std::mutex mEventMutex;
-    mutable std::shared_mutex mSharedMutex;
-
-    std::map<uint32_t, std::map<void *, EventListener> > mListenerMap;
-    std::map<void *, EventListener> mCurrentListener;
-    std::mutex mListenerMutex;
+    [[nodiscard]] bool IsQueueEmpty() const;
 };

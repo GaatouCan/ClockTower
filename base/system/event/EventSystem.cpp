@@ -14,7 +14,7 @@ UEventSystem::~UEventSystem() {
 }
 
 void UEventSystem::Init() {
-    bInitialized = true;
+
 }
 
 awaitable<void> UEventSystem::HandleEvent() {

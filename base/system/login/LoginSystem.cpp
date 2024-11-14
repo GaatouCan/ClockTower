@@ -7,7 +7,7 @@
 REGISTER_SUBSYSTEM(ULoginSystem, 2)
 
 void ULoginSystem::Init() {
-    bInitialized = true;
+
 }
 
 bool ULoginSystem::VerifyAddress(const asio::ip::address &addr) {

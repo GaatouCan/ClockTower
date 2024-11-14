@@ -18,13 +18,19 @@ inline std::vector<std::function<IConfigLoader*(class UConfigSystem *)>> gConfig
 
 class UConfigSystem final : public ISubSystem {
 
-    SUB_SYSTEM_BODY(ConfigSystem)
+    std::string mYAMLPath;
+    std::string mJSONPath;
 
+    YAML::Node mConfig;
+    std::unordered_map<std::string, nlohmann::json> mConfigMap;
+    std::unordered_map<std::type_index, IConfigLoader *> mLoaderMap;
+
+public:
     ~UConfigSystem() override;
 
     void Init() override;
+    [[nodiscard]] constexpr const char *GetSystemName() const override { return "UConfigSystem"; }
 
-public:
     void SetYAMLPath(const std::string &path);
     void SetJSONPath(const std::string &path);
 
@@ -63,14 +69,6 @@ public:
             });
         }
     };
-
-private:
-    std::string mYAMLPath;
-    std::string mJSONPath;
-
-    YAML::Node mConfig;
-    std::unordered_map<std::string, nlohmann::json> mConfigMap;
-    std::unordered_map<std::type_index, IConfigLoader *> mLoaderMap;
 };
 
 inline const YAML::Node &GetServerConfig() {

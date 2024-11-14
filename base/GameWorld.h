@@ -8,7 +8,7 @@
 #include <typeindex>
 
 
-inline std::vector<std::function<ISubSystem*(UGameWorld&)>> gSubSystemCreatorVector;
+inline std::vector<std::function<ISubSystem*(class UGameWorld&)>> gSubSystemCreatorVector;
 
 class UGameWorld final {
 

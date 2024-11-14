@@ -16,12 +16,17 @@ struct FDatabaseNode {
 };
 
 class UDatabaseSystem final : public ISubSystem {
-    SUB_SYSTEM_BODY(DatabaseSystem)
-    void Init() override;
 
-    ~UDatabaseSystem() override;
+    std::vector<FDatabaseNode> mNodeList;
+    std::atomic_size_t mNextNodeIndex = 0;
 
 public:
+    ~UDatabaseSystem() override;
+
+    void Init() override;
+
+    [[nodiscard]] constexpr const char *GetSystemName() const override { return "UDatabaseSystem"; }
+
     /**
      * 阻塞SQL查询，只能用于服务初始化时数据加载
      * @param tableName 表名
@@ -55,8 +60,4 @@ public:
 
         return asio::async_initiate<CompletionToken, void()>(init, token, task);
     }
-
-private:
-    std::vector<FDatabaseNode> mNodeList;
-    std::atomic_size_t mNextNodeIndex = 0;
 };

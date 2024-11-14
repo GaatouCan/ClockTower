@@ -11,7 +11,7 @@ class UPlayerManager final : public IManager {
 
     MANAGER_BODY(UPlayerManager)
 
-    std::unordered_map<uint64_t, std::shared_ptr<UPlayer>> mPlayerMap;
+    std::map<uint64_t, std::shared_ptr<UPlayer>> mPlayerMap;
     std::mutex mMutex;
     std::shared_mutex mSharedMutex;
 

@@ -16,17 +16,6 @@
 auto main(int argc, char *argv[]) -> int {
     spdlog::info("Welcome to the ClockTower!");
 
-    InitLogger();
-
-    set_default_logger(spdlog::get("base_logger"));
-
-#ifdef _DEBUG
-    { // logger test
-        const auto gBaseLogger = spdlog::get("base_logger");
-        gBaseLogger->info("Hello World, This is a logger test.");
-    }
-#endif
-
     if (const auto sys = GetSystem<UConfigSystem>(); sys != nullptr) {
         sys->SetYAMLPath("../../config");
         sys->SetLoaderFunctor(&LoadConfigLoader);
@@ -44,6 +33,8 @@ auto main(int argc, char *argv[]) -> int {
     if (const auto sys = GetSystem<UManagerSystem>(); sys != nullptr) {
         sys->SetManagerLoader(&LoadManager);
     }
+
+    GetWorld().DefineLogger(&InitLogger);
 
     GetWorld().FilterConnection([](const AConnectionPointer &conn) {
         if (conn != nullptr) {

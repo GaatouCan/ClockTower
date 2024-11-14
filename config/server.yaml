@@ -2,6 +2,9 @@ server:
   port: 8080
   work_thread: 4
 
+log_dir:
+  ./logs/
+
 package:
   magic: 23244435
   version: 20241013

@@ -38,6 +38,7 @@ class UGameWorld final {
     std::unordered_map<std::type_index, ISubSystem *> mSystemMap;
 
     std::function<void(const AConnectionPointer &)> mConnectionFilter;
+    std::function<void(const YAML::Node&)> mLoggerLoader;
 
     AThreadID mMainThreadId;
 
@@ -66,6 +67,7 @@ public:
     UGameWorld &Shutdown();
 
     void FilterConnection(const std::function<void(const AConnectionPointer &)> &filter);
+    void DefineLogger(const std::function<void(const YAML::Node&)> &func);
 
     void RemoveConnection(const std::string &key);
 

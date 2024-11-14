@@ -1,7 +1,10 @@
 #include "ProtocolSystem.h"
 #include "../../Package.h"
+#include "../../GameWorld.h"
 
 #include <spdlog/spdlog.h>
+
+REGISTER_SUBSYSTEM(UProtocolSystem, 1)
 
 
 void UProtocolSystem::Init() {

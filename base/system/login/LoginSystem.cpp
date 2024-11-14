@@ -1,7 +1,10 @@
 #include "LoginSystem.h"
 #include "../../Connection.h"
+#include "../GameWorld.h"
 
 #include <spdlog/spdlog.h>
+
+REGISTER_SUBSYSTEM(ULoginSystem, 2)
 
 void ULoginSystem::Init() {
     bInitialized = true;

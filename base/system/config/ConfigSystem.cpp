@@ -4,7 +4,7 @@
 #include <fstream>
 #include <spdlog/spdlog.h>
 
-static UGameWorld::TSubSystemCreator<UConfigSystem> g_UConfigSystem_Creator(0);
+REGISTER_SUBSYSTEM(UConfigSystem, 0)
 
 UConfigSystem::UConfigSystem()
     : mLoader(nullptr) {

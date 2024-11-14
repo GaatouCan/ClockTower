@@ -2,6 +2,8 @@
 
 #include <spdlog/spdlog.h>
 
+REGISTER_SUBSYSTEM(UManagerSystem, 10)
+
 UManagerSystem::UManagerSystem()
     : mLoader(nullptr),
       mTickTimer(mIOContext) {

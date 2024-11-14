@@ -7,9 +7,11 @@
 
 #include <typeindex>
 
+
 inline std::vector<std::function<ISubSystem*(UGameWorld&)>> gSubSystemCreatorVector;
 
 class UGameWorld final {
+
     asio::io_context mContext;
     ATcpAcceptor mAcceptor;
 
@@ -43,6 +45,17 @@ class UGameWorld final {
     std::atomic_bool bRunning;
 
 public:
+
+    template<SYSTEM_TYPE T>
+    class TSubSystemRegister {
+    public:
+        explicit TSubSystemRegister(const int priority) {
+            gSubSystemCreatorVector.emplace_back([priority](UGameWorld &world) {
+                return world.CreateSystem<T>(priority);
+            });
+        }
+    };
+
     UGameWorld();
     ~UGameWorld();
 
@@ -67,16 +80,6 @@ public:
             return dynamic_cast<T *>(iter->second);
         return nullptr;
     }
-
-    template<SYSTEM_TYPE T>
-    class TSubSystemCreator {
-    public:
-        explicit TSubSystemCreator(const int priority) {
-            gSubSystemCreatorVector.emplace_back([priority](UGameWorld &world) {
-                return world.CreateSystem<T>(priority);
-            });
-        }
-    };
 
 private:
     awaitable<void> WaitForConnect();
@@ -105,3 +108,6 @@ template<SYSTEM_TYPE T>
 T *GetSystem() {
     return GetWorld().GetSystem<T>();
 }
+
+#define REGISTER_SUBSYSTEM(sys, priority) \
+static UGameWorld::TSubSystemRegister<sys> g_##sys##_Register(priority);

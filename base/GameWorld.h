@@ -7,7 +7,6 @@
 
 #include <typeindex>
 
-UGameWorld &GetWorld();
 
 class UGameWorld final {
     asio::io_context mContext;
@@ -44,15 +43,12 @@ class UGameWorld final {
 
 public:
     UGameWorld();
-
     ~UGameWorld();
 
     DISABLE_COPY_MOVE(UGameWorld)
 
     UGameWorld &Init();
-
     UGameWorld &Run();
-
     UGameWorld &Shutdown();
 
     void FilterConnection(const std::function<void(const AConnectionPointer &)> &filter);
@@ -60,7 +56,6 @@ public:
     void RemoveConnection(const std::string &key);
 
     FContextNode &NextContextNode();
-
     asio::io_context &GetIOContext();
 
     AThreadID GetThreadID() const;
@@ -71,14 +66,6 @@ public:
             return dynamic_cast<T *>(iter->second);
         return nullptr;
     }
-
-    template<SYSTEM_TYPE T>
-    class TSubSystemCreator {
-    public:
-        explicit TSubSystemCreator(const int priority) {
-            GetWorld().CreateSystem<T>(priority);
-        }
-    };
 
 private:
     awaitable<void> WaitForConnect();
@@ -107,6 +94,3 @@ template<SYSTEM_TYPE T>
 T *GetSystem() {
     return GetWorld().GetSystem<T>();
 }
-
-#define REGISTER_SUBSYSTEM(sys, priority) \
-static UGameWorld::TSubSystemCreator<sys> g_##sys##_creator(priority);

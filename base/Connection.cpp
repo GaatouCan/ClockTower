@@ -21,7 +21,7 @@ UConnection::~UConnection() {
 void UConnection::ConnectToClient() {
     mDeadline = std::chrono::steady_clock::now() + sExpireTime;
 
-    spdlog::trace("{} - Connection from {} run in thread: {}", __func__, RemoteAddress().to_string(), ThreadIdToInt(mThreadId));
+    spdlog::trace("{} - Connection from {} run in thread: {}", __FUNCTION__, RemoteAddress().to_string(), ThreadIdToInt(mThreadId));
     if (mHandler != nullptr)
         mHandler->OnConnected(shared_from_this());
 
@@ -134,14 +134,14 @@ awaitable<void> UConnection::Watchdog() {
             Disconnect();
         }
     } catch (std::exception &e) {
-        spdlog::warn("{} - {}", __func__, e.what());
+        spdlog::warn("{} - {}", __FUNCTION__, e.what());
     }
 }
 
 awaitable<void> UConnection::WritePackage() {
     try {
         if (mCodec == nullptr) {
-            spdlog::critical("{} - codec undefined", __func__);
+            spdlog::critical("{} - codec undefined", __FUNCTION__);
             Disconnect();
             co_return;
         }
@@ -157,13 +157,13 @@ awaitable<void> UConnection::WritePackage() {
                 }
                 mPool.Recycle(pkg);
             } else {
-                spdlog::warn("{} - write failed", __func__);
+                spdlog::warn("{} - write failed", __FUNCTION__);
                 mPool.Recycle(pkg);
                 Disconnect();
             }
         }
     } catch (std::exception &e) {
-        spdlog::error("{} : {}", __func__, e.what());
+        spdlog::error("{} : {}", __FUNCTION__, e.what());
         Disconnect();
     }
 }
@@ -171,7 +171,7 @@ awaitable<void> UConnection::WritePackage() {
 awaitable<void> UConnection::ReadPackage() {
     try {
         if (mCodec == nullptr) {
-            spdlog::error("{} - codec undefined", __func__);
+            spdlog::error("{} - codec undefined", __FUNCTION__);
             Disconnect();
             co_return;
         }
@@ -188,14 +188,14 @@ awaitable<void> UConnection::ReadPackage() {
                     co_await mHandler->OnReadPackage(shared_from_this(), pkg);
                 }
             } else {
-                spdlog::warn("{} - Read failed", __func__);
+                spdlog::warn("{} - Read failed", __FUNCTION__);
                 Disconnect();
             }
 
             mPool.Recycle(pkg);
         }
     } catch (std::exception &e) {
-        spdlog::error("{} : {}", __func__, e.what());
+        spdlog::error("{} : {}", __FUNCTION__, e.what());
         Disconnect();
     }
 }

@@ -29,7 +29,7 @@ awaitable<std::optional<FCacheNode>> UPlayerCache::FindCacheNode(const uint64_t 
     }
     const auto sys = GetSystem<UDatabaseSystem>();
     if (sys == nullptr) {
-        spdlog::error("{} - Failed to get DatabaseSystem", __func__);
+        spdlog::error("{} - Failed to get DatabaseSystem", __FUNCTION__);
         co_return std::nullopt;
     }
 

@@ -5,7 +5,7 @@
 awaitable<void> UPackageCodecImpl::EncodeT(ATcpSocket &socket, FPackage *pkg) {
     try {
         if (const auto len = co_await async_write(socket, asio::buffer(&pkg->mHeader, FPackage::headerSize)); len == 0) {
-            spdlog::warn("{} - Write package header length equal zero", __func__);
+            spdlog::warn("{} - Write package header length equal zero", __FUNCTION__);
             pkg->Invalid();
             co_return;
         }
@@ -15,7 +15,7 @@ awaitable<void> UPackageCodecImpl::EncodeT(ATcpSocket &socket, FPackage *pkg) {
 
         co_await async_write(socket, asio::buffer(pkg->mData));
     } catch (std::exception &e) {
-        spdlog::warn("{} - {}", __func__, e.what());
+        spdlog::warn("{} - {}", __FUNCTION__, e.what());
     }
     co_return;
 }
@@ -23,7 +23,7 @@ awaitable<void> UPackageCodecImpl::EncodeT(ATcpSocket &socket, FPackage *pkg) {
 awaitable<void> UPackageCodecImpl::DecodeT(ATcpSocket &socket, FPackage *pkg) {
     try {
         if (const auto len = co_await async_read(socket, asio::buffer(&pkg->mHeader, FPackage::headerSize)); len == 0) {
-            spdlog::warn("{} - Read package header length equal zero", __func__);
+            spdlog::warn("{} - Read package header length equal zero", __FUNCTION__);
             pkg->Invalid();
             co_return;
         }
@@ -34,7 +34,7 @@ awaitable<void> UPackageCodecImpl::DecodeT(ATcpSocket &socket, FPackage *pkg) {
         pkg->mData.resize(pkg->mHeader.size);
         co_await async_read(socket, asio::buffer(pkg->mData));
     } catch (std::exception &e) {
-        spdlog::warn("{} - {}", __func__, e.what());
+        spdlog::warn("{} - {}", __FUNCTION__, e.what());
     }
     co_return;
 }

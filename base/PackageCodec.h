@@ -23,7 +23,7 @@ public:
             co_await EncodeT(socket, dynamic_cast<T *>(pkg));
         } catch (std::bad_cast &e) {
             pkg->Invalid();
-            spdlog::error("{} - {}", __func__, e.what());
+            spdlog::error("{} - {}", __FUNCTION__, e.what());
         }
     }
     awaitable<void> Decode(ATcpSocket &socket, IPackage *pkg) override {
@@ -31,7 +31,7 @@ public:
             co_await DecodeT(socket, dynamic_cast<T *>(pkg));
         } catch (std::bad_cast &e) {
             pkg->Invalid();
-            spdlog::error("{} - {}", __func__, e.what());
+            spdlog::error("{} - {}", __FUNCTION__, e.what());
         }
     }
 

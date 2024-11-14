@@ -83,7 +83,7 @@ file(GLOB_RECURSE BASE_SRC
 file(GLOB_RECURSE COMMON_SRC ${CMAKE_SOURCE_DIR}/server/common/*.h ${CMAKE_SOURCE_DIR}/server/common/*.cpp)
 file(GLOB_RECURSE IMPL_SRC ${CMAKE_SOURCE_DIR}/server/impl/*.h ${CMAKE_SOURCE_DIR}/server/impl/*.cpp)
 file(GLOB_RECURSE PLAYER_SRC ${CMAKE_SOURCE_DIR}/server/player/*.h ${CMAKE_SOURCE_DIR}/server/player/*.cpp)
-
+file(GLOB_RECURSE COMMAND_SRC ${CMAKE_SOURCE_DIR}/server/command/*.h ${CMAKE_SOURCE_DIR}/server/command/*.cpp)
 file(GLOB_RECURSE WORLD_SRC ${CMAKE_SOURCE_DIR}/server/world/*.h ${CMAKE_SOURCE_DIR}/server/world/*.cpp)
 
 add_library(base_static STATIC ${BASE_SRC})
@@ -95,7 +95,14 @@ target_link_libraries(base_static PUBLIC yaml-cpp::yaml-cpp)
 target_link_libraries(base_static PUBLIC mysql::concpp)
 
 include_directories(${BASE_SRC})
-add_executable(server server/server.cpp ${COMMON_SRC} ${IMPL_SRC} ${PLAYER_SRC} ${WORLD_SRC})
+
+add_executable(server server/server.cpp
+        ${COMMON_SRC}
+        ${IMPL_SRC}
+        ${COMMAND_SRC}
+        ${PLAYER_SRC}
+        ${WORLD_SRC}
+)
 target_link_libraries(server PRIVATE base_static)
 target_link_libraries(server PRIVATE ${PROTOBUF_LIBS})
 

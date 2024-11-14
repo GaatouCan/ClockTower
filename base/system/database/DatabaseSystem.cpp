@@ -56,7 +56,7 @@ void UDatabaseSystem::Init() {
 
 void UDatabaseSystem::SyncSelect(const std::string &tableName, const std::string &where, const std::function<void(mysqlx::Row)> &cb) {
     if (mNodeList.empty()) {
-        spdlog::error("{} - {}", __func__, __LINE__);
+        spdlog::error("{} - {}", __FUNCTION__, __LINE__);
         return;
     }
 
@@ -65,13 +65,13 @@ void UDatabaseSystem::SyncSelect(const std::string &tableName, const std::string
 
     auto schema = sess->getSchema(cfg["database"]["mysql"]["schema"].as<std::string>());
     if (!schema.existsInDatabase()) {
-        spdlog::error("{} - schema not exists", __func__);
+        spdlog::error("{} - schema not exists", __FUNCTION__);
         return;
     }
 
     auto table = schema.getTable(tableName);
     if (!table.existsInDatabase()) {
-        spdlog::error("{} - table not exists", __func__);
+        spdlog::error("{} - table not exists", __FUNCTION__);
         return;
     }
 

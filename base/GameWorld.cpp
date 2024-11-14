@@ -37,7 +37,7 @@ UGameWorld::~UGameWorld() {
             continue;
 
         delete iter->second;
-        spdlog::info("{} destroyed.", type.name());
+        spdlog::info("{} Destroyed.", type.name());
 
         mSystemMap.erase(iter);
     }
@@ -47,7 +47,7 @@ UGameWorld::~UGameWorld() {
         delete sys;
     }
 
-    spdlog::info("Game world destroyed.");
+    spdlog::info("Game World Destroyed.");
     spdlog::drop_all();
 }
 
@@ -61,7 +61,7 @@ UGameWorld &UGameWorld::Init() {
             continue;
 
         iter->second->Init();
-        spdlog::info("{} initialized.", iter->second->GetSystemName());
+        spdlog::info("{} Initialized.", iter->second->GetSystemName());
     }
 
     const auto &config = GetServerConfig();
@@ -101,7 +101,7 @@ UGameWorld &UGameWorld::Shutdown() {
     if (!bRunning)
         return *this;
 
-    spdlog::info("Server shutting down...");
+    spdlog::info("Server Shutting Down...");
     bRunning = false;
 
     if (!mContext.stopped())
@@ -130,12 +130,12 @@ awaitable<void> UGameWorld::WaitForConnect() {
 
         const auto loginSys = GetSystem<ULoginSystem>();
         if (loginSys == nullptr) {
-            spdlog::critical("{} - Failed to get login system.", __func__);
+            spdlog::critical("{} - Failed to get login system.", __FUNCTION__);
             Shutdown();
             exit(-1);
         }
 
-        spdlog::info("Waiting for client to connect - server port: {}", config["server"]["port"].as<uint16_t>());
+        spdlog::info("Waiting For Client To Connect - Server Port: {}", config["server"]["port"].as<uint16_t>());
 
         while (bRunning) {
             // PackagePool and io_context in per sub thread
@@ -143,15 +143,15 @@ awaitable<void> UGameWorld::WaitForConnect() {
 
             if (auto socket = co_await mAcceptor.async_accept(ctx); socket.is_open()) {
                 const auto addr = socket.remote_endpoint().address();
-                spdlog::info("New connection from: {}", addr.to_string());
+                spdlog::info("New Connection From: {}", addr.to_string());
 
                 if (!loginSys->VerifyAddress(socket.remote_endpoint().address())) {
-                    spdlog::warn("Rejected connection from: {}", addr.to_string());
+                    spdlog::warn("Rejected Connection From: {}", addr.to_string());
                     continue;
                 }
 
                 const auto conn = std::make_shared<UConnection>(std::move(socket), pool);
-                spdlog::info("Accept connection from: {}", addr.to_string());
+                spdlog::info("Accept Connection From: {}", addr.to_string());
 
                 const std::string key = fmt::format("{} - {}", addr.to_string(), UnixTime());
 
@@ -177,7 +177,7 @@ awaitable<void> UGameWorld::WaitForConnect() {
             }
         }
     } catch (std::exception &e) {
-        spdlog::error("{} - {}", __func__, e.what());
+        spdlog::error("{} - {}", __FUNCTION__, e.what());
         Shutdown();
     }
 }

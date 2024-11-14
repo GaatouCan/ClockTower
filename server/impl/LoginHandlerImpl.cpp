@@ -12,7 +12,7 @@ awaitable<void> ULoginHandlerImpl::OnPlayerLogin(const std::shared_ptr<UConnecti
     if (const auto plrMgr = GetManager<UPlayerManager>(); plrMgr != nullptr) {
         co_await plrMgr->OnPlayerLogin(conn, info.pid);
     } else
-        spdlog::warn("{} - PlayerManager not found", __func__);
+        spdlog::warn("{} - PlayerManager not found", __FUNCTION__);
 }
 
 FLoginInfo ULoginHandlerImpl::ParseLoginInfo(IPackage *pkg) {
@@ -30,7 +30,7 @@ FLoginInfo ULoginHandlerImpl::ParseLoginInfo(IPackage *pkg) {
             request.token()
         };
     } catch (std::exception &e) {
-        spdlog::warn("{} - {}", __func__, e.what());
+        spdlog::warn("{} - {}", __FUNCTION__, e.what());
         return {};
     }
 }

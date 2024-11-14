@@ -63,7 +63,7 @@ public:
 inline const YAML::Node &GetServerConfig() {
     const auto cfgSys = GetSystem<UConfigSystem>();
     if (cfgSys == nullptr) {
-        spdlog::critical("{} - Fail to found ConfigSystem", __func__);
+        spdlog::critical("{} - Fail to found ConfigSystem", __FUNCTION__);
         GetWorld().Shutdown();
         exit(-1);
     }

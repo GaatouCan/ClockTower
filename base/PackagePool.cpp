@@ -109,7 +109,7 @@ void UPackagePool::LoadConfig(const YAML::Node &cfg) {
     if (!cfg["package"]["pool"]["collect_scale"].IsNull())
         SetCollectScale(cfg["package"]["pool"]["collect_scale"].as<float>());
 
-    spdlog::info("Package pool configuration loaded.");
+    spdlog::info("Package Pool Configuration Loaded Successfully.");
 }
 
 void UPackagePool::SetDefaultCapacity(const size_t capacity) {
@@ -152,7 +152,7 @@ void UPackagePool::Expanse() {
         return;
 
     const auto num = static_cast<size_t>(std::ceil(static_cast<float>(mUseCount) * sExpanseScale));
-    spdlog::trace("{} - Pool rest: {}, current using: {}, expand number: {}.", __func__, mQueue.size(), mUseCount, num);
+    spdlog::trace("{} - Pool Rest[{}], Current Using[{}], Expand Number[{}].", __FUNCTION__, mQueue.size(), mUseCount, num);
 
     for (size_t i = 0; i < num; i++)
         if (sCreatePackage)
@@ -174,7 +174,7 @@ void UPackagePool::Collect() {
     mCollectTime = now;
 
     const auto num = static_cast<size_t>(std::ceil(static_cast<float>(mQueue.size()) * sCollectScale));
-    spdlog::trace("{} - Pool rest: {}, current using: {}, collect number: {}.", __func__, mQueue.size(), mUseCount, num);
+    spdlog::trace("{} - Pool Rest[{}], Current Using[{}], Collect Number[{}].", __FUNCTION__, mQueue.size(), mUseCount, num);
 
     for (size_t i = 0; i < num && mQueue.size() > sMinCapacity; i++) {
         const auto pkg = mQueue.front();

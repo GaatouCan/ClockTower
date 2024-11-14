@@ -32,7 +32,7 @@ public:
     T* CreateManager() {
         auto mgr = new T(mIOContext);
         mManagerMap[typeid(T)] = mgr;
-        spdlog::info("{} - Loaded {}", __func__, mgr->GetManagerName());
+        spdlog::info("{} - Loaded {}", __FUNCTION__, mgr->GetManagerName());
         return mgr;
     }
 
@@ -52,7 +52,7 @@ template<MANAGER_TYPE T>
 T *GetManager() {
     const auto sys = GetSystem<UManagerSystem>();
     if (sys == nullptr) {
-        spdlog::critical("{} - Failed to found ManagerSystem.", __func__);
+        spdlog::critical("{} - Failed to found ManagerSystem.", __FUNCTION__);
         GetWorld().Shutdown();
         exit(-1);
     }

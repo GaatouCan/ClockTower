@@ -15,12 +15,12 @@ UConfigSystem::~UConfigSystem() {
 }
 
 void UConfigSystem::Init() {
-    spdlog::info("Using configuration file: {}.", mYAMLPath + kServerConfigFile);
+    spdlog::info("Using Server Configuration File: {}.", mYAMLPath + kServerConfigFile);
 
     mConfig = YAML::LoadFile(mYAMLPath + kServerConfigFile);
 
     assert(!mConfig.IsNull());
-    spdlog::info("Checking configuration file.");
+    spdlog::info("Checking Server Configuration File.");
 
     assert(!mConfig["server"].IsNull());
     assert(!mConfig["server"]["port"].IsNull());
@@ -40,6 +40,8 @@ void UConfigSystem::Init() {
     assert(!mConfig["package"]["pool"]["expanse_scale"].IsNull());
     assert(!mConfig["package"]["pool"]["collect_rate"].IsNull());
     assert(!mConfig["package"]["pool"]["collect_scale"].IsNull());
+
+    spdlog::info("Server Configuration File Check Successfully.");
 
     const std::string jsonPath = !mJSONPath.empty() ? mJSONPath : mYAMLPath + kServerConfigJSON;
 

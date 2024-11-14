@@ -52,7 +52,7 @@ void UEventModule::RemoveListener(const EEvent event, void *ptr) {
 }
 
 void UEventModule::Dispatch(EEvent event, IEventParam *parma) {
-    spdlog::debug("{} - Player[{}] dispatch event[{}]", __func__, mOwner->GetPlayerID(), static_cast<uint32_t>(event));
+    spdlog::debug("{} - Player[{}] dispatch event[{}]", __FUNCTION__, mOwner->GetPlayerID(), static_cast<uint32_t>(event));
     const bool empty = IsQueueEmpty();
 
     {

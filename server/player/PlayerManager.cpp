@@ -13,7 +13,7 @@ UPlayerManager::~UPlayerManager() {
 
 awaitable<void> UPlayerManager::OnPlayerLogin(const std::shared_ptr<UConnection> &conn, const uint64_t pid) {
     if (const auto plr = FindPlayer(pid); plr != nullptr) {
-        spdlog::info("{} - Player[{}] over login", __func__, pid);
+        spdlog::info("{} - Player[{}] Over Login", __FUNCTION__, pid);
 
         // 首先断开旧连接
         plr->GetConnection()->ResetContext();
@@ -24,31 +24,31 @@ awaitable<void> UPlayerManager::OnPlayerLogin(const std::shared_ptr<UConnection>
             plr->SetConnection(conn);
             plr->OnLogin();
 
-            spdlog::info("{} - Player[{}] rebind new connection", __func__, pid);
+            spdlog::info("{} - Player[{}] Rebind New Connection From {}", __FUNCTION__, pid, conn->RemoteAddress().to_string());
             co_return;
         }
 
         // 否则直接删掉该对象并执行下面登录逻辑
         RemovePlayer(pid);
-        spdlog::info("{} - Remove old player[{}]", __func__, pid);
+        spdlog::info("{} - Remove Old player[{}]", __FUNCTION__, pid);
     }
 
     const auto plr = EmplacePlayer(conn, pid);
-    spdlog::info("{} - New player[{}] login", __func__, pid);
+    spdlog::info("{} - New Player[{}] Login", __FUNCTION__, pid);
 
     if (const auto sys = GetSystem<UDatabaseSystem>(); sys != nullptr) {
         co_await sys->AsyncPushTask([plr](mysqlx::Schema &schema) {
         plr->GetComponentModule().Deserialize(schema);
         }, asio::use_awaitable);
     } else {
-        spdlog::error("{} - Failed to found DatabaseSystem.", __func__);
+        spdlog::error("{} - Failed To Get Database System.", __FUNCTION__);
     }
 
     plr->OnLogin();
 }
 
 void UPlayerManager::OnPlayerLogout(const uint64_t pid) {
-    spdlog::info("{} - Player[{}] logout", __func__, pid);
+    spdlog::info("{} - Player[{}] Logout", __FUNCTION__, pid);
     if (const auto plr = RemovePlayer(pid); plr != nullptr) {
         plr->OnLogout();
 
@@ -57,7 +57,7 @@ void UPlayerManager::OnPlayerLogout(const uint64_t pid) {
                 plr->GetComponentModule().Serialize(schema);
             });
         } else {
-            spdlog::error("{} - Failed to get DatabaseSystem", __func__);
+            spdlog::error("{} - Failed To Get Database System", __FUNCTION__);
         }
     }
 }

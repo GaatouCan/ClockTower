@@ -57,7 +57,7 @@ void UPlayer::OnLogin() {
         RunInThread(&UPlayer::OnLogin, this);
         return;
     }
-    spdlog::info("{} - Player[{}] login succeed.", __func__, GetPlayerID());
+    spdlog::info("{} - Player[{}] Login Successfully.", __FUNCTION__, GetPlayerID());
 
     mLoginTime = std::chrono::steady_clock::now();
     mComponentModule.OnLogin();
@@ -84,7 +84,7 @@ void UPlayer::OnLogout() {
     mTimerMap.clear();
 
     mComponentModule.OnLogout();
-    spdlog::info("{} - Player[{}] logout.", __func__, GetPlayerID());
+    spdlog::info("{} - Player[{}] Logout.", __FUNCTION__, GetPlayerID());
 
     const auto param = new FEP_PlayerLogout;
     param->pid = mId;

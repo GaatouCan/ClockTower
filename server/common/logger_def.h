@@ -4,8 +4,6 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/daily_file_sink.h>
 
-static constexpr auto kLogPath = "./logs/";
-
 inline void CreateDefaultLogger(const spdlog::sink_ptr &consoleSink, const std::string &logName, const std::string &path) {
     const auto fileSink = std::make_shared<spdlog::sinks::daily_file_sink_mt>("./logs/" + path, 2, 30);
     fileSink->set_level(spdlog::level::trace);

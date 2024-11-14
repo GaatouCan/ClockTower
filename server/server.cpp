@@ -9,7 +9,6 @@
 #include "impl/LoginHandlerImpl.h"
 
 #include "common/proto_def.h"
-#include "common/mgr_def.h"
 #include "common/logger_def.h"
 
 auto main(int argc, char *argv[]) -> int {
@@ -26,10 +25,6 @@ auto main(int argc, char *argv[]) -> int {
 
     if (const auto sys = GetSystem<ULoginSystem>(); sys != nullptr) {
         sys->SetHandler<ULoginHandlerImpl>();
-    }
-
-    if (const auto sys = GetSystem<UManagerSystem>(); sys != nullptr) {
-        sys->SetManagerLoader(&LoadManager);
     }
 
     GetWorld().DefineLogger(&InitLogger);

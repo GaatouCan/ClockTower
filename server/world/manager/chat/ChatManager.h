@@ -5,8 +5,12 @@
 
 class UChatManager final : public IManager {
 
-    MANAGER_BODY(UChatManager)
+public:
 
     explicit UChatManager(asio::io_context &ctx);
     ~UChatManager() override;
+
+    [[nodiscard]] constexpr const char * GetManagerName() const override {
+        return "UChatManager";
+    }
 };

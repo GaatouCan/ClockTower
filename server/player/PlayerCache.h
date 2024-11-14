@@ -9,16 +9,18 @@
 
 class UPlayerCache final : public IManager {
 
-    MANAGER_BODY(UPlayerCache)
-
     std::map<uint64_t, FCacheNode> mCacheMap;
     std::mutex mBlockMutex;
     mutable std::shared_mutex mSharedMutex;
 
+public:
     explicit UPlayerCache(asio::io_context &ctx);
     ~UPlayerCache() override;
 
-public:
+    [[nodiscard]] constexpr const char *GetManagerName() const override {
+        return "UPlayerCache";
+    }
+
     void OnTick(ATimePoint now) override;
 
     void SyncCache(FCacheNode node);

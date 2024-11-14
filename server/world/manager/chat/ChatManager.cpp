@@ -1,7 +1,10 @@
 #include "ChatManager.h"
 #include "../../../player/Player.h"
 #include "../../../common/proto_def.h"
+#include "../system/manager/ManagerSystem.h"
 
+
+REGISTER_MANAGER(UChatManager)
 
 UChatManager::UChatManager(asio::io_context &ctx)
     : IManager(ctx) {

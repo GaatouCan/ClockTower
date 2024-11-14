@@ -6,10 +6,11 @@
 
 #include <typeindex>
 
+inline std::vector<std::function<IManager*(class UManagerSystem *sys)>> gManagerCreatorVector;
+
 class UManagerSystem final : public ISubSystem {
 
     std::unordered_map<std::type_index, IManager *> mManagerMap;
-    std::function<void(UManagerSystem *)> mLoader;
 
     asio::io_context mIOContext;
     ASteadyTimer mTickTimer;
@@ -18,6 +19,17 @@ class UManagerSystem final : public ISubSystem {
     AThreadID mManagerThreadId;
 
 public:
+
+    template<MANAGER_TYPE T>
+    class TManagerRegister {
+    public:
+        TManagerRegister() {
+            gManagerCreatorVector.emplace_back([](UManagerSystem *sys) {
+                return sys->CreateManager<T>();
+            });
+        }
+    };
+
     UManagerSystem();
     ~UManagerSystem() override;
 
@@ -25,16 +37,6 @@ public:
 
     [[nodiscard]] constexpr const char * GetSystemName() const override {
         return "UManagerSystem";
-    }
-
-    void SetManagerLoader(const std::function<void(UManagerSystem *)> &loader);
-
-    template<MANAGER_TYPE T>
-    T* CreateManager() {
-        auto mgr = new T(mIOContext);
-        mManagerMap[typeid(T)] = mgr;
-        spdlog::info("{} - Loaded {}", __func__, mgr->GetManagerName());
-        return mgr;
     }
 
     template<MANAGER_TYPE T>
@@ -47,6 +49,15 @@ public:
 
     [[nodiscard]] AThreadID GetThreadID() const;
     [[nodiscard]] bool InManagerThread() const;
+
+private:
+    template<MANAGER_TYPE T>
+    T* CreateManager() {
+        auto mgr = new T(mIOContext);
+        mManagerMap[typeid(T)] = mgr;
+        spdlog::info("{} - Loaded {}", __func__, mgr->GetManagerName());
+        return mgr;
+    }
 };
 
 template<MANAGER_TYPE T>
@@ -60,3 +71,6 @@ T *GetManager() {
 
     return sys->GetManager<T>();
 }
+
+#define REGISTER_MANAGER(mgr) \
+static UManagerSystem::TManagerRegister<mgr> g_Manager_##mgr##_Register();

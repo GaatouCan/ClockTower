@@ -5,8 +5,7 @@
 REGISTER_SUBSYSTEM(UManagerSystem, 10)
 
 UManagerSystem::UManagerSystem()
-    : mLoader(nullptr),
-      mTickTimer(mIOContext) {
+    : mTickTimer(mIOContext) {
 }
 
 UManagerSystem::~UManagerSystem() {
@@ -23,9 +22,8 @@ UManagerSystem::~UManagerSystem() {
 }
 
 void UManagerSystem::Init() {
-    if (mLoader) {
-        std::invoke(mLoader, this);
-    }
+    for (auto &val : gManagerCreatorVector)
+        std::invoke(val, this);
 
     mManagerThread = std::thread([this] {
         mManagerThreadId = std::this_thread::get_id();
@@ -57,10 +55,6 @@ void UManagerSystem::Init() {
             spdlog::warn("{}", e.what());
         }
     }, detached);
-}
-
-void UManagerSystem::SetManagerLoader(const std::function<void(UManagerSystem *)> &loader) {
-    mLoader = loader;
 }
 
 AThreadID UManagerSystem::GetThreadID() const {

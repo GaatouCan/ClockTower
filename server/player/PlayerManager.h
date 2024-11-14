@@ -3,22 +3,23 @@
 #include "../../base/system/manager/Manager.h"
 #include "Player.h"
 
-#include <unordered_map>
 #include <mutex>
 #include <shared_mutex>
 
 class UPlayerManager final : public IManager {
 
-    MANAGER_BODY(UPlayerManager)
-
     std::map<uint64_t, std::shared_ptr<UPlayer>> mPlayerMap;
     std::mutex mMutex;
     std::shared_mutex mSharedMutex;
 
+public:
     explicit UPlayerManager(asio::io_context &ctx);
     ~UPlayerManager() override;
 
-public:
+    [[nodiscard]] constexpr const char * GetManagerName() const override {
+        return "UPlayerManager";
+    }
+
 
     awaitable<void> OnPlayerLogin(const std::shared_ptr<UConnection> &conn, uint64_t pid);
     void OnPlayerLogout(uint64_t pid);

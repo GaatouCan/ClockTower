@@ -4,7 +4,10 @@
 #include "impl/PackageCodecImpl.h"
 
 #include "system/config/ConfigSystem.h"
+#include "system/protocol/ProtocolSystem.h"
 #include "system/login/LoginSystem.h"
+#include "system/manager/ManagerSystem.h"
+#include "system/event/EventSystem.h"
 
 
 UGameWorld::UGameWorld()
@@ -15,10 +18,11 @@ UGameWorld::UGameWorld()
       bInited(false),
       bRunning(false) {
     // Create Sub System
-    for (auto &creator: gSubSystemCreatorVector)
-        std::invoke(creator, *this);
-
-    gSubSystemCreatorVector.clear();
+    CreateSystem<UConfigSystem>(0);
+    CreateSystem<UProtocolSystem>(1);
+    CreateSystem<ULoginSystem>(2);
+    CreateSystem<UManagerSystem>(9);
+    CreateSystem<UEventSystem>(10);
 }
 
 UGameWorld::~UGameWorld() {

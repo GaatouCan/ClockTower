@@ -2,9 +2,8 @@
 
 #include "../../SubSystem.h"
 #include "../../GameWorld.h"
-#include "ConfigLoader.h"
+#include "LogicConfig.h"
 
-#include <concepts>
 #include <spdlog/spdlog.h>
 #include <yaml-cpp/yaml.h>
 #include <nlohmann/json.hpp>
@@ -13,8 +12,6 @@
 constexpr auto kServerConfigFile = "/server.yaml";
 constexpr auto kServerConfigJSON = "/json";
 
-inline std::vector<std::function<IConfigLoader*(class UConfigSystem *)>> gConfigLoaderVector;
-
 
 class UConfigSystem final : public ISubSystem {
 
@@ -22,10 +19,13 @@ class UConfigSystem final : public ISubSystem {
     std::string mJSONPath;
 
     YAML::Node mConfig;
-    std::unordered_map<std::string, nlohmann::json> mConfigMap;
-    std::unordered_map<std::type_index, IConfigLoader *> mLoaderMap;
+    std::unordered_map<std::string, nlohmann::json> mJSONConfigMap;
+    std::unordered_map<std::type_index, ILogicConfig *> mLogicConfigMap;
+
+    std::function<void(UConfigSystem *)> mLogicConfigLoader;
 
 public:
+    UConfigSystem();
     ~UConfigSystem() override;
 
     void Init() override;
@@ -34,22 +34,22 @@ public:
     void SetYAMLPath(const std::string &path);
     void SetJSONPath(const std::string &path);
 
-    template<typename T>
-    requires std::derived_from<T, IConfigLoader>
-    void AddConfigLoader(const std::vector<std::string> &pathList) {
+    void SetLogicConfigLoader(const std::function<void(UConfigSystem *)> &loader);
+
+    template<LOGIC_CONFIG_TYPE T>
+    void CreateLogicConfig(const std::vector<std::string> &pathList) {
         std::vector<nlohmann::json> configs;
         for (const auto &path : pathList) {
-            if (const auto iter = mConfigMap.find(path); iter != mConfigMap.end()) {
+            if (const auto iter = mJSONConfigMap.find(path); iter != mJSONConfigMap.end()) {
                 configs.push_back(iter->second);
             }
         }
-        mLoaderMap.insert_or_assign(typeid(T), new T(configs));
+        mLogicConfigMap.insert_or_assign(typeid(T), new T(configs));
     }
 
-    template<typename T>
-    requires std::derived_from<T, IConfigLoader>
-    T *FindLoader() {
-        if (const auto iter = mLoaderMap.find(typeid(T)); iter != mLoaderMap.end()) {
+    template<LOGIC_CONFIG_TYPE T>
+    T *FindLogicConfig() {
+        if (const auto iter = mLogicConfigMap.find(typeid(T)); iter != mLogicConfigMap.end()) {
             return dynamic_cast<T *>(iter->second);
         }
         return nullptr;
@@ -57,18 +57,7 @@ public:
 
     const YAML::Node &GetConfig() const;
 
-    std::optional<nlohmann::json> Find(const std::string &path, uint64_t id) const;
-
-    template<typename T>
-    requires std::derived_from<T, IConfigLoader>
-    class TConfigLoaderRegister {
-    public:
-        explicit TConfigLoaderRegister(const std::string &path) {
-            gConfigLoaderVector.emplace_back([path](UConfigSystem *sys) {
-                return sys->AddConfigLoader<T>(path);
-            });
-        }
-    };
+    std::optional<nlohmann::json> FindConfig(const std::string &path, uint64_t id) const;
 };
 
 inline const YAML::Node &GetServerConfig() {
@@ -81,6 +70,3 @@ inline const YAML::Node &GetServerConfig() {
 
     return cfgSys->GetConfig();
 }
-
-#define REGISTER_CONFIG_LOADER(loader, ...) \
-    static UConfigSystem::TConfigLoaderRegister<loader> g_ConfigLoader_##loader##_Register({__VA_ARGS__});

@@ -1,10 +1,7 @@
 ﻿#include "PlayerManager.h"
 #include "../base/GameWorld.h"
-#include "../base/system/database/DatabaseSystem.h"
-#include "../base/system/manager/ManagerSystem.h"
+#include "../system/database/DatabaseSystem.h"
 
-
-REGISTER_MANAGER(UPlayerManager)
 
 UPlayerManager::UPlayerManager(asio::io_context &ctx)
     : IManager(ctx) {

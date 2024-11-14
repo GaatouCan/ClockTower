@@ -1,10 +1,8 @@
 #include "PlayerCache.h"
-#include "../base/system/manager/ManagerSystem.h"
-#include "../base/system/database/DatabaseSystem.h"
+
 #include "../base/GameWorld.h"
+#include "../system/database/DatabaseSystem.h"
 
-
-REGISTER_MANAGER(UPlayerCache)
 
 UPlayerCache::UPlayerCache(asio::io_context &ctx) : IManager(ctx) {
 }

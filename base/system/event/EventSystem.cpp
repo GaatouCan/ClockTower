@@ -1,7 +1,6 @@
 ﻿#include "EventSystem.h"
 #include "../../GameWorld.h"
 
-REGISTER_SUBSYSTEM(UEventSystem, 11)
 
 UEventSystem::~UEventSystem() {
     mListenerMap.clear();

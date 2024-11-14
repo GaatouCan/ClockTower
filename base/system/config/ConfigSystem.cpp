@@ -4,10 +4,12 @@
 #include <fstream>
 #include <spdlog/spdlog.h>
 
-REGISTER_SUBSYSTEM(UConfigSystem, 0)
+UConfigSystem::UConfigSystem()
+    : mLogicConfigLoader(nullptr) {
+}
 
 UConfigSystem::~UConfigSystem() {
-    for (const auto &loader: std::views::values(mLoaderMap)) {
+    for (const auto &loader: std::views::values(mLogicConfigMap)) {
         delete loader;
     }
 }
@@ -52,13 +54,14 @@ void UConfigSystem::Init() {
 
             filepath = StringReplace(filepath, '\\', '.');
 
-            mConfigMap[filepath] = nlohmann::json::parse(fs);
+            mJSONConfigMap[filepath] = nlohmann::json::parse(fs);
             spdlog::info("\tLoaded {}.", filepath);
         }
     });
 
-    for (auto &val : gConfigLoaderVector)
-        std::invoke(val, this);
+    if (mLogicConfigLoader) {
+        std::invoke(mLogicConfigLoader, this);
+    }
 }
 
 void UConfigSystem::SetYAMLPath(const std::string &path) {
@@ -69,12 +72,16 @@ void UConfigSystem::SetJSONPath(const std::string &path) {
     mJSONPath = path;
 }
 
+void UConfigSystem::SetLogicConfigLoader(const std::function<void(UConfigSystem *)> &loader) {
+    mLogicConfigLoader = loader;
+}
+
 const YAML::Node &UConfigSystem::GetConfig() const {
     return mConfig;
 }
 
-std::optional<nlohmann::json> UConfigSystem::Find(const std::string &path, const uint64_t id) const {
-    if (const auto it = mConfigMap.find(path); it != mConfigMap.end()) {
+std::optional<nlohmann::json> UConfigSystem::FindConfig(const std::string &path, const uint64_t id) const {
+    if (const auto it = mJSONConfigMap.find(path); it != mJSONConfigMap.end()) {
         if (it->second.contains(std::to_string(id)))
             return it->second[std::to_string(id)];
     }

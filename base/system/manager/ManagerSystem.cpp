@@ -1,12 +1,12 @@
 #include "ManagerSystem.h"
-#include "../../GameWorld.h"
 
 #include <spdlog/spdlog.h>
+#include <ranges>
 
-REGISTER_SUBSYSTEM(UManagerSystem, 9)
 
 UManagerSystem::UManagerSystem()
-    : mTickTimer(mIOContext) {
+    : mManagerLoader(nullptr),
+      mTickTimer(mIOContext) {
 }
 
 UManagerSystem::~UManagerSystem() {
@@ -23,10 +23,9 @@ UManagerSystem::~UManagerSystem() {
 }
 
 void UManagerSystem::Init() {
-    spdlog::info("{} - {}", __func__, gManagerCreatorVector.size());
-
-    for (auto &val : gManagerCreatorVector)
-        std::invoke(val, this);
+    if (mManagerLoader) {
+        std::invoke(mManagerLoader, this);
+    }
 
     mManagerThread = std::thread([this] {
         mManagerThreadId = std::this_thread::get_id();
@@ -58,6 +57,10 @@ void UManagerSystem::Init() {
             spdlog::warn("{}", e.what());
         }
     }, detached);
+}
+
+void UManagerSystem::SetManagerLoader(const std::function<void(UManagerSystem *)> &loader) {
+    mManagerLoader = loader;
 }
 
 AThreadID UManagerSystem::GetThreadID() const {

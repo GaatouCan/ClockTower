@@ -1,10 +1,10 @@
 #include "AppearanceCT.h"
 
-#include "../../base/impl/Package.h"
+#include "../base/impl/Package.h"
+#include "../base/utils.h"
 #include "../../../player/ComponentModule.h"
 #include "../../../player/Player.h"
 #include "../../../common/proto_def.h"
-#include "../base/utils.h"
 
 #include <ranges>
 #include <utility>
@@ -80,11 +80,11 @@ void UAppearanceCT::SendInfo() const {
     // GetOwner()->SendPackage(SC_AppearanceResponse, res);
 }
 
-awaitable<void> protocol::CS_AppearanceRequest(const std::shared_ptr<UCharacter> &plr, IPackage *pkg) {
-    if (plr == nullptr)
+awaitable<void> protocol::CS_AppearanceRequest(const std::shared_ptr<UCharacter> &character, IPackage *pkg) {
+    if (character == nullptr)
         co_return;
 
-    const auto player = std::dynamic_pointer_cast<UPlayer>(plr);
+    const auto player = std::dynamic_pointer_cast<UPlayer>(character);
     const auto package = dynamic_cast<FPackage *>(pkg);
 
     Appearance::CS_AppearanceRequest req;

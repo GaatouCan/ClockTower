@@ -8,7 +8,6 @@
 #include "impl/ProtocolHandlerImpl.h"
 #include "impl/LoginHandlerImpl.h"
 
-#include "common/loader_def.h"
 #include "common/proto_def.h"
 #include "common/mgr_def.h"
 #include "common/logger_def.h"
@@ -18,7 +17,6 @@ auto main(int argc, char *argv[]) -> int {
 
     if (const auto sys = GetSystem<UConfigSystem>(); sys != nullptr) {
         sys->SetYAMLPath("../../config");
-        sys->SetLoaderFunctor(&LoadConfigLoader);
     }
 
     if (const auto sys = GetSystem<UProtocolSystem>(); sys != nullptr) {

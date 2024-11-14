@@ -6,10 +6,6 @@
 
 REGISTER_SUBSYSTEM(UConfigSystem, 0)
 
-UConfigSystem::UConfigSystem()
-    : mLoader(nullptr) {
-}
-
 UConfigSystem::~UConfigSystem() {
     for (const auto &loader: std::views::values(mLoaderMap)) {
         delete loader;
@@ -27,6 +23,21 @@ void UConfigSystem::Init() {
     assert(!mConfig["server"].IsNull());
     assert(!mConfig["server"]["port"].IsNull());
     assert(!mConfig["server"]["work_thread"].IsNull());
+
+    assert(!mConfig["log_dir"].IsNull());
+
+    assert(!mConfig["package"].IsNull());
+    assert(!mConfig["package"]["magic"].IsNull());
+    assert(!mConfig["package"]["version"].IsNull());
+    assert(!mConfig["package"]["method"].IsNull());
+
+    assert(!mConfig["package"]["pool"].IsNull());
+    assert(!mConfig["package"]["pool"]["default_capacity"].IsNull());
+    assert(!mConfig["package"]["pool"]["minimum_capacity"].IsNull());
+    assert(!mConfig["package"]["pool"]["expanse_rate"].IsNull());
+    assert(!mConfig["package"]["pool"]["expanse_scale"].IsNull());
+    assert(!mConfig["package"]["pool"]["collect_rate"].IsNull());
+    assert(!mConfig["package"]["pool"]["collect_scale"].IsNull());
 
     const std::string jsonPath = !mJSONPath.empty() ? mJSONPath : mYAMLPath + kServerConfigJSON;
 
@@ -47,8 +58,9 @@ void UConfigSystem::Init() {
     });
 
     bInitialized = true;
-    if (mLoader)
-        std::invoke(mLoader, this);
+
+    for (auto &val : gConfigLoaderVector)
+        std::invoke(val, this);
 }
 
 void UConfigSystem::SetYAMLPath(const std::string &path) {
@@ -57,10 +69,6 @@ void UConfigSystem::SetYAMLPath(const std::string &path) {
 
 void UConfigSystem::SetJSONPath(const std::string &path) {
     mJSONPath = path;
-}
-
-void UConfigSystem::SetLoaderFunctor(const std::function<void(UConfigSystem *)> &func) {
-    mLoader = func;
 }
 
 const YAML::Node &UConfigSystem::GetConfig() const {

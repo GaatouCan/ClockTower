@@ -13,11 +13,13 @@
 constexpr auto kServerConfigFile = "/server.yaml";
 constexpr auto kServerConfigJSON = "/json";
 
+inline std::vector<std::function<IConfigLoader*(class UConfigSystem *)>> gConfigLoaderVector;
+
+
 class UConfigSystem final : public ISubSystem {
 
     SUB_SYSTEM_BODY(ConfigSystem)
 
-    UConfigSystem();
     ~UConfigSystem() override;
 
     void Init() override;
@@ -25,8 +27,6 @@ class UConfigSystem final : public ISubSystem {
 public:
     void SetYAMLPath(const std::string &path);
     void SetJSONPath(const std::string &path);
-
-    void SetLoaderFunctor(const std::function<void(UConfigSystem *)> &func);
 
     template<typename T>
     requires std::derived_from<T, IConfigLoader>
@@ -53,6 +53,17 @@ public:
 
     std::optional<nlohmann::json> Find(const std::string &path, uint64_t id) const;
 
+    template<typename T>
+    requires std::derived_from<T, IConfigLoader>
+    class TConfigLoaderRegister {
+    public:
+        explicit TConfigLoaderRegister(const std::string &path) {
+            gConfigLoaderVector.emplace_back([path](UConfigSystem *sys) {
+                return sys->AddConfigLoader<T>(path);
+            });
+        }
+    };
+
 private:
     std::string mYAMLPath;
     std::string mJSONPath;
@@ -60,8 +71,6 @@ private:
     YAML::Node mConfig;
     std::unordered_map<std::string, nlohmann::json> mConfigMap;
     std::unordered_map<std::type_index, IConfigLoader *> mLoaderMap;
-
-    std::function<void(UConfigSystem*)> mLoader;
 };
 
 inline const YAML::Node &GetServerConfig() {
@@ -74,3 +83,6 @@ inline const YAML::Node &GetServerConfig() {
 
     return cfgSys->GetConfig();
 }
+
+#define REGISTER_CONFIG_LOADER(loader, ...) \
+    static UConfigSystem::TConfigLoaderRegister<loader> g_ConfigLoader_##loader##_Register({__VA_ARGS__});

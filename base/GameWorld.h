@@ -111,5 +111,10 @@ T *GetSystem() {
     return GetWorld().GetSystem<T>();
 }
 
+/**
+ * Register SubSystem To the Game World
+ * @param sys SubSystem Type
+ * @param priority smaller value initialize earlier
+ */
 #define REGISTER_SUBSYSTEM(sys, priority) \
-static UGameWorld::TSubSystemRegister<sys> g_##sys##_Register(priority);
+static UGameWorld::TSubSystemRegister<sys> g_SubSystem_##sys##_Register(priority);

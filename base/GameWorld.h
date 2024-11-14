@@ -10,7 +10,6 @@
 UGameWorld &GetWorld();
 
 class UGameWorld final {
-
     asio::io_context mContext;
     ATcpAcceptor mAcceptor;
 
@@ -36,7 +35,7 @@ class UGameWorld final {
     std::priority_queue<FSystemPriority, std::vector<FSystemPriority>, std::less<> > mDestPriority;
     std::unordered_map<std::type_index, ISubSystem *> mSystemMap;
 
-    std::function<void(const AConnectionPointer&)> mConnectionFilter;
+    std::function<void(const AConnectionPointer &)> mConnectionFilter;
 
     AThreadID mMainThreadId;
 
@@ -45,15 +44,18 @@ class UGameWorld final {
 
 public:
     UGameWorld();
+
     ~UGameWorld();
 
     DISABLE_COPY_MOVE(UGameWorld)
 
     UGameWorld &Init();
+
     UGameWorld &Run();
+
     UGameWorld &Shutdown();
 
-    void FilterConnection(const std::function<void(const AConnectionPointer&)> &filter);
+    void FilterConnection(const std::function<void(const AConnectionPointer &)> &filter);
 
     void RemoveConnection(const std::string &key);
 
@@ -62,6 +64,24 @@ public:
     asio::io_context &GetIOContext();
 
     AThreadID GetThreadID() const;
+
+    template<SYSTEM_TYPE T>
+    T *GetSystem() noexcept {
+        if (const auto iter = mSystemMap.find(typeid(T)); iter != mSystemMap.end())
+            return dynamic_cast<T *>(iter->second);
+        return nullptr;
+    }
+
+    template<SYSTEM_TYPE T>
+    class TSubSystemCreator {
+    public:
+        explicit TSubSystemCreator(const int priority) {
+            GetWorld().CreateSystem<T>(priority);
+        }
+    };
+
+private:
+    awaitable<void> WaitForConnect();
 
     template<SYSTEM_TYPE T>
     T *CreateSystem(const int priority = 0) {
@@ -76,16 +96,6 @@ public:
 
         return res;
     }
-
-    template<SYSTEM_TYPE T>
-    T *GetSystem() noexcept {
-        if (const auto iter = mSystemMap.find(typeid(T)); iter != mSystemMap.end())
-            return dynamic_cast<T *>(iter->second);
-        return nullptr;
-    }
-
-private:
-    awaitable<void> WaitForConnect();
 };
 
 inline UGameWorld &GetWorld() {
@@ -97,3 +107,6 @@ template<SYSTEM_TYPE T>
 T *GetSystem() {
     return GetWorld().GetSystem<T>();
 }
+
+#define REGISTER_SUBSYSTEM(sys, priority) \
+static UGameWorld::TSubSystemCreator<sys> g_##sys##_creator(priority);

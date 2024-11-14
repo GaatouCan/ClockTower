@@ -19,7 +19,6 @@ UGameWorld::UGameWorld()
       bRunning(false) {
 
     // Create Necessary Sub System
-    CreateSystem<UConfigSystem>(0);
     CreateSystem<UProtocolSystem>(1);
     CreateSystem<ULoginSystem>(2);
     // CreateSystem<UDatabaseSystem>(9);

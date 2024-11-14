@@ -4,6 +4,7 @@
 #include <fstream>
 #include <spdlog/spdlog.h>
 
+REGISTER_SUBSYSTEM(UConfigSystem, 0)
 
 UConfigSystem::UConfigSystem()
     : mLoader(nullptr) {

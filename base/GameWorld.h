@@ -7,6 +7,7 @@
 
 #include <typeindex>
 
+inline std::vector<std::function<ISubSystem*(UGameWorld&)>> gSubSystemCreatorVector;
 
 class UGameWorld final {
     asio::io_context mContext;
@@ -66,6 +67,16 @@ public:
             return dynamic_cast<T *>(iter->second);
         return nullptr;
     }
+
+    template<SYSTEM_TYPE T>
+    class TSubSystemCreator {
+    public:
+        explicit TSubSystemCreator(const int priority) {
+            gSubSystemCreatorVector.emplace_back([priority](UGameWorld &world) {
+                return world.CreateSystem<T>(priority);
+            });
+        }
+    };
 
 private:
     awaitable<void> WaitForConnect();

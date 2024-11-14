@@ -18,8 +18,13 @@ UGameWorld::UGameWorld()
       bInited(false),
       bRunning(false) {
 
+    spdlog::info("Creating UGameWorld");
+
+    for (auto &creator : gSubSystemCreatorVector)
+        creator(*this);
+
     // Create Necessary Sub System
-    CreateSystem<UConfigSystem>(0);
+    // CreateSystem<UConfigSystem>(0);
     CreateSystem<UProtocolSystem>(1);
     CreateSystem<ULoginSystem>(2);
     // CreateSystem<UDatabaseSystem>(9);

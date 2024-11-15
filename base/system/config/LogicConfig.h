@@ -1,16 +1,25 @@
 #pragma once
 
+#include <utility>
 #include <vector>
 #include <concepts>
 #include <nlohmann/json.hpp>
 
-class ILogicConfig {
+#include "../../common.h"
 
+class ILogicConfig {
 public:
     ILogicConfig() = delete;
 
-    explicit ILogicConfig(std::vector<nlohmann::json> configList);
+    explicit ILogicConfig(std::vector<nlohmann::json> configList)
+        : mConfigList(std::move(configList)) {}
+
     virtual ~ILogicConfig() = default;
+
+    DISABLE_COPY_MOVE(ILogicConfig)
+
+protected:
+    std::vector<nlohmann::json> mConfigList;
 };
 
 template<typename T>

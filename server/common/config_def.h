@@ -2,8 +2,11 @@
 
 #include "../base/system/config/ConfigSystem.h"
 
-inline void LoadLogicConfig(UConfigSystem *sys) {
-    assert(sys);
+#include "../config/AvatarLogicConfig.h"
 
-    // TODO
+inline void LoadLogicConfig(UConfigSystem *sys) {
+    if (sys == nullptr)
+        return;
+
+    sys->CreateLogicConfig<UAvatarLogicConfig>({"appearance.avatar"});
 }

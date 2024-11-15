@@ -84,6 +84,7 @@ file(GLOB_RECURSE COMMON_SRC ${CMAKE_SOURCE_DIR}/server/common/*.h ${CMAKE_SOURC
 file(GLOB_RECURSE IMPL_SRC ${CMAKE_SOURCE_DIR}/server/impl/*.h ${CMAKE_SOURCE_DIR}/server/impl/*.cpp)
 file(GLOB_RECURSE PLAYER_SRC ${CMAKE_SOURCE_DIR}/server/player/*.h ${CMAKE_SOURCE_DIR}/server/player/*.cpp)
 file(GLOB_RECURSE COMMAND_SRC ${CMAKE_SOURCE_DIR}/server/command/*.h ${CMAKE_SOURCE_DIR}/server/command/*.cpp)
+file(GLOB_RECURSE CONFIG_SRC ${CMAKE_SOURCE_DIR}/server/config/*.h ${CMAKE_SOURCE_DIR}/server/config/*.cpp)
 file(GLOB_RECURSE WORLD_SRC ${CMAKE_SOURCE_DIR}/server/world/*.h ${CMAKE_SOURCE_DIR}/server/world/*.cpp)
 
 
@@ -92,6 +93,7 @@ add_executable(server server/server.cpp
         ${COMMON_SRC}
         ${IMPL_SRC}
         ${COMMAND_SRC}
+        ${CONFIG_SRC}
         ${PLAYER_SRC}
         ${WORLD_SRC}
 )

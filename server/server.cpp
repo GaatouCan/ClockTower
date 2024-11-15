@@ -1,7 +1,7 @@
 #include "../base/GameWorld.h"
 
-#include "../system/protocol/ProtocolSystem.h"
-#include "../system/login/LoginSystem.h"
+#include "../base/system/protocol/ProtocolSystem.h"
+#include "../base/system/login/LoginSystem.h"
 
 #include "impl/ConnectionHandlerImpl.h"
 #include "impl/ProtocolHandlerImpl.h"

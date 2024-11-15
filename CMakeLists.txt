@@ -86,24 +86,21 @@ file(GLOB_RECURSE PLAYER_SRC ${CMAKE_SOURCE_DIR}/server/player/*.h ${CMAKE_SOURC
 file(GLOB_RECURSE COMMAND_SRC ${CMAKE_SOURCE_DIR}/server/command/*.h ${CMAKE_SOURCE_DIR}/server/command/*.cpp)
 file(GLOB_RECURSE WORLD_SRC ${CMAKE_SOURCE_DIR}/server/world/*.h ${CMAKE_SOURCE_DIR}/server/world/*.cpp)
 
-add_library(base_static STATIC ${BASE_SRC})
-target_link_libraries(base_static PUBLIC spdlog::spdlog)
-target_link_libraries(base_static PUBLIC asio::asio)
-target_link_libraries(base_static PUBLIC nlohmann_json::nlohmann_json)
-target_link_libraries(base_static PUBLIC protobuf::libprotobuf)
-target_link_libraries(base_static PUBLIC yaml-cpp::yaml-cpp)
-target_link_libraries(base_static PUBLIC mysql::concpp)
-
-include_directories(${BASE_SRC})
 
 add_executable(server server/server.cpp
+        ${BASE_SRC}
         ${COMMON_SRC}
         ${IMPL_SRC}
         ${COMMAND_SRC}
         ${PLAYER_SRC}
         ${WORLD_SRC}
 )
-target_link_libraries(server PRIVATE base_static)
+target_link_libraries(server PUBLIC spdlog::spdlog)
+target_link_libraries(server PUBLIC asio::asio)
+target_link_libraries(server PUBLIC nlohmann_json::nlohmann_json)
+target_link_libraries(server PUBLIC protobuf::libprotobuf)
+target_link_libraries(server PUBLIC yaml-cpp::yaml-cpp)
+target_link_libraries(server PUBLIC mysql::concpp)
 target_link_libraries(server PRIVATE ${PROTOBUF_LIBS})
 
 add_executable(demo main.cpp)

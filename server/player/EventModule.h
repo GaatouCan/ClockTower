@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../system/event/EventParam.h"
+#include "../base/system/event/EventParam.h"
 #include "../common/Event.h"
 
 #include <queue>

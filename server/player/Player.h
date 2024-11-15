@@ -4,8 +4,8 @@
 #include "../base/Connection.h"
 #include "../base/RepeatedTimer.h"
 #include "../base/utils.h"
-#include "../system/login/PlatformInfo.h"
-#include "../system/event/EventParam.h"
+#include "../base/system/login/PlatformInfo.h"
+#include "../base/system/event/EventParam.h"
 
 #include "ComponentModule.h"
 #include "EventModule.h"

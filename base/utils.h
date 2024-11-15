@@ -21,3 +21,7 @@ uint64_t ClearBit(uint64_t, uint32_t);
 uint64_t ToggleBit(uint64_t, uint32_t);
 
 bool CheckBit(uint64_t, uint32_t);
+
+std::vector<std::string> SplitString(const std::string &src, char delimiter);
+
+std::vector<int> SplitStringToInt(const std::string &src, char delimiter);

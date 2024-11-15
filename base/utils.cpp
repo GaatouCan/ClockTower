@@ -62,7 +62,7 @@ long long UnixTime() {
 
 uint64_t SetBit(const uint64_t number, const uint32_t n) {
     assert(n < sizeof(uint64_t) * 8);
-    return number | (static_cast<uint64_t>(1) << n);
+    return number | static_cast<uint64_t>(1) << n;
 }
 
 uint64_t ClearBit(const uint64_t number, const uint32_t n) {
@@ -72,12 +72,34 @@ uint64_t ClearBit(const uint64_t number, const uint32_t n) {
 
 uint64_t ToggleBit(const uint64_t number, const uint32_t n) {
     assert(n < sizeof(uint64_t) * 8);
-    return number ^ (static_cast<uint64_t>(1) << n);
+    return number ^ static_cast<uint64_t>(1) << n;
 }
 
 bool CheckBit(const uint64_t number, const uint32_t n) {
     assert(n < sizeof(uint64_t) * 8);
-    return number & (static_cast<uint64_t>(1) << n);
+    return number & static_cast<uint64_t>(1) << n;
+}
+
+std::vector<std::string> SplitString(const std::string &src, const char delimiter) {
+    std::vector<std::string> result;
+    std::stringstream ss(src);
+    std::string item;
+
+    while (std::getline(ss, item, delimiter)) {
+        result.push_back(item);
+    }
+
+    return result;
 }
 
 
+std::vector<int> SplitStringToInt(const std::string &src, const char delimiter) {
+    std::vector<int> result;
+    std::stringstream ss(src);
+    std::string item;
+
+    while (std::getline(ss, item, delimiter)) {
+        result.push_back(std::stoi(item));}
+
+    return result;
+}

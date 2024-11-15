@@ -7,7 +7,7 @@ using ATimerFunctor = std::function<void()>;
 
 class URepeatedTimer final {
 
-    asio::io_context &mContext;
+    AIOContext &mContext;
     ASteadyTimer mTimer;
 
     ATimerID mTimerId;
@@ -21,7 +21,7 @@ class URepeatedTimer final {
 public:
     URepeatedTimer() = delete;
 
-    explicit URepeatedTimer(asio::io_context &ctx);
+    explicit URepeatedTimer(AIOContext &ctx);
     ~URepeatedTimer();
 
     DISABLE_COPY_MOVE(URepeatedTimer)

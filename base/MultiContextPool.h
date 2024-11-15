@@ -8,7 +8,7 @@
  */
 struct FContextNode {
     UPackagePool pool;
-    asio::io_context ctx;
+    AIOContext ctx;
     AThreadID tid;
 };
 
@@ -19,7 +19,7 @@ struct FContextNode {
 class UMultiContextPool final {
 
     std::vector<FContextNode> mNodeVec;
-    std::vector<asio::io_context::work> mWorkVec;
+    std::vector<AIOContext::work> mWorkVec;
     std::vector<std::thread> mThreadVec;
 
     std::atomic_size_t mNextIndex;

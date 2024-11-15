@@ -197,7 +197,7 @@ FContextNode &UGameWorld::NextContextNode() {
     return mPool.NextContextNode();
 }
 
-asio::io_context &UGameWorld::GetIOContext() {
+AIOContext &UGameWorld::GetIOContext() {
     return mContext;
 }
 

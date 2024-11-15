@@ -30,6 +30,8 @@ using asio::deferred_t;
 
 using default_token = as_tuple_t<use_awaitable_t<>>;
 
+using AIOContext = asio::io_context;
+
 using ATcpSocket = deferred_t::as_default_on_t<tcp::socket>;
 using ATcpAcceptor = deferred_t::as_default_on_t<tcp::acceptor>;
 

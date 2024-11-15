@@ -1,7 +1,7 @@
 #include "Manager.h"
 
 
-IManager::IManager(asio::io_context &ctx)
+IManager::IManager(AIOContext &ctx)
     : mIOContext(ctx) {
 }
 
@@ -20,7 +20,7 @@ bool IManager::IsSameThread() const {
 void IManager::OnTick(ATimePoint now) {
 }
 
-asio::io_context &IManager::GetIOContext() const {
+AIOContext &IManager::GetIOContext() const {
     return mIOContext;
 }
 

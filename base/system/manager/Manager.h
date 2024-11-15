@@ -8,17 +8,18 @@
 
 class IManager {
 
-    asio::io_context &mIOContext;
+    AIOContext &mIOContext;
     AThreadID mThreadId;
 
     std::unordered_map<ATimerID, URepeatedTimer> mTimerMap;
 
 public:
+    IManager() = delete;
 
-    explicit IManager(asio::io_context &ctx);
+    explicit IManager(AIOContext &ctx);
     virtual ~IManager() = default;
 
-    IManager() = delete;
+    DISABLE_COPY_MOVE(IManager)
 
     [[nodiscard]] virtual const char *GetManagerName() const = 0;
 
@@ -27,11 +28,9 @@ public:
 
     [[nodiscard]] bool IsSameThread() const;
 
-    DISABLE_COPY_MOVE(IManager)
-
     virtual void OnTick(ATimePoint now);
 
-    [[nodiscard]] asio::io_context &GetIOContext() const;
+    [[nodiscard]] AIOContext &GetIOContext() const;
 
     template<typename Functor, typename... Args>
     void RunInThread(Functor &&func, Args &&... args) {

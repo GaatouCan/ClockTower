@@ -10,7 +10,7 @@
 
 class UGameWorld final {
 
-    asio::io_context mContext;
+    AIOContext mContext;
     ATcpAcceptor mAcceptor;
 
     UMultiContextPool mPool;
@@ -59,7 +59,7 @@ public:
     void RemoveConnection(const std::string &key);
 
     FContextNode &NextContextNode();
-    asio::io_context &GetIOContext();
+    AIOContext &GetIOContext();
 
     AThreadID GetThreadID() const;
 

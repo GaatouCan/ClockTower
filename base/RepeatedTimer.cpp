@@ -3,7 +3,7 @@
 #include <spdlog/spdlog.h>
 
 
-URepeatedTimer::URepeatedTimer(asio::io_context &ctx)
+URepeatedTimer::URepeatedTimer(AIOContext &ctx)
     : mContext(ctx),
       mTimer(mContext),
       mTimerId(0),

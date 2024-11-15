@@ -8,7 +8,8 @@
 #include "../world/manager/chat/ChatManager.h"
 
 inline void LoadManager(UManagerSystem *sys) {
-    assert(sys);
+    if (sys == nullptr)
+        return;
 
     sys->CreateManager<UCommandManager>();
     sys->CreateManager<UPlayerManager>();

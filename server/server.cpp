@@ -1,4 +1,4 @@
-#include "../base/GameWorld.h"
+﻿#include "../base/GameWorld.h"
 
 #include "../base/system/protocol/ProtocolSystem.h"
 #include "../base/system/login/LoginSystem.h"
@@ -13,7 +13,8 @@
 #include "common/manager_def.h"
 
 auto main(int argc, char *argv[]) -> int {
-    spdlog::info("Welcome to the ClockTower!");
+    spdlog::set_level(spdlog::level::trace);
+    spdlog::info("卧槽 你不支持中文？");
 
     if (const auto sys = GetSystem<UConfigSystem>(); sys != nullptr) {
         sys->SetYAMLPath("../../config");

@@ -3,6 +3,8 @@
 
 #include "../world/component/appearance/AppearanceCT.h"
 
+#include <ranges>
+
 UComponentModule::UComponentModule(UPlayer *plr)
     : mOwner(plr){
 

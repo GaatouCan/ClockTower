@@ -1,6 +1,7 @@
 ﻿#include "EventSystem.h"
 #include "../../GameWorld.h"
 
+#include <ranges>
 
 UEventSystem::~UEventSystem() {
     mListenerMap.clear();

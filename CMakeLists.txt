@@ -7,6 +7,8 @@ add_compile_definitions(ASIO_HAS_CO_AWAIT)
 
 set(CMAKE_CXX_STANDARD 23)
 
+option(USE_SOLUTION_FOLDERS ON)
+
 # Import Third Library
 set(THIRD_LIBRARY_DIR D:/library/install)
 
@@ -80,6 +82,22 @@ file(GLOB_RECURSE BASE_SRC
         ${CMAKE_SOURCE_DIR}/base/*.cpp
 )
 
+foreach(file ${BASE_SRC})
+    get_filename_component(PARENT_DIR "${file}" DIRECTORY)
+    string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}" "" GROUP "${PARENT_DIR}")
+    string(REPLACE "/" "\\" GROUP "${GROUP}")
+    set(GROUP "${GROUP}")
+    source_group("${GROUP}" FILES "${file}")
+endforeach()
+
+add_library(base STATIC ${BASE_SRC})
+target_link_libraries(base PUBLIC spdlog::spdlog)
+target_link_libraries(base PUBLIC asio::asio)
+target_link_libraries(base PUBLIC nlohmann_json::nlohmann_json)
+target_link_libraries(base PUBLIC protobuf::libprotobuf)
+target_link_libraries(base PUBLIC yaml-cpp::yaml-cpp)
+target_link_libraries(base PUBLIC mysql::concpp)
+
 file(GLOB_RECURSE COMMON_SRC ${CMAKE_SOURCE_DIR}/server/common/*.h ${CMAKE_SOURCE_DIR}/server/common/*.cpp)
 file(GLOB_RECURSE IMPL_SRC ${CMAKE_SOURCE_DIR}/server/impl/*.h ${CMAKE_SOURCE_DIR}/server/impl/*.cpp)
 file(GLOB_RECURSE PLAYER_SRC ${CMAKE_SOURCE_DIR}/server/player/*.h ${CMAKE_SOURCE_DIR}/server/player/*.cpp)
@@ -87,22 +105,18 @@ file(GLOB_RECURSE COMMAND_SRC ${CMAKE_SOURCE_DIR}/server/command/*.h ${CMAKE_SOU
 file(GLOB_RECURSE CONFIG_SRC ${CMAKE_SOURCE_DIR}/server/config/*.h ${CMAKE_SOURCE_DIR}/server/config/*.cpp)
 file(GLOB_RECURSE WORLD_SRC ${CMAKE_SOURCE_DIR}/server/world/*.h ${CMAKE_SOURCE_DIR}/server/world/*.cpp)
 
+set(SERVER_SRC ${COMMON_SRC} ${IMPL_SRC} ${COMMAND_SRC} ${CONFIG_SRC} ${PLAYER_SRC} ${WORLD_SRC})
+foreach(file ${SERVER_SRC})
+    get_filename_component(PARENT_DIR "${file}" DIRECTORY)
+    string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}" "" GROUP "${PARENT_DIR}")
+    string(REPLACE "/" "\\" GROUP "${GROUP}")
+    set(GROUP "${GROUP}")
+    source_group("${GROUP}" FILES "${file}")
+endforeach()
 
-add_executable(server server/server.cpp
-        ${BASE_SRC}
-        ${COMMON_SRC}
-        ${IMPL_SRC}
-        ${COMMAND_SRC}
-        ${CONFIG_SRC}
-        ${PLAYER_SRC}
-        ${WORLD_SRC}
-)
-target_link_libraries(server PUBLIC spdlog::spdlog)
-target_link_libraries(server PUBLIC asio::asio)
-target_link_libraries(server PUBLIC nlohmann_json::nlohmann_json)
-target_link_libraries(server PUBLIC protobuf::libprotobuf)
-target_link_libraries(server PUBLIC yaml-cpp::yaml-cpp)
-target_link_libraries(server PUBLIC mysql::concpp)
+add_executable(server server/server.cpp ${SERVER_SRC})
+target_include_directories(server PRIVATE ${BASE_SRC})
+target_link_libraries(server PRIVATE base)
 target_link_libraries(server PRIVATE ${PROTOBUF_LIBS})
 
 add_executable(demo main.cpp)

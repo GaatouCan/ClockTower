@@ -1,6 +1,8 @@
 #include "EventModule.h"
 #include "Player.h"
 
+#include <ranges>
+
 UEventModule::UEventModule(UPlayer *plr)
     : mOwner(plr) {
 }

@@ -1,13 +1,16 @@
 cmake_minimum_required(VERSION 3.29)
 project(ClockTower)
 
-add_compile_definitions(_WIN32_WINNT=0x0A00)
+set(CMAKE_CXX_STANDARD 23)
+
+if (MSVC)
+    add_compile_definitions(_WIN32_WINNT=0x0A00)
+    option(USE_SOLUTION_FOLDERS ON)
+endif ()
+
 add_compile_definitions(ASIO_STANDALONE)
 add_compile_definitions(ASIO_HAS_CO_AWAIT)
 
-set(CMAKE_CXX_STANDARD 23)
-
-option(USE_SOLUTION_FOLDERS ON)
 
 # Import Third Library
 set(THIRD_LIBRARY_DIR D:/library/install)
@@ -82,13 +85,15 @@ file(GLOB_RECURSE BASE_SRC
         ${CMAKE_SOURCE_DIR}/base/*.cpp
 )
 
-foreach(file ${BASE_SRC})
-    get_filename_component(PARENT_DIR "${file}" DIRECTORY)
-    string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}" "" GROUP "${PARENT_DIR}")
-    string(REPLACE "/" "\\" GROUP "${GROUP}")
-    set(GROUP "${GROUP}")
-    source_group("${GROUP}" FILES "${file}")
-endforeach()
+if (MSVC)
+    foreach(file ${BASE_SRC})
+        get_filename_component(PARENT_DIR "${file}" DIRECTORY)
+        string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}" "" GROUP "${PARENT_DIR}")
+        string(REPLACE "/" "\\" GROUP "${GROUP}")
+        set(GROUP "${GROUP}")
+        source_group("${GROUP}" FILES "${file}")
+    endforeach()
+endif ()
 
 add_library(base STATIC ${BASE_SRC})
 target_link_libraries(base PUBLIC spdlog::spdlog)
@@ -106,13 +111,15 @@ file(GLOB_RECURSE CONFIG_SRC ${CMAKE_SOURCE_DIR}/server/config/*.h ${CMAKE_SOURC
 file(GLOB_RECURSE WORLD_SRC ${CMAKE_SOURCE_DIR}/server/world/*.h ${CMAKE_SOURCE_DIR}/server/world/*.cpp)
 
 set(SERVER_SRC ${COMMON_SRC} ${IMPL_SRC} ${COMMAND_SRC} ${CONFIG_SRC} ${PLAYER_SRC} ${WORLD_SRC})
-foreach(file ${SERVER_SRC})
-    get_filename_component(PARENT_DIR "${file}" DIRECTORY)
-    string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}" "" GROUP "${PARENT_DIR}")
-    string(REPLACE "/" "\\" GROUP "${GROUP}")
-    set(GROUP "${GROUP}")
-    source_group("${GROUP}" FILES "${file}")
-endforeach()
+if (MSVC)
+    foreach(file ${SERVER_SRC})
+        get_filename_component(PARENT_DIR "${file}" DIRECTORY)
+        string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}" "" GROUP "${PARENT_DIR}")
+        string(REPLACE "/" "\\" GROUP "${GROUP}")
+        set(GROUP "${GROUP}")
+        source_group("${GROUP}" FILES "${file}")
+    endforeach()
+endif ()
 
 add_executable(server server/server.cpp ${SERVER_SRC})
 target_include_directories(server PRIVATE ${BASE_SRC})

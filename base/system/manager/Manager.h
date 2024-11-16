@@ -4,14 +4,16 @@
 #include "../../RepeatedTimer.h"
 #include "../../utils.h"
 
+#include <map>
 #include <spdlog/spdlog.h>
 
 class IManager {
 
     AIOContext &mIOContext;
-    AThreadID mThreadId;
+    
+    std::map<ATimerID, URepeatedTimer> mTimerMap;
 
-    std::unordered_map<ATimerID, URepeatedTimer> mTimerMap;
+    AThreadID mThreadId;
 
 public:
     IManager() = delete;

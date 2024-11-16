@@ -29,9 +29,10 @@ class UPlayer final : public UCharacter, public std::enable_shared_from_this<UPl
     UEventModule mEventModule;
 
     ATimePoint mLoginTime;
-    FPlatformInfo mPlatform;
-
+    
     std::map<uint64_t, URepeatedTimer> mTimerMap;
+
+    FPlatformInfo mPlatform;
 
 public:
     UPlayer() = delete;

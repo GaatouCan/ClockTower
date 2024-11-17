@@ -8,7 +8,8 @@
 UCommandObject::UCommandObject(std::string cmdType, std::string cmdOriginParam)
     : mCmdType(std::move(cmdType)),
       mCmdOriginParam(std::move(cmdOriginParam)),
-      mCmdParams(SplitString(mCmdOriginParam, '|')) {
+      mCmdParams(SplitString(mCmdOriginParam, '|')),
+      mIndex(0) {
 }
 
 std::string UCommandObject::GetCommandType() const {

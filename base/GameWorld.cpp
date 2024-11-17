@@ -146,6 +146,7 @@ awaitable<void> UGameWorld::WaitForConnect() {
                 spdlog::info("New Connection From: {}", addr.to_string());
 
                 if (!loginSys->VerifyAddress(socket.remote_endpoint().address())) {
+                    socket.close();
                     spdlog::warn("Rejected Connection From: {}", addr.to_string());
                     continue;
                 }

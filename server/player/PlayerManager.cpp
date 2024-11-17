@@ -1,6 +1,7 @@
 ﻿#include "PlayerManager.h"
-#include "../base/GameWorld.h"
-#include "../base/system/database/DatabaseSystem.h"
+
+#include <GameWorld.h>
+#include <system/database/DatabaseSystem.h>
 
 
 UPlayerManager::UPlayerManager(asio::io_context &ctx)

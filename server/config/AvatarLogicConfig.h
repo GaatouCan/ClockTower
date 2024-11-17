@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../base/system/config/LogicConfig.h"
+#include <system/config/LogicConfig.h>
 
 
 class UAvatarLogicConfig final : public ILogicConfig {

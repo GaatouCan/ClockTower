@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../base/ConnectionHandler.h"
+#include <ConnectionHandler.h>
 
 
 class UConnectionHandlerImpl final : public IConnectionHandler {

@@ -72,15 +72,10 @@ target_link_libraries(proto_static PRIVATE protobuf::libprotobuf)
 include_directories(${PROTOBUF_GENERATED_DIR})
 link_directories(${PROTOBUF_LIBRARY_DIR}/Debug)
 
-include_directories(${CMAKE_SOURCE_DIR}/struct)
-link_directories(${CMAKE_SOURCE_DIR}/struct/lib/Debug)
-
 #execute_process(
 #        COMMAND ./PreBuildTool.exe "--config=build.json"
 #        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 #)
-
-include_directories(${CMAKE_SOURCE_DIR}/struct)
 
 file(GLOB_RECURSE BASE_SRC
         ${CMAKE_SOURCE_DIR}/base/*.h
@@ -128,7 +123,8 @@ if (MSVC)
 endif ()
 
 add_executable(server server/server.cpp ${SERVER_SRC})
-target_include_directories(server PRIVATE ${BASE_SRC})
+target_include_directories(server PRIVATE ${CMAKE_SOURCE_DIR}/base)
+target_include_directories(server PRIVATE ${CMAKE_SOURCE_DIR}/struct)
 target_link_libraries(server PRIVATE base_static)
 target_link_libraries(server PRIVATE proto_static)
 

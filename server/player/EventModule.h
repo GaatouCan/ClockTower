@@ -1,7 +1,8 @@
 #pragma once
 
-#include "../base/system/event/EventParam.h"
 #include "../common/Event.h"
+
+#include <system/event/EventParam.h>
 
 #include <queue>
 #include <mutex>

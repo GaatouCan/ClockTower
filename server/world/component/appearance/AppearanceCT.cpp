@@ -1,10 +1,11 @@
 #include "AppearanceCT.h"
 
-#include "../base/impl/Package.h"
-#include "../base/utils.h"
 #include "../../../player/ComponentModule.h"
 #include "../../../player/Player.h"
 #include "../../../common/proto_def.h"
+
+#include <impl/Package.h>
+#include <utils.h>
 
 #include <ranges>
 #include <utility>

@@ -1,14 +1,14 @@
 #pragma once
 
-#include "../base/Character.h"
-#include "../base/Connection.h"
-#include "../base/RepeatedTimer.h"
-#include "../base/utils.h"
-#include "../base/system/login/PlatformInfo.h"
-#include "../base/system/event/EventParam.h"
-
 #include "ComponentModule.h"
 #include "EventModule.h"
+
+#include <Character.h>
+#include <Connection.h>
+#include <RepeatedTimer.h>
+#include <utils.h>
+#include <system/login/PlatformInfo.h>
+#include <system/event/EventParam.h>
 
 #include <spdlog/spdlog.h>
 

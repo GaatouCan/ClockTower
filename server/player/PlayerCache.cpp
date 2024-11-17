@@ -1,7 +1,7 @@
 #include "PlayerCache.h"
 
-#include "../base/GameWorld.h"
-#include "../base/system/database/DatabaseSystem.h"
+#include <GameWorld.h>
+#include <system/database/DatabaseSystem.h>
 
 
 UPlayerCache::UPlayerCache(asio::io_context &ctx) : IManager(ctx) {

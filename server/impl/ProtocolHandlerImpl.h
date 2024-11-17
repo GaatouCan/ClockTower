@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../base/ProtocolHandler.h"
+#include <ProtocolHandler.h>
 
 class UProtocolHandlerImpl final : public IProtocolHandler {
 public:

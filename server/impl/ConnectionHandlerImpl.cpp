@@ -1,11 +1,12 @@
 #include "ConnectionHandlerImpl.h"
 
-#include "../base/GameWorld.h"
-#include "../base/system/protocol/ProtocolSystem.h"
-#include "../base/system/login/LoginSystem.h"
-#include "../base/system/manager/ManagerSystem.h"
 #include "../player/PlayerManager.h"
 #include "../common/ProtoType.h"
+
+#include <GameWorld.h>
+#include <system/protocol/ProtocolSystem.h>
+#include <system/login/LoginSystem.h>
+#include <system/manager/ManagerSystem.h>
 
 
 void UConnectionHandlerImpl::OnConnected(const AConnectionPointer &conn) {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../base/system/manager/ManagerSystem.h"
+#include <system/manager/ManagerSystem.h>
 
 #include "../command/CommandManager.h"
 #include "../player/PlayerManager.h"

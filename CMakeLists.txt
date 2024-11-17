@@ -58,13 +58,15 @@ foreach (proto ${PROTOBUF_LIST})
             COMMAND ${PROTOBUF_PROTOC}
             ARGS --cpp_out ${PROTOBUF_GENERATED_DIR} -I ${PROTOBUF_DEFINE_DIR} ${proto}
             DEPENDS ${proto})
-    add_library(${proto_name}.proto STATIC ${proto_src} ${proto_hdr})
-    target_link_libraries(${proto_name}.proto PRIVATE protobuf::libprotobuf)
+#    add_library(${proto_name}.proto STATIC ${proto_src} ${proto_hdr})
+#    target_link_libraries(${proto_name}.proto PRIVATE protobuf::libprotobuf)
 
-    list(APPEND PROTOBUF_LIBS ${proto_name}.proto)
+#    list(APPEND PROTOBUF_LIBS ${proto_name}.proto)
+    list(APPEND PROTOBUF_FILES ${proto_src} ${proto_hdr})
 endforeach ()
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+add_library(proto_static STATIC ${PROTOBUF_FILES})
+target_link_libraries(proto_static PRIVATE protobuf::libprotobuf)
 
 # Link To Generated Files
 include_directories(${PROTOBUF_GENERATED_DIR})
@@ -95,13 +97,17 @@ if (MSVC)
     endforeach()
 endif ()
 
-add_library(base STATIC ${BASE_SRC})
-target_link_libraries(base PUBLIC spdlog::spdlog)
-target_link_libraries(base PUBLIC asio::asio)
-target_link_libraries(base PUBLIC nlohmann_json::nlohmann_json)
-target_link_libraries(base PUBLIC protobuf::libprotobuf)
-target_link_libraries(base PUBLIC yaml-cpp::yaml-cpp)
-target_link_libraries(base PUBLIC mysql::concpp)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/base/lib)
+
+add_library(base_static STATIC ${BASE_SRC})
+target_link_libraries(base_static PUBLIC spdlog::spdlog)
+target_link_libraries(base_static PUBLIC asio::asio)
+target_link_libraries(base_static PUBLIC nlohmann_json::nlohmann_json)
+target_link_libraries(base_static PUBLIC protobuf::libprotobuf)
+target_link_libraries(base_static PUBLIC yaml-cpp::yaml-cpp)
+target_link_libraries(base_static PUBLIC mysql::concpp)
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 file(GLOB_RECURSE COMMON_SRC ${CMAKE_SOURCE_DIR}/server/common/*.h ${CMAKE_SOURCE_DIR}/server/common/*.cpp)
 file(GLOB_RECURSE IMPL_SRC ${CMAKE_SOURCE_DIR}/server/impl/*.h ${CMAKE_SOURCE_DIR}/server/impl/*.cpp)
@@ -123,8 +129,8 @@ endif ()
 
 add_executable(server server/server.cpp ${SERVER_SRC})
 target_include_directories(server PRIVATE ${BASE_SRC})
-target_link_libraries(server PRIVATE base)
-target_link_libraries(server PRIVATE ${PROTOBUF_LIBS})
+target_link_libraries(server PRIVATE base_static)
+target_link_libraries(server PRIVATE proto_static)
 
 add_executable(demo main.cpp)
 target_link_libraries(demo PRIVATE asio::asio)

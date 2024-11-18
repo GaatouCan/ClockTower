@@ -1,5 +1,5 @@
 #include "CommandObject.h"
-#include "../base/utils.h"
+#include "../../utils.h"
 
 #include <utility>
 #include <spdlog/spdlog.h>

@@ -1,5 +1,6 @@
 #include "PlayerComponent.h"
 #include "ComponentModule.h"
+#include "Player.h"
 
 IPlayerComponent::IPlayerComponent(UComponentModule *module)
     : mModule(module){
@@ -25,4 +26,22 @@ void IPlayerComponent::OnLogout() {
 }
 
 void IPlayerComponent::SyncCache(FCacheNode *node) {
+}
+
+void IPlayerComponent::Send(IPackage *pkg) const {
+    if (const auto plr = GetOwner(); plr != nullptr) {
+        plr->Send(pkg);
+    }
+}
+
+void IPlayerComponent::Send(const uint32_t id, const std::string_view data) const {
+    if (const auto plr = GetOwner(); plr != nullptr) {
+        plr->Send(id, data);
+    }
+}
+
+void IPlayerComponent::Send(const uint32_t id, const std::stringstream &ss) const {
+    if (const auto plr = GetOwner(); plr != nullptr) {
+        plr->Send(id, ss);
+    }
 }

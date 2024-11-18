@@ -1,5 +1,7 @@
 #pragma once
 
+#include <impl/Package.h>
+
 class IPlayerComponent {
 
     class UComponentModule *mModule;
@@ -19,4 +21,9 @@ public:
     virtual void OnLogout();
 
     virtual void SyncCache(struct FCacheNode *node);
+
+    void Send(IPackage *pkg) const;
+
+    void Send(uint32_t id, std::string_view data) const;
+    void Send(uint32_t id, const std::stringstream &ss) const;
 };

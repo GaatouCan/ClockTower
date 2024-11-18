@@ -78,7 +78,7 @@ void UAppearanceCT::SendInfo() const {
         frame->set_expired(val.expired_time);
     }
 
-    // GetOwner()->SendPackage(SC_AppearanceResponse, res);
+    SendPackage(SC_AppearanceResponse, res);
 }
 
 awaitable<void> protocol::CS_AppearanceRequest(const std::shared_ptr<UCharacter> &character, IPackage *pkg) {

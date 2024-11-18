@@ -21,17 +21,17 @@ UAppearanceCT::UAppearanceCT(UComponentModule *module)
 }
 
 void UAppearanceCT::Serialize_Appearance(USerializer &s) {
-    s.Serialize(&appearance_);
+    s.Serialize(&mAppearance);
 }
 
 void UAppearanceCT::Deserialize_Appearance(UDeserializer &ds) {
     if (ds.HasMore()) {
-        ds.Deserialize(&appearance_);
+        ds.Deserialize(&mAppearance);
     }
 }
 
 void UAppearanceCT::Serialize_Avatar(USerializer &s) {
-    for (auto &avatar: std::views::values(avatarMap_)) {
+    for (auto &avatar: std::views::values(mAvatarMap)) {
         s.Serialize(&avatar);
     }
 }
@@ -40,12 +40,12 @@ void UAppearanceCT::Deserialize_Avatar(UDeserializer &ds) {
     while (ds.HasMore()) {
         orm::UDBTable_Avatar avatar;
         ds.Deserialize(&avatar);
-        avatarMap_[avatar.index] = avatar;
+        mAvatarMap[avatar.index] = avatar;
     }
 }
 
 void UAppearanceCT::Serialize_AvatarFrame(USerializer &s) {
-    for (auto &frame: std::views::values(avatarFrameMap_)) {
+    for (auto &frame: std::views::values(mAvatarFrameMap)) {
         s.Serialize(&frame);
     }
 }
@@ -54,24 +54,24 @@ void UAppearanceCT::Deserialize_AvatarFrame(UDeserializer &ds) {
     while (ds.HasMore()) {
         orm::UDBTable_AvatarFrame frame;
         ds.Deserialize(&frame);
-        avatarFrameMap_[frame.index] = frame;
+        mAvatarFrameMap[frame.index] = frame;
     }
 }
 
 void UAppearanceCT::SendInfo() const {
     Appearance::SC_AppearanceResponse res;
 
-    res.set_current_avatar(appearance_.avatar);
-    res.set_current_avatar_frame(appearance_.avatar_frame);
+    res.set_current_avatar(mAppearance.avatar);
+    res.set_current_avatar_frame(mAppearance.avatar_frame);
 
-    for (auto &val: std::views::values(avatarMap_)) {
+    for (auto &val: std::views::values(mAvatarMap)) {
         const auto avatar = res.add_avatar();
         avatar->set_index(val.index);
         avatar->set_bactivated(val.activated);
         avatar->set_expired(val.expired_time);
     }
 
-    for (auto &val: std::views::values(avatarFrameMap_)) {
+    for (auto &val: std::views::values(mAvatarFrameMap)) {
         const auto frame = res.add_avatar_frame();
         frame->set_index(val.index);
         frame->set_bactivated(val.activated);

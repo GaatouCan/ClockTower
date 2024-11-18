@@ -4,6 +4,7 @@
 
 class IAbstractCommand {
 
+protected:
     UCommandObject mParam;
 
 public:

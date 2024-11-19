@@ -9,6 +9,8 @@
 
 class UPlayerManager final : public IManager {
 
+    std::function<std::shared_ptr<IAbstractPlayer>(const AConnectionPointer&, uint64_t)> mPlayerCreator;
+
     std::map<uint64_t, std::shared_ptr<IAbstractPlayer>> mPlayerMap;
     std::mutex mMutex;
     std::shared_mutex mSharedMutex;
@@ -20,6 +22,8 @@ public:
     [[nodiscard]] constexpr const char * GetManagerName() const override {
         return "UPlayerManager";
     }
+
+    void SetPlayerCreator(const std::function<std::shared_ptr<IAbstractPlayer>(const AConnectionPointer&, uint64_t)> &func);
 
     awaitable<void> OnPlayerLogin(const std::shared_ptr<UConnection> &conn, uint64_t pid);
     void OnPlayerLogout(uint64_t pid);

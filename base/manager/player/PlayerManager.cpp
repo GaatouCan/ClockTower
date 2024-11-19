@@ -3,11 +3,16 @@
 
 
 UPlayerManager::UPlayerManager(asio::io_context &ctx)
-    : IManager(ctx) {
+    : IManager(ctx),
+      mPlayerCreator(nullptr) {
 }
 
 UPlayerManager::~UPlayerManager() {
     mPlayerMap.clear();
+}
+
+void UPlayerManager::SetPlayerCreator(const std::function<std::shared_ptr<IAbstractPlayer>(const AConnectionPointer &, uint64_t)> &func) {
+    mPlayerCreator = func;
 }
 
 awaitable<void> UPlayerManager::OnPlayerLogin(const std::shared_ptr<UConnection> &conn, const uint64_t pid) {
@@ -62,12 +67,15 @@ void UPlayerManager::OnPlayerLogout(const uint64_t pid) {
 }
 
 std::shared_ptr<IAbstractPlayer> UPlayerManager::EmplacePlayer(const std::shared_ptr<UConnection> &conn, const uint64_t pid) {
-    const auto plr = CreatePlayer(conn, pid);
+    if (!mPlayerCreator)
+        return nullptr;
+
+    const auto plr = std::invoke(mPlayerCreator, conn, pid);
     PushPlayer(plr);
     return plr;
 }
 
-void UPlayerManager::PushPlayer(const std::shared_ptr<IAbstractPlayer>& plr) {
+void UPlayerManager::PushPlayer(const std::shared_ptr<IAbstractPlayer> &plr) {
     if (!IsSameThread()) {
         RunInThread(&UPlayerManager::PushPlayer, this, plr);
         return;

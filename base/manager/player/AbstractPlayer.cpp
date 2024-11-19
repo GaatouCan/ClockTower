@@ -22,7 +22,7 @@ AConnectionPointer IAbstractPlayer::GetConnection() const {
     return mConn;
 }
 
-uint64_t IAbstractPlayer::GetPlayerId() const {
+uint64_t IAbstractPlayer::GetPlayerID() const {
     return mId;
 }
 

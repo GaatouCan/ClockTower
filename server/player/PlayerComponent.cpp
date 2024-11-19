@@ -30,7 +30,7 @@ void IPlayerComponent::SyncCache(FCacheNode *node) {
 
 void IPlayerComponent::Send(IPackage *pkg) const {
     if (const auto plr = GetOwner(); plr != nullptr) {
-        plr->Send(pkg);
+        dynamic_cast<IAbstractPlayer*>(plr)->Send(pkg);
     }
 }
 

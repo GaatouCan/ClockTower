@@ -1,11 +1,14 @@
-﻿#include "../base/GameWorld.h"
+﻿#include <GameWorld.h>
 
-#include "../base/system/protocol/ProtocolSystem.h"
-#include "../base/system/login/LoginSystem.h"
+#include <system/protocol/ProtocolSystem.h>
+#include <system/login/LoginSystem.h>
+
+#include <manager/player/PlayerManager.h>
 
 #include "impl/ConnectionHandlerImpl.h"
 #include "impl/ProtocolHandlerImpl.h"
 #include "impl/LoginHandlerImpl.h"
+#include "player/Player.h"
 
 #include "common/config_def.h"
 #include "common/proto_def.h"
@@ -33,6 +36,8 @@ auto main(int argc, char *argv[]) -> int {
     if (const auto sys = GetSystem<UManagerSystem>(); sys != nullptr) {
         sys->SetManagerLoader(&LoadManager);
     }
+
+    UPlayerManager::SetPlayerCreator(&CreatePlayer);
 
     GetWorld().DefineLogger(&InitLogger);
 

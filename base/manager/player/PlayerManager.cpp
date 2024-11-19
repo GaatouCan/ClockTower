@@ -1,10 +1,10 @@
 ﻿#include "PlayerManager.h"
 #include "../../GameWorld.h"
 
+std::function<std::shared_ptr<IAbstractPlayer>(const AConnectionPointer&, uint64_t)> UPlayerManager::sPlayerCreator = nullptr;
 
 UPlayerManager::UPlayerManager(asio::io_context &ctx)
-    : IManager(ctx),
-      mPlayerCreator(nullptr) {
+    : IManager(ctx) {
 }
 
 UPlayerManager::~UPlayerManager() {
@@ -12,7 +12,7 @@ UPlayerManager::~UPlayerManager() {
 }
 
 void UPlayerManager::SetPlayerCreator(const std::function<std::shared_ptr<IAbstractPlayer>(const AConnectionPointer &, uint64_t)> &func) {
-    mPlayerCreator = func;
+    sPlayerCreator = func;
 }
 
 awaitable<void> UPlayerManager::OnPlayerLogin(const std::shared_ptr<UConnection> &conn, const uint64_t pid) {
@@ -67,10 +67,10 @@ void UPlayerManager::OnPlayerLogout(const uint64_t pid) {
 }
 
 std::shared_ptr<IAbstractPlayer> UPlayerManager::EmplacePlayer(const std::shared_ptr<UConnection> &conn, const uint64_t pid) {
-    if (!mPlayerCreator)
+    if (!sPlayerCreator)
         return nullptr;
 
-    const auto plr = std::invoke(mPlayerCreator, conn, pid);
+    const auto plr = std::invoke(sPlayerCreator, conn, pid);
     PushPlayer(plr);
     return plr;
 }
@@ -82,7 +82,7 @@ void UPlayerManager::PushPlayer(const std::shared_ptr<IAbstractPlayer> &plr) {
     }
 
     std::scoped_lock lock(mMutex);
-    mPlayerMap[plr->GetPlayerId()] = plr;
+    mPlayerMap[plr->GetPlayerID()] = plr;
 }
 
 std::shared_ptr<IAbstractPlayer> UPlayerManager::FindPlayer(const uint64_t pid) {

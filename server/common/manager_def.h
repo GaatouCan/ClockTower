@@ -2,7 +2,7 @@
 
 #include <system/manager/ManagerSystem.h>
 
-#include "../player/PlayerManager.h"
+#include <manager/player/PlayerManager.h>
 #include "../player/PlayerCache.h"
 #include "../world/manager/chat/ChatManager.h"
 

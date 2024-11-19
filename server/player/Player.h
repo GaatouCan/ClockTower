@@ -3,7 +3,7 @@
 #include "ComponentModule.h"
 #include "EventModule.h"
 
-#include <Character.h>
+#include <manager/player/AbstractPlayer.h>
 #include <Connection.h>
 #include <RepeatedTimer.h>
 #include <utils.h>
@@ -20,55 +20,28 @@ struct FEP_PlayerLogout final : IEventParam {
     uint64_t pid;
 };
 
-class UPlayer final : public UCharacter, public std::enable_shared_from_this<UPlayer> {
-
-    AConnectionPointer mConn;
-    uint64_t mId;
+class UPlayer final : public IAbstractPlayer {
 
     UComponentModule mComponentModule;
     UEventModule mEventModule;
 
-    ATimePoint mLoginTime;
-    
     std::map<uint64_t, URepeatedTimer> mTimerMap;
 
     FPlatformInfo mPlatform;
 
 public:
-    UPlayer() = delete;
-
     explicit UPlayer(AConnectionPointer conn);
     ~UPlayer() override;
-
-    UPlayer &SetPlayerId(uint64_t id);
-    uint64_t GetPlayerID() const;
-
-    AConnectionPointer GetConnection() const;
-    void SetConnection(const AConnectionPointer &conn);
 
     [[nodiscard]] AThreadID GetThreadID() const;
 
     bool IsSameThread() const;
 
-    template<typename FUNC, typename... ARGS>
-    void RunInThread(FUNC &&func, ARGS &&... args) {
-        co_spawn(mConn->GetSocket().get_executor(), [func = std::forward<FUNC>(func), ...args = std::forward<ARGS>(args)]() -> awaitable<void> {
-            try {
-                std::invoke(func, args...);
-            } catch (std::exception &e) {
-                spdlog::error("Player::RunInThread: {}", e.what());
-            }
-            co_return;
-        }, detached);
-    }
-
     UComponentModule &GetComponentModule();
     UEventModule &GetEventModule();
 
-    void OnLogin();
-    void OnLogout();
-
-    bool IsLogin() const;
+    void OnLogin() override;
+    void OnLogout() override;
 
     template<typename FUNC, typename... ARGS>
     uint64_t SetTimer(const std::chrono::duration<uint32_t> expire, const bool repeat, FUNC &&func, ARGS &&... args) {
@@ -87,9 +60,6 @@ public:
     }
 
     void StopTimer(uint64_t timerID);
-
-    IPackage *BuildPackage() const;
-    void Send(IPackage *pkg) const;
 
     void Send(uint32_t id, std::string_view data) const;
     void Send(uint32_t id, const std::stringstream &ss) const;

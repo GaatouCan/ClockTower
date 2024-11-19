@@ -23,7 +23,7 @@ public:
     void SetConnection(const AConnectionPointer &conn);
     AConnectionPointer GetConnection() const;
 
-    uint64_t GetPlayerId() const;
+    uint64_t GetPlayerID() const;
 
     template<typename FUNC, typename... ARGS>
     void RunInThread(FUNC &&func, ARGS &&... args) {

@@ -21,15 +21,15 @@ namespace protocol {
 	// Login
 
 	// Appearance
-	awaitable<void> CS_AppearanceRequest(const std::shared_ptr<IAbstractPlayer> &character, IPackage *pkg);
+	awaitable<void> CS_AppearanceRequest(const std::shared_ptr<IAbstractPlayer> &plr, IPackage *pkg);
 
 	// Chat
-	awaitable<void> CS_ChatRoomRequest(const std::shared_ptr<IAbstractPlayer> &character, IPackage *pkg);
+	awaitable<void> CS_ChatRoomRequest(const std::shared_ptr<IAbstractPlayer> &plr, IPackage *pkg);
 
 } // protocol
 
 #include "ProtoType.h"
-#include <system/protocol/ProtocolSystem.h>
+#include "../base/system/protocol/ProtocolSystem.h"
 
 inline void LoadProtocol(UProtocolSystem *sys) {
 

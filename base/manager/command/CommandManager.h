@@ -8,13 +8,15 @@
 class IAbstractPlayer;
 class UCommandObject;
 
-
 class UCommandManager final : public IManager {
 
     using ACommandCreator = std::function<IAbstractCommand*(const UCommandObject&)>;
 
-    std::unordered_map<std::string, ACommandCreator> mOperateCmdMap;
-    std::unordered_map<std::string, ACommandCreator> mClientCmdMap;
+    static std::function<void(UCommandManager*)> sClientCommandRegister;
+    static std::function<void(UCommandManager*)> sOperateCommandRegister;
+
+    std::unordered_map<std::string, ACommandCreator> mOperateCommandMap;
+    std::unordered_map<std::string, ACommandCreator> mClientCommandMap;
 
 public:
     explicit UCommandManager(asio::io_context &ctx);
@@ -24,11 +26,14 @@ public:
         return "UCommandManager";
     }
 
+    static void SetClientCommandRegister(const std::function<void(UCommandManager*)> &func);
+    static void SetOperateCommandRegister(const std::function<void(UCommandManager*)> &func);
+
     template<class T>
     requires std::derived_from<T, IClientCommand>
     void RegisterClientCommand(const std::string &cmd) {
-        if (!mClientCmdMap.contains(cmd)) {
-            mClientCmdMap[cmd] = [](const UCommandObject &obj) -> IAbstractCommand* {
+        if (!mClientCommandMap.contains(cmd)) {
+            mClientCommandMap[cmd] = [](const UCommandObject &obj) -> IAbstractCommand* {
                 return new T(obj);
             };
         }
@@ -37,8 +42,8 @@ public:
     template<class T>
     requires std::derived_from<T, IOperateCommand>
     void RegisterOperateCommand(const std::string &cmd) {
-        if (!mOperateCmdMap.contains(cmd)) {
-            mOperateCmdMap[cmd] = [](const UCommandObject &obj) -> IAbstractCommand* {
+        if (!mOperateCommandMap.contains(cmd)) {
+            mOperateCommandMap[cmd] = [](const UCommandObject &obj) -> IAbstractCommand* {
                 return new T(obj);
             };
         }

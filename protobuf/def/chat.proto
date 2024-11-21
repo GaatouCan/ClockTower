@@ -19,8 +19,9 @@ message SC_ChatRoomResponse {
 
   enum Reason {
     NORMAL_SEND = 0;
-    MEMBER_ENTERED = 1;
-    MEMBER_EXITED = 2;
+    MEMBER_UPDATE = 1;
+    MEMBER_ENTERED = 2;
+    MEMBER_EXITED = 3;
   }
 
   Reason reason = 4;

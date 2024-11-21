@@ -52,10 +52,9 @@ awaitable<void> UChatRoom::SendAllRoomInfo(const std::shared_ptr<UPlayer> &plr) 
 
     response.set_roomid(mRoomId);
     response.set_leader(mLeaderId);
+    response.set_reason(Chat::SC_ChatRoomResponse::NORMAL_SEND);
 
-    std::set<uint64_t> targetPlayerSet;
-
-    for (const auto memberId: mMemberSet) {
+    for (const auto &memberId: mMemberSet) {
         auto node = co_await cacheMgr->FindCacheNode(memberId);
         if (!node.has_value())
             continue;
@@ -64,10 +63,6 @@ awaitable<void> UChatRoom::SendAllRoomInfo(const std::shared_ptr<UPlayer> &plr) 
         const auto member = response.add_memberlist();
         member->set_pid(memberId);
         member->set_online(cacheNode.IsOnline());
-
-        if (cacheNode.IsOnline()) {
-            targetPlayerSet.insert(memberId);
-        }
     }
 
     if (plr != nullptr) {
@@ -79,4 +74,48 @@ awaitable<void> UChatRoom::SendAllRoomInfo(const std::shared_ptr<UPlayer> &plr) 
         pkg->SetData(response.SerializeAsString());
         playerMgr->SendToList(pkg, mMemberSet);
     }
+}
+
+awaitable<void> UChatRoom::UpdateMemberInfo(std::set<uint64_t> members, const std::vector<FCacheNode *> &cacheVec) const {
+    const auto cacheMgr = GetManager<UPlayerCache>();
+    if (cacheMgr == nullptr)
+        co_return;
+
+    const auto playerMgr = GetManager<UPlayerManager>();
+    if (playerMgr == nullptr)
+        co_return;
+
+    Chat::SC_ChatRoomResponse response;
+
+    response.set_roomid(mRoomId);
+    response.set_leader(mLeaderId);
+    response.set_reason(Chat::SC_ChatRoomResponse::MEMBER_UPDATE);
+
+    for (const auto &cache: cacheVec) {
+        if (cache == nullptr)
+            continue;
+
+        const auto member = response.add_memberlist();
+        member->set_pid(cache->pid);
+        member->set_online(cache->IsOnline());
+
+        members.erase(cache->pid);
+    }
+
+    for (const uint64_t &memberId: members) {
+        auto node = co_await cacheMgr->FindCacheNode(memberId);
+        if (!node.has_value())
+            continue;
+
+        auto cacheNode = node.value();
+        const auto member = response.add_memberlist();
+        member->set_pid(memberId);
+        member->set_online(cacheNode.IsOnline());
+    }
+
+    const auto pkg = dynamic_cast<FPackage *>(mOwner->BuildPackage());
+
+    pkg->SetPackageID(static_cast<uint32_t>(protocol::EProtoType::SC_ChatRoomResponse));
+    pkg->SetData(response.SerializeAsString());
+    playerMgr->SendToList(pkg, mMemberSet);
 }

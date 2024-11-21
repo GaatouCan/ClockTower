@@ -3,11 +3,13 @@
 #include <common.h>
 #include <memory>
 #include <set>
+#include <vector>
 #include <asio.hpp>
 
 using asio::awaitable;
 
 class UPlayer;
+struct FCacheNode;
 
 class UChatRoom final : public std::enable_shared_from_this<UChatRoom> {
 
@@ -34,4 +36,6 @@ public:
     [[nodiscard]] uint64_t GetLeaderID() const;
 
     awaitable<void> SendAllRoomInfo(const std::shared_ptr<UPlayer> &plr = nullptr) const;
+
+    awaitable<void> UpdateMemberInfo(std::set<uint64_t> members, const std::vector<FCacheNode *> &cacheVec = {}) const;
 };

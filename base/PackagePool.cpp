@@ -160,11 +160,18 @@ void UPackagePool::Expanse() {
     const auto num = static_cast<size_t>(std::ceil(static_cast<float>(mUseCount) * sExpanseScale));
     spdlog::trace("{} - Pool Rest[{}], Current Using[{}], Expand Number[{}].", __FUNCTION__, mQueue.size(), mUseCount, num);
 
-    for (size_t i = 0; i < num; i++)
+    for (size_t i = 0; i < num; i++) {
+        IPackage *pkg = nullptr;
         if (sCreatePackage)
-            mQueue.emplace(sCreatePackage());
+            pkg = sCreatePackage();
         else
-            mQueue.emplace(DefaultPackage());
+            pkg = DefaultPackage();
+
+        if (pkg != nullptr) {
+            pkg->SetOwnerPool(this);
+            mQueue.push(pkg);
+        }
+    }
 }
 
 void UPackagePool::Collect() {

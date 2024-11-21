@@ -22,6 +22,10 @@ AConnectionPointer IAbstractPlayer::GetConnection() const {
     return mConn;
 }
 
+ATcpSocket & IAbstractPlayer::GetSocket() const {
+    return mConn->GetSocket();
+}
+
 uint64_t IAbstractPlayer::GetPlayerID() const {
     return mId;
 }

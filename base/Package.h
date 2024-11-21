@@ -6,8 +6,19 @@
  * 抽象数据包基类
  */
 class IPackage {
+
+    class UPackagePool *mOwnerPool = nullptr;
+
 public:
     virtual ~IPackage() = default;
+
+    void SetOwnerPool(UPackagePool *pool) {
+        mOwnerPool = pool;
+    }
+
+    [[nodiscard]] UPackagePool *GetOwnerPool() const {
+        return mOwnerPool;
+    }
 
     /**
      * 获取数据包ID
@@ -30,6 +41,8 @@ public:
      * @return bool
      */
     [[nodiscard]] virtual bool IsAvailable() const = 0;
+
+    virtual void CopyFromOther(IPackage *other) = 0;
 };
 
 template<typename T>

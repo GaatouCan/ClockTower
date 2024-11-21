@@ -47,10 +47,16 @@ void PackageDefaultInit(IPackage *pkg) {
 
 UPackagePool::UPackagePool(const size_t capacity) {
     for (size_t i = 0; i < capacity; i++) {
+        IPackage *pkg = nullptr;
         if (sCreatePackage)
-            mQueue.emplace(sCreatePackage());
+            pkg = sCreatePackage();
         else
-            mQueue.emplace(DefaultPackage());
+            pkg = DefaultPackage();
+
+        if (pkg != nullptr) {
+            pkg->SetOwnerPool(this);
+            mQueue.push(pkg);
+        }
     }
 }
 

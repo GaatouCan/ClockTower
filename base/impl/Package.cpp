@@ -124,6 +124,12 @@ uint32_t FPackage::GetID() const {
     return mHeader.id;
 }
 
+void FPackage::CopyFromOther(IPackage *other) {
+    if (const auto tmp = dynamic_cast<FPackage*>(other); tmp != nullptr) {
+        *this = *tmp;
+    }
+}
+
 size_t FPackage::GetDataLength() const {
     return mData.size();
 }

@@ -54,6 +54,8 @@ public:
     FPackage &SetPackageID(uint32_t id);
     [[nodiscard]] uint32_t GetID() const override;
 
+    void CopyFromOther(IPackage *other) override;
+
     FPackage &SetData(std::string_view data);
     FPackage &SetData(const std::stringstream &ss);
 

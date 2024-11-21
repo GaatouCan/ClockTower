@@ -24,7 +24,7 @@ void UPlayerManager::OnPlayerLogin(const std::shared_ptr<UConnection> &conn, con
         plr->GetConnection()->Disconnect();
 
         // 如果已经是登录状态则重新绑定TCP链接即可
-        if (plr->IsLogin()) {
+        if (plr->IsOnline()) {
             plr->SetConnection(conn);
             plr->OnLogin();
 

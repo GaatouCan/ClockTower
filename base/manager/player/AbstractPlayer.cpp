@@ -22,7 +22,7 @@ AConnectionPointer IAbstractPlayer::GetConnection() const {
     return mConn;
 }
 
-ATcpSocket & IAbstractPlayer::GetSocket() const {
+ATcpSocket &IAbstractPlayer::GetSocket() const {
     return mConn->GetSocket();
 }
 
@@ -30,7 +30,7 @@ uint64_t IAbstractPlayer::GetPlayerID() const {
     return mId;
 }
 
-IPackage * IAbstractPlayer::BuildPackage() const {
+IPackage *IAbstractPlayer::BuildPackage() const {
     return mConn->BuildPackage();
 }
 
@@ -46,6 +46,11 @@ void IAbstractPlayer::OnLogout() {
     mLoginTime = std::chrono::steady_clock::now();
 }
 
-bool IAbstractPlayer::IsLogin() const {
-    return mLoginTime.time_since_epoch().count() > 0 && mLogoutTime.time_since_epoch().count() <= 0;
+bool IAbstractPlayer::IsOnline() const {
+    constexpr ATimePoint zeroTimePoint{};
+    const auto now = std::chrono::steady_clock::now();
+
+    return (mLoginTime > zeroTimePoint && mLoginTime < now)
+           && (mLogoutTime > zeroTimePoint && mLoginTime < now)
+           && (mLogoutTime <= mLoginTime);
 }

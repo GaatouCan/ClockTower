@@ -45,7 +45,7 @@ public:
     virtual void OnLogin();
     virtual void OnLogout();
 
-    bool IsLogin() const;
+    bool IsOnline() const;
 };
 
 

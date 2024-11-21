@@ -33,4 +33,6 @@ public:
 
     std::shared_ptr<IAbstractPlayer> FindPlayer(uint64_t pid);
     std::shared_ptr<IAbstractPlayer> RemovePlayer(uint64_t pid);
+
+    void Broadcast(IPackage *pkg, uint64_t expect = 0);
 };

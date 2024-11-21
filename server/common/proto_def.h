@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <asio.hpp>
 #include <memory>
 
 class IPackage;
@@ -15,8 +14,6 @@ using AConnectionPointer = std::shared_ptr<class UConnection>;
 class IAbstractPlayer;
 
 namespace protocol {
-
-	 using asio::awaitable;
 
 	// Login
 

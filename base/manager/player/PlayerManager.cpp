@@ -40,14 +40,6 @@ void UPlayerManager::OnPlayerLogin(const std::shared_ptr<UConnection> &conn, con
     const auto plr = EmplacePlayer(conn, pid);
     spdlog::info("{} - New Player[{}] Login", __FUNCTION__, pid);
 
-    // if (const auto sys = GetSystem<UDatabaseSystem>(); sys != nullptr) {
-    //     co_await sys->AsyncPushTask([plr](mysqlx::Schema &schema) {
-    //     plr->GetComponentModule().Deserialize(schema);
-    //     }, asio::use_awaitable);
-    // } else {
-    //     spdlog::error("{} - Failed To Get Database System.", __FUNCTION__);
-    // }
-
     plr->OnLogin();
 }
 
@@ -55,14 +47,6 @@ void UPlayerManager::OnPlayerLogout(const uint64_t pid) {
     spdlog::info("{} - Player[{}] Logout", __FUNCTION__, pid);
     if (const auto plr = RemovePlayer(pid); plr != nullptr) {
         plr->OnLogout();
-
-        // if (const auto sys = GetSystem<UDatabaseSystem>(); sys != nullptr) {
-        //     sys->PushTask([plr](mysqlx::Schema &schema) {
-        //         plr->GetComponentModule().Serialize(schema);
-        //     });
-        // } else {
-        //     spdlog::error("{} - Failed To Get Database System", __FUNCTION__);
-        // }
     }
 }
 
@@ -123,6 +107,9 @@ void UPlayerManager::Broadcast(IPackage *pkg, const uint64_t expect) {
 }
 
 void UPlayerManager::SendToList(IPackage *pkg, const std::set<uint64_t>& players) {
+    if (pkg == nullptr)
+        return;
+
     for (const auto pid : players) {
         if (const auto plr = FindPlayer(pid); plr != nullptr && plr->IsOnline()) {
             const auto tPkg = plr->GetConnection()->BuildPackage();

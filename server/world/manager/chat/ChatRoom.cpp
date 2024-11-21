@@ -78,7 +78,5 @@ awaitable<void> UChatRoom::SendAllRoomInfo(const std::shared_ptr<UPlayer> &plr) 
         pkg->SetPackageID(static_cast<uint32_t>(protocol::EProtoType::SC_ChatRoomResponse));
         pkg->SetData(response.SerializeAsString());
         playerMgr->SendToList(pkg, mMemberSet);
-
-        delete pkg;
     }
 }

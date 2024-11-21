@@ -8,6 +8,7 @@ IAbstractPlayer::IAbstractPlayer(AConnectionPointer conn)
 }
 
 IAbstractPlayer::~IAbstractPlayer() {
+    spdlog::trace("IAbstractPlayer::~IAbstractPlayer() - {}", mId);
 }
 
 void IAbstractPlayer::SetConnection(const AConnectionPointer &conn) {

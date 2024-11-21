@@ -16,6 +16,7 @@ UConnection::UConnection(ATcpSocket socket, UPackagePool &pool)
 
 UConnection::~UConnection() {
     Disconnect();
+    spdlog::trace("UConnection::~UConnection() - {}", mKey);
 }
 
 void UConnection::ConnectToClient() {

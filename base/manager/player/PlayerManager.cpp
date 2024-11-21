@@ -103,7 +103,7 @@ std::shared_ptr<IAbstractPlayer> UPlayerManager::RemovePlayer(const uint64_t pid
     return nullptr;
 }
 
-void UPlayerManager::Broadcast(IPackage *pkg, uint64_t expect) {
+void UPlayerManager::Broadcast(IPackage *pkg, const uint64_t expect) {
     if (pkg == nullptr)
         return;
 
@@ -112,7 +112,26 @@ void UPlayerManager::Broadcast(IPackage *pkg, uint64_t expect) {
             continue;
 
         if (plr->IsOnline()) {
-
+            const auto tPkg = plr->GetConnection()->BuildPackage();
+            tPkg->CopyFromOther(pkg);
+            plr->Send(tPkg);
         }
+    }
+    if (const auto pool = pkg->GetOwnerPool(); pool != nullptr) {
+        pool->Recycle(pkg);
+    }
+}
+
+void UPlayerManager::SendToList(IPackage *pkg, const std::set<uint64_t>& players) {
+    for (const auto pid : players) {
+        if (const auto plr = FindPlayer(pid); plr != nullptr && plr->IsOnline()) {
+            const auto tPkg = plr->GetConnection()->BuildPackage();
+            tPkg->CopyFromOther(pkg);
+            plr->Send(tPkg);
+        }
+    }
+
+    if (const auto pool = pkg->GetOwnerPool(); pool != nullptr) {
+        pool->Recycle(pkg);
     }
 }

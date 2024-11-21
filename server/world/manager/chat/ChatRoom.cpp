@@ -5,6 +5,7 @@
 #include "system/manager/ManagerSystem.h"
 #include "../../../common/ProtoType.h"
 
+#include <PackagePool.h>
 #include <manager/player/PlayerManager.h>
 #include <chat.pb.h>
 
@@ -55,10 +56,12 @@ awaitable<void> UChatRoom::SendAllRoomInfo(const std::shared_ptr<UPlayer> &plr) 
         plr->SendPackage(SC_ChatRoomResponse, response);
     }
     else {
-        // for (const auto memberId : targetPlayerSet) {
-        //     if (const auto member = std::dynamic_pointer_cast<UPlayer>(playerMgr->FindPlayer(memberId)); member != nullptr && member->IsOnline()) {
-        //         member->SendPackage(SC_ChatRoomResponse, response);
-        //     }
-        // }
+        const auto pkg = dynamic_cast<FPackage *>(UPackagePool::BuildPackage());
+
+        pkg->SetPackageID(static_cast<uint32_t>(protocol::EProtoType::SC_ChatRoomResponse));
+        pkg->SetData(response.SerializeAsString());
+        playerMgr->SendToList(pkg, mMemberSet);
+
+        delete pkg;
     }
 }

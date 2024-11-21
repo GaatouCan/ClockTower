@@ -150,6 +150,23 @@ void UPackagePool::SetPackageInitializer(const std::function<void(IPackage *)> &
     sInitPackage = func;
 }
 
+IPackage * UPackagePool::BuildPackage() {
+    IPackage *pkg = nullptr;
+
+    if (sCreatePackage) {
+        pkg = sCreatePackage();
+    } else {
+        pkg = DefaultPackage();
+    }
+
+    if (pkg != nullptr) {
+        if (sInitPackage)
+            std::invoke(sInitPackage, pkg);
+    }
+
+    return pkg;
+}
+
 void UPackagePool::Expanse() {
     if (mUseCount == 0)
         return;

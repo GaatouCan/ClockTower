@@ -21,7 +21,7 @@ public:
 
     uint64_t VerifyToken(uint64_t pid, const std::string &token);
 
-    awaitable<void> OnLogin(const std::shared_ptr<UConnection> &conn, IPackage *pkg);
+    void OnLogin(const std::shared_ptr<UConnection> &conn, IPackage *pkg);
 
     template<typename T>
     requires std::derived_from<T, ILoginHandler>

@@ -9,7 +9,7 @@ UChatManager::UChatManager(asio::io_context &ctx)
 UChatManager::~UChatManager() {
 }
 
-awaitable<void> protocol::CS_ChatRoomRequest(const std::shared_ptr<IAbstractPlayer> &plr, IPackage *pkg) {
+void protocol::CS_ChatRoomRequest(const std::shared_ptr<IAbstractPlayer> &plr, IPackage *pkg) {
     // TODO
-    co_return;
+    return;
 }

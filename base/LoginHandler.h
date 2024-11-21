@@ -1,6 +1,7 @@
 #pragma once
 
-#include <asio.hpp>
+#include <memory>
+#include <string>
 
 class IPackage;
 class UConnection;
@@ -14,5 +15,5 @@ class ILoginHandler {
 public:
     virtual ~ILoginHandler() = default;
     virtual FLoginInfo ParseLoginInfo(IPackage *) = 0;
-    virtual asio::awaitable<void> OnPlayerLogin(const std::shared_ptr<UConnection>&, const FLoginInfo&) = 0;
+    virtual void OnPlayerLogin(const std::shared_ptr<UConnection>&, const FLoginInfo&) = 0;
 };

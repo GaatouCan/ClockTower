@@ -15,8 +15,8 @@ public:
 
     virtual void OnConnected(const AConnectionPointer &) {}
 
-    virtual awaitable<void> OnReadPackage(const AConnectionPointer &, IPackage *) { co_return; }
-    virtual awaitable<void> OnWritePackage(const AConnectionPointer &) { co_return; }
+    virtual void OnReadPackage(const AConnectionPointer &, IPackage *) {}
+    virtual void OnWritePackage(const AConnectionPointer &) {}
 
     virtual void OnClosed(const AConnectionPointer &) {}
 };

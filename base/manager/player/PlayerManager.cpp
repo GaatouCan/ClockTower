@@ -15,7 +15,7 @@ void UPlayerManager::SetPlayerCreator(const std::function<std::shared_ptr<IAbstr
     sPlayerCreator = func;
 }
 
-awaitable<void> UPlayerManager::OnPlayerLogin(const std::shared_ptr<UConnection> &conn, const uint64_t pid) {
+void UPlayerManager::OnPlayerLogin(const std::shared_ptr<UConnection> &conn, const uint64_t pid) {
     if (const auto plr = FindPlayer(pid); plr != nullptr) {
         spdlog::info("{} - Player[{}] Over Login", __FUNCTION__, pid);
 
@@ -29,7 +29,7 @@ awaitable<void> UPlayerManager::OnPlayerLogin(const std::shared_ptr<UConnection>
             plr->OnLogin();
 
             spdlog::info("{} - Player[{}] Rebind New Connection From {}", __FUNCTION__, pid, conn->RemoteAddress().to_string());
-            co_return;
+            return;
         }
 
         // 否则直接删掉该对象并执行下面登录逻辑

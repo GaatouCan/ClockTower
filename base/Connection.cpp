@@ -153,7 +153,7 @@ awaitable<void> UConnection::WritePackage() {
 
             if (pkg->IsAvailable()) {
                 if (mHandler != nullptr) {
-                    co_await mHandler->OnWritePackage(shared_from_this());
+                    mHandler->OnWritePackage(shared_from_this());
                 }
                 mPool.Recycle(pkg);
             } else {
@@ -185,7 +185,7 @@ awaitable<void> UConnection::ReadPackage() {
                 mDeadline = std::chrono::steady_clock::now() + sExpireTime;
 
                 if (mHandler != nullptr) {
-                    co_await mHandler->OnReadPackage(shared_from_this(), pkg);
+                    mHandler->OnReadPackage(shared_from_this(), pkg);
                 }
             } else {
                 spdlog::warn("{} - Read failed", __FUNCTION__);

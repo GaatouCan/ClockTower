@@ -1,13 +1,14 @@
 #pragma once
 
 #include <cstdint>
+#include <common.h>
 
 struct FCacheNode {
     uint64_t pid;
     ATimePoint lastLoginTime;
     ATimePoint lastLogoutTime;
 
-    bool IsOnline() const {
+    [[nodiscard]] bool IsOnline() const {
         constexpr auto zeroPoint = ATimePoint();
         const auto now = std::chrono::steady_clock::now();
 

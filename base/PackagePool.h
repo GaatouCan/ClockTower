@@ -69,12 +69,6 @@ public:
     static void SetPackageBuilder(const std::function<IPackage*()>& func);
     static void SetPackageInitializer(const std::function<void(IPackage*)>& func);
 
-    /**
-     * From Sometime Need A Package Not From Any Pool
-     * @return
-     */
-    static IPackage *BuildPackage();
-
 private:
     void Expanse();
     void Collect();

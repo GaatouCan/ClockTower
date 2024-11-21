@@ -8,7 +8,7 @@
 std::function<void(UCommandManager*)> UCommandManager::sClientCommandRegister = nullptr;
 std::function<void(UCommandManager*)> UCommandManager::sOperateCommandRegister = nullptr;
 
-UCommandManager::UCommandManager(asio::io_context &ctx)
+UCommandManager::UCommandManager(FContextNode &ctx)
     : IManager(ctx) {
 
     if (sOperateCommandRegister) {

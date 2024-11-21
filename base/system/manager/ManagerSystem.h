@@ -10,11 +10,10 @@ class UManagerSystem final : public ISubSystem {
     std::unordered_map<std::type_index, IManager *> mManagerMap;
     std::function<void(UManagerSystem *)> mManagerLoader;
 
-    asio::io_context mIOContext;
+    FContextNode mContextNode;
     ASteadyTimer mTickTimer;
 
     std::thread mManagerThread;
-    AThreadID mManagerThreadId;
 
 public:
     UManagerSystem();
@@ -30,7 +29,7 @@ public:
 
     template<MANAGER_TYPE T>
     T* CreateManager() {
-        auto mgr = new T(mIOContext);
+        auto mgr = new T(mContextNode);
         mManagerMap[typeid(T)] = mgr;
         spdlog::info("{} - Loaded {}", __FUNCTION__, mgr->GetManagerName());
         return mgr;

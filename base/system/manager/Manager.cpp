@@ -1,27 +1,28 @@
 #include "Manager.h"
 
 
-IManager::IManager(AIOContext &ctx)
-    : mIOContext(ctx) {
+IManager::IManager(FContextNode &ctx)
+    : mContextNode(ctx) {
 }
 
-void IManager::SetThreadID(const AThreadID tid) {
-    mThreadId = tid;
-}
 
 AThreadID IManager::GetThreadID() const {
-    return mThreadId;
+    return mContextNode.tid;
 }
 
 bool IManager::IsSameThread() const {
-    return mThreadId == std::this_thread::get_id();
+    return mContextNode.tid == std::this_thread::get_id();
 }
 
 void IManager::OnTick(ATimePoint now) {
 }
 
 AIOContext &IManager::GetIOContext() const {
-    return mIOContext;
+    return mContextNode.ctx;
+}
+
+IPackage * IManager::BuildPackage() const {
+    return mContextNode.pool.Acquire();
 }
 
 void IManager::StopTimer(const ATimerID timerID) {

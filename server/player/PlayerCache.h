@@ -14,7 +14,7 @@ class UPlayerCache final : public IManager {
     mutable std::shared_mutex mSharedMutex;
 
 public:
-    explicit UPlayerCache(asio::io_context &ctx);
+    explicit UPlayerCache(FContextNode &ctx);
     ~UPlayerCache() override;
 
     [[nodiscard]] constexpr const char *GetManagerName() const override {

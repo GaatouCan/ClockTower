@@ -19,7 +19,7 @@ class UCommandManager final : public IManager {
     std::unordered_map<std::string, ACommandCreator> mClientCommandMap;
 
 public:
-    explicit UCommandManager(asio::io_context &ctx);
+    explicit UCommandManager(FContextNode &ctx);
     ~UCommandManager() override;
 
     [[nodiscard]] constexpr const char * GetManagerName() const override {

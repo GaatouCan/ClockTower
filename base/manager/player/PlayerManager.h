@@ -16,7 +16,7 @@ class UPlayerManager final : public IManager {
     std::shared_mutex mSharedMutex;
 
 public:
-    explicit UPlayerManager(asio::io_context &ctx);
+    explicit UPlayerManager(FContextNode &ctx);
     ~UPlayerManager() override;
 
     [[nodiscard]] constexpr const char * GetManagerName() const override {

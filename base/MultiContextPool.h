@@ -1,16 +1,6 @@
 ﻿#pragma once
 
-#include "common.h"
-#include "PackagePool.h"
-
-/**
- * 每个IO线程的数据节点
- */
-struct FContextNode {
-    UPackagePool pool;
-    AIOContext ctx;
-    AThreadID tid;
-};
+#include "ContextNode.h"
 
 /**
  * 多线程池

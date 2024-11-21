@@ -2,7 +2,7 @@
 #include "../../../player/Player.h"
 #include "../../../common/proto_def.h"
 
-UChatManager::UChatManager(asio::io_context &ctx)
+UChatManager::UChatManager(FContextNode &ctx)
     : IManager(ctx) {
 }
 

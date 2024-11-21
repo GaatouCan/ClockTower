@@ -6,7 +6,7 @@
 
 UManagerSystem::UManagerSystem()
     : mManagerLoader(nullptr),
-      mTickTimer(mIOContext) {
+      mTickTimer(mContextNode.ctx) {
 }
 
 UManagerSystem::~UManagerSystem() {
@@ -15,8 +15,8 @@ UManagerSystem::~UManagerSystem() {
 
     mTickTimer.cancel();
 
-    if (!mIOContext.stopped())
-        mIOContext.stop();
+    if (!mContextNode.ctx.stopped())
+        mContextNode.ctx.stop();
 
     for (const auto mgr: std::views::values(mManagerMap))
         delete mgr;
@@ -28,24 +28,21 @@ void UManagerSystem::Init() {
     }
 
     mManagerThread = std::thread([this] {
-        mManagerThreadId = std::this_thread::get_id();
-        asio::signal_set signals(mIOContext, SIGINT, SIGTERM);
+        mContextNode.tid = std::this_thread::get_id();
+        asio::signal_set signals(mContextNode.ctx, SIGINT, SIGTERM);
         signals.async_wait([&](auto, auto) {
-            mIOContext.stop();
+            mContextNode.ctx.stop();
         });
 
-        for (const auto mgr: std::views::values(mManagerMap))
-            mgr->SetThreadID(mManagerThreadId);
-
-        mIOContext.run();
+        mContextNode.ctx.run();
     });
 
-    co_spawn(mIOContext, [this]() mutable -> awaitable<void> {
+    co_spawn(mContextNode.ctx, [this]() mutable -> awaitable<void> {
         try {
             ATimePoint point = std::chrono::steady_clock::now();
             point = std::chrono::floor<std::chrono::seconds>(point);
 
-            while (!mIOContext.stopped()) {
+            while (!mContextNode.ctx.stopped()) {
                 point += std::chrono::seconds(1);
                 mTickTimer.expires_at(point);
                 co_await mTickTimer.async_wait();
@@ -64,9 +61,9 @@ void UManagerSystem::SetManagerLoader(const std::function<void(UManagerSystem *)
 }
 
 AThreadID UManagerSystem::GetThreadID() const {
-    return mManagerThreadId;
+    return mContextNode.tid;
 }
 
 bool UManagerSystem::InManagerThread() const {
-    return mManagerThreadId == std::this_thread::get_id();
+    return mContextNode.tid == std::this_thread::get_id();
 }

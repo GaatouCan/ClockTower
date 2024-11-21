@@ -3,7 +3,7 @@
 
 std::function<std::shared_ptr<IAbstractPlayer>(const AConnectionPointer&, uint64_t)> UPlayerManager::sPlayerCreator = nullptr;
 
-UPlayerManager::UPlayerManager(asio::io_context &ctx)
+UPlayerManager::UPlayerManager(FContextNode &ctx)
     : IManager(ctx) {
 }
 

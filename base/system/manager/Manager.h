@@ -1,31 +1,27 @@
 ﻿#pragma once
 
-#include "../../common.h"
 #include "../../RepeatedTimer.h"
 #include "../../utils.h"
+#include "../../ContextNode.h"
 
 #include <map>
 #include <spdlog/spdlog.h>
 
 class IManager {
 
-    AIOContext &mIOContext;
-    
+    FContextNode &mContextNode;
     std::map<ATimerID, URepeatedTimer> mTimerMap;
-
-    AThreadID mThreadId;
 
 public:
     IManager() = delete;
 
-    explicit IManager(AIOContext &ctx);
+    explicit IManager(FContextNode &ctx);
     virtual ~IManager() = default;
 
     DISABLE_COPY_MOVE(IManager)
 
     [[nodiscard]] virtual const char *GetManagerName() const = 0;
 
-    void SetThreadID(AThreadID tid);
     [[nodiscard]] AThreadID GetThreadID() const;
 
     [[nodiscard]] bool IsSameThread() const;
@@ -34,9 +30,11 @@ public:
 
     [[nodiscard]] AIOContext &GetIOContext() const;
 
+    [[nodiscard]] IPackage *BuildPackage() const;
+
     template<typename Functor, typename... Args>
     void RunInThread(Functor &&func, Args &&... args) {
-        co_spawn(mIOContext, [func = std::forward<Functor>(func), ...args = std::forward<Args>(args)]() -> awaitable<void> {
+        co_spawn(mContextNode.ctx, [func = std::forward<Functor>(func), ...args = std::forward<Args>(args)]() -> awaitable<void> {
             try {
                 std::invoke(func, args...);
             } catch (std::exception &e) {
@@ -49,7 +47,7 @@ public:
     template<typename Functor, typename... Args>
     ATimerID SetTimer(const std::chrono::duration<uint32_t> expire, const bool repeat, Functor &&func, Args &&... args) {
         const uint64_t timerID = UnixTime();
-        if (auto [iter, res] = mTimerMap.insert_or_assign(timerID, mIOContext); res) {
+        if (auto [iter, res] = mTimerMap.insert_or_assign(timerID, mContextNode.ctx); res) {
             iter->second
                     .SetTimerID(timerID)
                     .SetExpireTime(expire)

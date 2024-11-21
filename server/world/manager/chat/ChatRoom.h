@@ -9,8 +9,9 @@ using asio::awaitable;
 
 class UPlayer;
 
-
 class UChatRoom final : public std::enable_shared_from_this<UChatRoom> {
+
+    class UChatManager *mOwner;
 
     uint64_t mRoomId;
     uint64_t mLeaderId;
@@ -23,10 +24,14 @@ class UChatRoom final : public std::enable_shared_from_this<UChatRoom> {
 public:
     UChatRoom() = delete;
 
-    UChatRoom(uint64_t roomId, uint64_t leaderId);
+    explicit UChatRoom(UChatManager *owner);
     ~UChatRoom();
 
-    uint64_t GetRoomID() const;
+    UChatRoom &SetRoomID(uint64_t roomId);
+    [[nodiscard]] uint64_t GetRoomID() const;
+
+    UChatRoom &SetLeaderID(uint64_t leaderId);
+    [[nodiscard]] uint64_t GetLeaderID() const;
 
     awaitable<void> SendAllRoomInfo(const std::shared_ptr<UPlayer> &plr = nullptr) const;
 };

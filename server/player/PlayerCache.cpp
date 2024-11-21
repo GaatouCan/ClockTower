@@ -4,7 +4,7 @@
 #include <system/database/DatabaseSystem.h>
 
 
-UPlayerCache::UPlayerCache(asio::io_context &ctx) : IManager(ctx) {
+UPlayerCache::UPlayerCache(FContextNode &ctx) : IManager(ctx) {
 }
 
 UPlayerCache::~UPlayerCache() {

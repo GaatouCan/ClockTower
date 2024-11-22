@@ -65,7 +65,7 @@ awaitable<void> UChatRoom::SendAllRoomInfo(const std::shared_ptr<UPlayer> &plr) 
     }
 
     if (plr != nullptr) {
-        plr->SendPackage(SC_ChatRoomResponse, response);
+        SEND_PACKAGE(plr, SC_ChatRoomResponse, response);
     } else {
         const auto pkg = dynamic_cast<FPackage *>(mOwner->BuildPackage());
 
@@ -91,6 +91,9 @@ awaitable<void> UChatRoom::UpdateMemberInfo(std::set<uint64_t> members, const st
 
     for (const auto &cache: cacheVec) {
         if (cache == nullptr)
+            continue;
+
+        if (!mMemberSet.contains(cache->pid))
             continue;
 
         const auto member = response.add_memberlist();

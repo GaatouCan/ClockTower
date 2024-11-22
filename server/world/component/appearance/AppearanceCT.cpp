@@ -78,7 +78,7 @@ void UAppearanceCT::SendInfo() const {
         frame->set_expired(val.expired_time);
     }
 
-    SendPackage(SC_AppearanceResponse, res);
+    SEND_PACKAGE(this, SC_AppearanceResponse, res);
 }
 
 void protocol::CS_AppearanceRequest(const std::shared_ptr<IAbstractPlayer> &character, IPackage *pkg) {

@@ -1,8 +1,11 @@
 #pragma once
 
 #include <system/manager/Manager.h>
+#include "ChatRoom.h"
 
 class UChatManager final : public IManager {
+
+    std::map<uint64_t, UChatRoom *> mChatRoomMap;
 
 public:
 

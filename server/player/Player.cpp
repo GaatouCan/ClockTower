@@ -51,7 +51,7 @@ void UPlayer::OnLogin() {
     response.set_progress(100);
     response.set_describe("Component Load Completed");
 
-    SendPackage(SC_LoginResponse, response);
+    SEND_PACKAGE(this, SC_LoginResponse, response);
 
     const auto param = new FEP_PlayerLogin;
     param->pid = GetPlayerID();

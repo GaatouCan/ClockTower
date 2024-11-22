@@ -46,7 +46,7 @@ public:
     template<typename FUNC, typename... ARGS>
     uint64_t SetTimer(const std::chrono::duration<uint32_t> expire, const bool repeat, FUNC &&func, ARGS &&... args) {
         const uint64_t timerID = UnixTime();
-        if (auto [iter, res] = mTimerMap.insert_or_assign(timerID, mConn->GetSocket().get_executor()); res) {
+        if (auto [iter, res] = mTimerMap.insert_or_assign(timerID, GetSocket().get_executor()); res) {
             iter->second
                     .SetTimerID(timerID)
                     .SetExpireTime(expire)
@@ -71,3 +71,6 @@ std::shared_ptr<UPlayer> CreatePlayer(const AConnectionPointer &, uint64_t);
 
 #define SendPackage(proto, data) \
     Send(static_cast<uint32_t>(protocol::EProtoType::proto), data.SerializeAsString())
+
+#define BUILD_PACKAGE(pkg, proto, data) \
+    pkg->SetPackageID(static_cast<uint32_t>(protocol::EProtoType::proto)).SetData(data.SerializeAsString());

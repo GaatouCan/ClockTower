@@ -6,7 +6,6 @@
 #include "../../../common/ProtoType.h"
 #include "ChatManager.h"
 
-#include <PackagePool.h>
 #include <manager/player/PlayerManager.h>
 #include <chat.pb.h>
 
@@ -70,8 +69,7 @@ awaitable<void> UChatRoom::SendAllRoomInfo(const std::shared_ptr<UPlayer> &plr) 
     } else {
         const auto pkg = dynamic_cast<FPackage *>(mOwner->BuildPackage());
 
-        pkg->SetPackageID(static_cast<uint32_t>(protocol::EProtoType::SC_ChatRoomResponse));
-        pkg->SetData(response.SerializeAsString());
+        BUILD_PACKAGE(pkg, SC_ChatRoomResponse, response)
         playerMgr->SendToList(pkg, mMemberSet);
     }
 }
@@ -115,7 +113,6 @@ awaitable<void> UChatRoom::UpdateMemberInfo(std::set<uint64_t> members, const st
 
     const auto pkg = dynamic_cast<FPackage *>(mOwner->BuildPackage());
 
-    pkg->SetPackageID(static_cast<uint32_t>(protocol::EProtoType::SC_ChatRoomResponse));
-    pkg->SetData(response.SerializeAsString());
+    BUILD_PACKAGE(pkg, SC_ChatRoomResponse, response)
     playerMgr->SendToList(pkg, mMemberSet);
 }

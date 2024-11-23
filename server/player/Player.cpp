@@ -56,7 +56,7 @@ void UPlayer::OnLogin() {
     const auto param = new FEP_PlayerLogin;
     param->pid = GetPlayerID();
 
-    DispatchEvent(PLAYER_LOGIN, param);
+    DISPATCH_EVENT(PLAYER_LOGIN, param);
 }
 
 void UPlayer::OnLogout() {
@@ -72,7 +72,8 @@ void UPlayer::OnLogout() {
 
     const auto param = new FEP_PlayerLogout;
     param->pid = GetPlayerID();
-    DispatchEvent(PLAYER_LOGOUT, param);
+
+    DISPATCH_EVENT(PLAYER_LOGOUT, param);
 }
 
 void UPlayer::StopTimer(const uint64_t timerID) {

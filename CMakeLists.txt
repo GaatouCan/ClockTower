@@ -69,8 +69,8 @@ add_library(proto_static STATIC ${PROTOBUF_FILES})
 target_link_libraries(proto_static PRIVATE protobuf::libprotobuf)
 
 # Link To Generated Files
-include_directories(${PROTOBUF_GENERATED_DIR})
-link_directories(${PROTOBUF_LIBRARY_DIR}/Debug)
+#include_directories(${PROTOBUF_GENERATED_DIR})
+#link_directories(${PROTOBUF_LIBRARY_DIR}/Debug)
 
 #execute_process(
 #        COMMAND ./PreBuildTool.exe "--config=build.json"
@@ -123,6 +123,7 @@ if (MSVC)
 endif ()
 
 add_executable(server ${SERVER_SRC})
+target_include_directories(server PRIVATE ${PROTOBUF_GENERATED_DIR})
 target_include_directories(server PRIVATE ${CMAKE_SOURCE_DIR}/base)
 target_include_directories(server PRIVATE ${CMAKE_SOURCE_DIR}/struct)
 target_link_libraries(server PRIVATE base_static)

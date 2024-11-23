@@ -7,6 +7,7 @@
 #include <system/event/EventSystem.h>
 
 #include <utility>
+#include <ranges>
 #include <login.pb.h>
 
 
@@ -17,6 +18,9 @@ UPlayer::UPlayer(AConnectionPointer conn)
 }
 
 UPlayer::~UPlayer() {
+    for (auto &timer : std::views::values(mTimerMap)) {
+        timer.Stop();
+    }
 }
 
 AThreadID UPlayer::GetThreadID() const {

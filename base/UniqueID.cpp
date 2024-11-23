@@ -1,4 +1,5 @@
 #include "UniqueID.h"
+#include "utils.h"
 
 #include <spdlog/fmt/fmt.h>
 #include <absl/random/random.h>

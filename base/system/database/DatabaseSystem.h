@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include "../../base/SubSystem.h"
-#include "../../base/TSDeque.h"
+#include "../../SubSystem.h"
+#include "../../TSDeque.h"
 #include "../../DBCallbackWrapper.h"
 
 #include <thread>

@@ -18,9 +18,7 @@ UPlayer::UPlayer(AConnectionPointer conn)
 }
 
 UPlayer::~UPlayer() {
-    for (auto &timer : std::views::values(mTimerMap)) {
-        timer.Stop();
-    }
+
 }
 
 AThreadID UPlayer::GetThreadID() const {

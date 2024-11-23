@@ -87,12 +87,12 @@ std::shared_ptr<IAbstractPlayer> UPlayerManager::RemovePlayer(const uint64_t pid
     return nullptr;
 }
 
-void UPlayerManager::Broadcast(IPackage *pkg, const uint64_t expect) {
+void UPlayerManager::Broadcast(IPackage *pkg, const std::set<uint64_t> &except) {
     if (pkg == nullptr)
         return;
 
     for (const auto &[pid, plr] : mPlayerMap) {
-        if (expect != 0 && pid == expect)
+        if (except.contains(pid))
             continue;
 
         if (plr->IsOnline()) {

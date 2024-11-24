@@ -8,5 +8,5 @@ inline void LoadLogicConfig(UConfigSystem *sys) {
     if (sys == nullptr)
         return;
 
-    sys->CreateLogicConfig<UAvatarLogicConfig>({"appearance.avatar"});
+    REGISTER_LOGIC_CONFIG(UAvatarLogicConfig, "appearance.avatar")
 }

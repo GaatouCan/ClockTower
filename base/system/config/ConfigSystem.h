@@ -70,3 +70,6 @@ inline const YAML::Node &GetServerConfig() {
 
     return cfgSys->GetConfig();
 }
+
+#define REGISTER_LOGIC_CONFIG(cfg, ...) \
+    sys->CreateLogicConfig<cfg>({__VA_ARGS__});

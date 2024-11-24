@@ -26,7 +26,7 @@ void UComponentModule::Serialize(mysqlx::Schema &schema) {
         for (const auto& [tableName, node] : serialize) {
             if (mysqlx::Table table = schema.getTable(tableName); table.existsInDatabase()) {
                 if (node.serializer) {
-                    node.serializer(comp, table);
+                    node.serializer(comp, std::move(table));
                 }
             }
         }

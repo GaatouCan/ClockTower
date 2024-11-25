@@ -13,6 +13,10 @@ using asio::awaitable;
 class UPlayer;
 struct FCacheNode;
 
+struct FChatContent {
+
+};
+
 class UChatRoom final : public std::enable_shared_from_this<UChatRoom> {
 
     class UChatManager *mOwner;

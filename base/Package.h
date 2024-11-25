@@ -2,6 +2,10 @@
 
 #include <concepts>
 
+#ifdef __linux__
+#include <cstdint>
+#endif
+
 /**
  * 抽象数据包基类
  */

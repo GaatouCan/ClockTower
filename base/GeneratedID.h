@@ -2,6 +2,10 @@
 
 #include <string>
 
+#ifdef __linux__
+#include <cstdint>
+#endif
+
 struct FGeneratedID {
 
     long long time;

@@ -1,5 +1,9 @@
 #include "Package.h"
 
+#ifdef __linux__
+#include <cstring>
+#endif
+
 
 FPackage::FPackage()
     : mHeader() {

@@ -122,28 +122,35 @@ awaitable<void> UChatRoom::UpdateMemberInfo(std::set<uint64_t> members, const st
 }
 
 void UChatRoom::OnChat(const std::shared_ptr<UPlayer> &plr, const FChatContent &content) {
-    if (const auto now = std::chrono::steady_clock::now(); mLastUpdateTime != now) {
-        mLastUpdateTime = now;
-        mChatIndex = 1;
-    }
-
     Chat::SC_ChatToRoomResponse response;
 
     response.set_roomid(mRoomId.ToString());
     response.set_clienttime(content.clientTime);
     response.set_clientindex(content.clientIndex);
+
+    if (!mMemberSet.contains(plr->GetPlayerID())) {
+        response.set_reason(Chat::SC_ChatToRoomResponse::NOT_ROOM_MEMBER);
+        SEND_PACKAGE(plr, SC_ChatToRoomResponse, response)
+        return;
+    }
+
+    if (const auto now = std::chrono::steady_clock::now(); mLastUpdateTime != now) {
+        mLastUpdateTime = now;
+        mChatIndex = 1;
+    }
+
     response.set_servertime(ToUnixTime(mLastUpdateTime));
     response.set_serverindex(mChatIndex);
 
     const auto playerMgr = GetManager<UPlayerManager>();
     if (playerMgr == nullptr) {
-        response.set_success(false);
+        response.set_reason(Chat::SC_ChatToRoomResponse::IN_LIMITED);
         SEND_PACKAGE(plr, SC_ChatRoomResponse, response)
         return;
     }
 
-    response.set_success(true);
-    SEND_PACKAGE(plr, SC_ChatRoomResponse, response)
+    response.set_reason(Chat::SC_ChatToRoomResponse::SUCCESS);
+    SEND_PACKAGE(plr, SC_ChatToRoomResponse, response)
 
     Chat::SC_OnChatRoomResponse msg;
 

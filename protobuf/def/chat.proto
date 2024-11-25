@@ -42,7 +42,14 @@ message SC_ChatToRoomResponse {
   uint32 clientIndex = 4;
   int64 serverTime = 5;
   uint32 serverIndex = 6;
-  bool success = 7;
+
+  enum Reason {
+    SUCCESS = 0;
+    NOT_ROOM_MEMBER = 1;
+    IN_LIMITED = 2;
+  }
+
+  Reason reason = 7;
 }
 
 message SC_OnChatRoomResponse {

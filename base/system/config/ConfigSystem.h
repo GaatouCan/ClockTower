@@ -20,6 +20,8 @@ class UConfigSystem final : public ISubSystem {
 
     YAML::Node mConfig;
     std::unordered_map<std::string, nlohmann::json> mJSONConfigMap;
+
+    std::unordered_map<std::type_index, std::vector<std::string>> mLogicLoadMap;
     std::unordered_map<std::type_index, ILogicConfig *> mLogicConfigMap;
 
     std::function<void(UConfigSystem *)> mLogicConfigLoader;
@@ -38,6 +40,7 @@ public:
 
     template<LOGIC_CONFIG_TYPE T>
     void CreateLogicConfig(const std::vector<std::string> &pathList) {
+        mLogicLoadMap[typeid(T)] = pathList;
         std::vector<nlohmann::json> configs;
         for (const auto &path : pathList) {
             if (const auto iter = mJSONConfigMap.find(path); iter != mJSONConfigMap.end()) {
@@ -58,6 +61,8 @@ public:
     const YAML::Node &GetConfig() const;
 
     std::optional<nlohmann::json> FindConfig(const std::string &path, uint64_t id) const;
+
+    void ReloadConfig();
 };
 
 inline const YAML::Node &GetServerConfig() {

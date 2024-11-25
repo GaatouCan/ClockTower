@@ -18,6 +18,12 @@ public:
 
     DISABLE_COPY_MOVE(ILogicConfig)
 
+    virtual void OnReload(std::vector<nlohmann::json> configList) {
+        mConfigList = std::move(configList);
+    }
+
+    virtual void Init() {}
+
 protected:
     std::vector<nlohmann::json> mConfigList;
 };

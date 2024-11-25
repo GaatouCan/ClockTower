@@ -14,6 +14,8 @@ std::string PascalToUnderline(const std::string &src);
 
 long long UnixTime();
 
+long long ToUnixTime(std::chrono::time_point<std::chrono::steady_clock> point);
+
 uint64_t SetBit(uint64_t, uint32_t);
 
 uint64_t ClearBit(uint64_t, uint32_t);

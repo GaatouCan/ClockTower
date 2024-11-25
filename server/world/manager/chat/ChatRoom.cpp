@@ -66,7 +66,7 @@ awaitable<void> UChatRoom::SendAllRoomInfo(const std::shared_ptr<UPlayer> &plr) 
     }
 
     if (plr != nullptr) {
-        SEND_PACKAGE(plr, SC_ChatRoomResponse, response);
+        SEND_PACKAGE(plr, SC_ChatRoomResponse, response)
     } else {
         const auto pkg = dynamic_cast<FPackage *>(mOwner->BuildPackage());
 
@@ -127,4 +127,33 @@ void UChatRoom::OnChat(const std::shared_ptr<UPlayer> &plr, const FChatContent &
         mLastUpdateTime = now;
         mChatIndex = 1;
     }
+
+    Chat::SC_ChatToRoomResponse response;
+
+    response.set_roomid(mRoomId.ToString());
+    response.set_clienttime(content.clientTime);
+    response.set_clientindex(content.clientIndex);
+    response.set_servertime(ToUnixTime(mLastUpdateTime));
+    response.set_serverindex(mChatIndex);
+
+    const auto playerMgr = GetManager<UPlayerManager>();
+    if (playerMgr == nullptr) {
+        response.set_success(false);
+        SEND_PACKAGE(plr, SC_ChatRoomResponse, response)
+        return;
+    }
+
+    Chat::SC_OnChatRoomResponse msg;
+
+    msg.set_roomid(mRoomId.ToString());
+    msg.set_sender(plr->GetPlayerID());
+    msg.set_content(content.content);
+    msg.set_servertime(ToUnixTime(mLastUpdateTime));
+    msg.set_serverindex(mChatIndex++);
+    msg.set_reftime(content.refTime);
+    msg.set_refindex(content.refIndex);
+
+    const auto mPkg = dynamic_cast<FPackage *>(mOwner->BuildPackage());
+    BUILD_PACKAGE(mPkg, SC_OnChatRoomResponse, msg)
+    playerMgr->SendToList(mPkg, mMemberSet);
 }

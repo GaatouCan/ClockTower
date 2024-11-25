@@ -13,3 +13,7 @@ void protocol::CS_ChatRoomRequest(const std::shared_ptr<IAbstractPlayer> &plr, I
     // TODO
     return;
 }
+
+void protocol::CS_ChatToRoomRequest(const std::shared_ptr<IAbstractPlayer> &plr, IPackage *pkg) {
+
+}

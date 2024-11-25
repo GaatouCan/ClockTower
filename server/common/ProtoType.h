@@ -23,6 +23,9 @@ namespace protocol {
 		// Chat
 		CS_ChatRoomRequest = 3001,
 		SC_ChatRoomResponse = 3002,
+		CS_ChatToRoomRequest = 3003,
+		SC_ChatToRoomResponse = 3004,
+		SC_OnChatRoomResponse = 3005,
 
 		PROTO_TYPE_MAX,
 	}; // EProtoType
@@ -41,6 +44,9 @@ namespace protocol {
 			// Chat
 			case EProtoType::CS_ChatRoomRequest: return "CS_ChatRoomRequest";
 			case EProtoType::SC_ChatRoomResponse: return "SC_ChatRoomResponse";
+			case EProtoType::CS_ChatToRoomRequest: return "CS_ChatToRoomRequest";
+			case EProtoType::SC_ChatToRoomResponse: return "SC_ChatToRoomResponse";
+			case EProtoType::SC_OnChatRoomResponse: return "SC_OnChatRoomResponse";
 
 			default: return "UNDEFINED";
 		} // switch

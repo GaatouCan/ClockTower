@@ -53,12 +53,12 @@ void UPlayer::OnLogin() {
     response.set_progress(100);
     response.set_describe("Component Load Completed");
 
-    SEND_PACKAGE(this, SC_LoginResponse, response);
+    SEND_PACKAGE(this, SC_LoginResponse, response)
 
     const auto param = new FEP_PlayerLogin;
     param->pid = GetPlayerID();
 
-    DISPATCH_EVENT(PLAYER_LOGIN, param);
+    DISPATCH_EVENT(PLAYER_LOGIN, param)
 }
 
 void UPlayer::OnLogout() {

@@ -60,6 +60,12 @@ long long UnixTime() {
     return secondsSinceEpoch.count();
 }
 
+long long ToUnixTime(const std::chrono::time_point<std::chrono::steady_clock> point) {
+    const auto durationSinceEpoch = point.time_since_epoch();
+    const auto secondsSinceEpoch = std::chrono::duration_cast<std::chrono::seconds>(durationSinceEpoch);
+    return secondsSinceEpoch.count();
+}
+
 uint64_t SetBit(const uint64_t number, const uint32_t n) {
     assert(n < sizeof(uint64_t) * 8);
     return number | static_cast<uint64_t>(1) << n;

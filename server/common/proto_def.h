@@ -22,6 +22,7 @@ namespace protocol {
 
 	// Chat
 	void CS_ChatRoomRequest(const std::shared_ptr<IAbstractPlayer> &plr, IPackage *pkg);
+	void CS_ChatToRoomRequest(const std::shared_ptr<IAbstractPlayer> &plr, IPackage *pkg);
 
 } // protocol
 
@@ -39,5 +40,6 @@ inline void LoadProtocol(UProtocolSystem *sys) {
 
 	// Chat
 	REGISTER_PROTOCOL(CS_ChatRoomRequest)
+	REGISTER_PROTOCOL(CS_ChatToRoomRequest)
 
 }

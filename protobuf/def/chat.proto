@@ -40,14 +40,17 @@ message SC_ChatToRoomResponse {
   string roomId = 1;
   int64 clientTime = 3;
   uint32 clientIndex = 4;
-  bool success = 5;
+  int64 serverTime = 5;
+  uint32 serverIndex = 6;
+  bool success = 7;
 }
 
 message SC_OnChatRoomResponse {
   string roomId = 1;
-  string content = 2;
-  int64 clientTime = 3;
-  uint32 clientIndex = 4;
-  int64 refTime = 5;
-  uint32 refIndex = 6;
+  uint64 sender = 2;
+  string content = 3;
+  int64 serverTime = 4;
+  uint32 serverIndex = 5;
+  int64 refTime = 6;
+  uint32 refIndex = 7;
 }

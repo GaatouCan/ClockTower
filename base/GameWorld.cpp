@@ -36,8 +36,8 @@ UGameWorld::~UGameWorld() {
         if (iter == mSystemMap.end())
             continue;
 
+        spdlog::info("{} Destroyed.", iter->second->GetSystemName());
         delete iter->second;
-        spdlog::info("{} Destroyed.", type.name());
 
         mSystemMap.erase(iter);
     }

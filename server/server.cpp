@@ -20,7 +20,11 @@ auto main(int argc, char *argv[]) -> int {
     spdlog::info("卧槽 你不支持中文？");
 
     if (const auto sys = GetSystem<UConfigSystem>(); sys != nullptr) {
+#ifdef WIN32
         sys->SetYAMLPath("../../config");
+#else
+        sys->SetYAMLPath("../config");
+#endif
         sys->SetLogicConfigLoader(&LoadLogicConfig);
     }
 

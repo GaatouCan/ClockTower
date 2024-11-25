@@ -14,7 +14,16 @@ class UPlayer;
 struct FCacheNode;
 
 struct FChatContent {
+    long long clientTime;
+    long long serverTime;
 
+    uint32_t clientIndex;
+    uint32_t serverIndex;
+
+    std::string content;
+
+    long long refTime;
+    uint32_t refIndex;
 };
 
 class UChatRoom final : public std::enable_shared_from_this<UChatRoom> {

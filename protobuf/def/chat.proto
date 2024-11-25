@@ -3,11 +3,11 @@ syntax = "proto3";
 package Chat;
 
 message CS_ChatRoomRequest {
-  uint64 roomId = 1;
+  string roomId = 1;
 }
 
 message SC_ChatRoomResponse {
-  uint64 roomId = 1;
+  string roomId = 1;
   uint64 leader = 2;
 
   message ChatRoomMember {
@@ -25,4 +25,8 @@ message SC_ChatRoomResponse {
   }
 
   Reason reason = 4;
+}
+
+message CS_ChatToRoomRequest {
+  string roomId = 1;
 }

@@ -9,7 +9,7 @@
         GetWorld().Shutdown(); \
     }
 
-enum class EEvent : uint32_t {
+enum class EEvent : unsigned int {
     UNAVAILABLE,
     PLAYER_LOGIN,
     PLAYER_LOGOUT

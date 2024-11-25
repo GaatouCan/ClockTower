@@ -68,10 +68,6 @@ endforeach ()
 add_library(proto_static STATIC ${PROTOBUF_FILES})
 target_link_libraries(proto_static PRIVATE protobuf::libprotobuf)
 
-# Link To Generated Files
-#include_directories(${PROTOBUF_GENERATED_DIR})
-#link_directories(${PROTOBUF_LIBRARY_DIR}/Debug)
-
 #execute_process(
 #        COMMAND ./PreBuildTool.exe "--config=build.json"
 #        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}

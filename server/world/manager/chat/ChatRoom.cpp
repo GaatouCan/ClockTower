@@ -12,24 +12,24 @@
 
 UChatRoom::UChatRoom(UChatManager *owner)
     : mOwner(owner),
-      mRoomId(0),
+      mRoomId(),
       mLeaderId(0) {
 }
 
 UChatRoom::~UChatRoom() {
 }
 
-UChatRoom & UChatRoom::SetRoomID(uint64_t roomId) {
+UChatRoom & UChatRoom::SetRoomID(const FGeneratedID roomId) {
     mRoomId = roomId;
     return *this;
 }
 
-UChatRoom & UChatRoom::SetLeaderID(uint64_t leaderId) {
+UChatRoom & UChatRoom::SetLeaderID(const uint64_t leaderId) {
     mLeaderId = leaderId;
     return *this;
 }
 
-uint64_t UChatRoom::GetRoomID() const {
+FGeneratedID UChatRoom::GetRoomID() const {
     return mRoomId;
 }
 
@@ -49,7 +49,7 @@ awaitable<void> UChatRoom::SendAllRoomInfo(const std::shared_ptr<UPlayer> &plr) 
 
     Chat::SC_ChatRoomResponse response;
 
-    response.set_roomid(mRoomId);
+    response.set_roomid(mRoomId.ToString());
     response.set_leader(mLeaderId);
     response.set_reason(Chat::SC_ChatRoomResponse::NORMAL_SEND);
 
@@ -85,7 +85,7 @@ awaitable<void> UChatRoom::UpdateMemberInfo(std::set<uint64_t> members, const st
 
     Chat::SC_ChatRoomResponse response;
 
-    response.set_roomid(mRoomId);
+    response.set_roomid(mRoomId.ToString());
     response.set_leader(mLeaderId);
     response.set_reason(Chat::SC_ChatRoomResponse::MEMBER_UPDATE);
 

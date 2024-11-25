@@ -8,6 +8,13 @@ std::string FGeneratedID::ToString() const {
     return fmt::format("{}-{}", time, random);
 }
 
+FGeneratedID & FGeneratedID::FromString(const std::string &str) {
+    const std::vector<std::string> res = SplitString(str, '-');
+    time = std::stoll(res[0]);
+    random = std::stoull(res[1]);
+    return *this;
+}
+
 FGeneratedID FGeneratedID::RandGenerate() {
     static absl::BitGen gen;
     const uint64_t number = absl::Uniform(gen, 100000, 999999);

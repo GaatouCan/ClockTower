@@ -9,6 +9,8 @@ struct FGeneratedID {
 
     [[nodiscard]] std::string ToString() const;
 
+    FGeneratedID &FromString(const std::string &str);
+
     static FGeneratedID RandGenerate();
 
     bool operator==(const FGeneratedID& other) const;

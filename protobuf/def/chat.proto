@@ -29,4 +29,5 @@ message SC_ChatRoomResponse {
 
 message CS_ChatToRoomRequest {
   string roomId = 1;
+  string content = 2;
 }

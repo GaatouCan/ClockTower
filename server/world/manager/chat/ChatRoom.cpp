@@ -13,18 +13,19 @@
 UChatRoom::UChatRoom(UChatManager *owner)
     : mOwner(owner),
       mRoomId(),
-      mLeaderId(0) {
+      mLeaderId(0),
+      mChatIndex(1) {
 }
 
 UChatRoom::~UChatRoom() {
 }
 
-UChatRoom & UChatRoom::SetRoomID(const FGeneratedID roomId) {
+UChatRoom &UChatRoom::SetRoomID(const FGeneratedID roomId) {
     mRoomId = roomId;
     return *this;
 }
 
-UChatRoom & UChatRoom::SetLeaderID(const uint64_t leaderId) {
+UChatRoom &UChatRoom::SetLeaderID(const uint64_t leaderId) {
     mLeaderId = leaderId;
     return *this;
 }
@@ -74,7 +75,8 @@ awaitable<void> UChatRoom::SendAllRoomInfo(const std::shared_ptr<UPlayer> &plr) 
     }
 }
 
-awaitable<void> UChatRoom::UpdateMemberInfo(std::set<uint64_t> members, const std::vector<FCacheNode *> &cacheVec) const {
+awaitable<void> UChatRoom::UpdateMemberInfo(std::set<uint64_t> members,
+                                            const std::vector<FCacheNode *> &cacheVec) const {
     const auto cacheMgr = GetManager<UPlayerCache>();
     if (cacheMgr == nullptr)
         co_return;
@@ -118,4 +120,11 @@ awaitable<void> UChatRoom::UpdateMemberInfo(std::set<uint64_t> members, const st
 
     BUILD_PACKAGE(pkg, SC_ChatRoomResponse, response)
     playerMgr->SendToList(pkg, mMemberSet);
+}
+
+void UChatRoom::OnChat(const std::shared_ptr<UPlayer> &plr, const FChatContent &content) {
+    if (const auto now = std::chrono::steady_clock::now(); mLastUpdateTime != now) {
+        mLastUpdateTime = now;
+        mChatIndex = 1;
+    }
 }

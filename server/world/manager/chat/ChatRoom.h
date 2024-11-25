@@ -38,6 +38,8 @@ class UChatRoom final : public std::enable_shared_from_this<UChatRoom> {
     ATimePoint mCreateTime;
     ATimePoint mLastUpdateTime;
 
+    uint32_t mChatIndex;
+
 public:
     UChatRoom() = delete;
 
@@ -53,4 +55,6 @@ public:
     awaitable<void> SendAllRoomInfo(const std::shared_ptr<UPlayer> &plr = nullptr) const;
 
     awaitable<void> UpdateMemberInfo(std::set<uint64_t> members, const std::vector<FCacheNode *> &cacheVec = {}) const;
+
+    void OnChat(const std::shared_ptr<UPlayer> &plr, const FChatContent &content);
 };

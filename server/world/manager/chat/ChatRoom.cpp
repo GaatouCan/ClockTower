@@ -75,8 +75,7 @@ awaitable<void> UChatRoom::SendAllRoomInfo(const std::shared_ptr<UPlayer> &plr) 
     }
 }
 
-awaitable<void> UChatRoom::UpdateMemberInfo(std::set<uint64_t> members,
-                                            const std::vector<FCacheNode *> &cacheVec) const {
+awaitable<void> UChatRoom::UpdateMemberInfo(std::set<uint64_t> members, const std::vector<FCacheNode *> &cacheVec) const {
     const auto cacheMgr = GetManager<UPlayerCache>();
     if (cacheMgr == nullptr)
         co_return;
@@ -142,6 +141,9 @@ void UChatRoom::OnChat(const std::shared_ptr<UPlayer> &plr, const FChatContent &
         SEND_PACKAGE(plr, SC_ChatRoomResponse, response)
         return;
     }
+
+    response.set_success(true);
+    SEND_PACKAGE(plr, SC_ChatRoomResponse, response)
 
     Chat::SC_OnChatRoomResponse msg;
 

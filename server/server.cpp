@@ -19,6 +19,7 @@ auto main(int argc, char *argv[]) -> int {
     spdlog::set_level(spdlog::level::trace);
     spdlog::info("Welcome To ClockTower!");
 
+    // 设置服务器配置文件路径
     if (const auto sys = GetSystem<UConfigSystem>(); sys != nullptr) {
 #ifdef WIN32
         sys->SetYAMLPath("../../config");
@@ -28,29 +29,36 @@ auto main(int argc, char *argv[]) -> int {
         sys->SetLogicConfigLoader(&LoadLogicConfig);
     }
 
+    // 注册程式生成协议定义以及协议处理器
     if (const auto sys = GetSystem<UProtocolSystem>(); sys != nullptr) {
         LoadProtocol(sys);
         sys->SetHandler<UProtocolHandlerImpl>();
     }
 
+    // 设置玩家登陆请求处理器
     if (const auto sys = GetSystem<ULoginSystem>(); sys != nullptr) {
         sys->SetHandler<ULoginHandlerImpl>();
     }
 
+    // 注册Manager
     if (const auto sys = GetSystem<UManagerSystem>(); sys != nullptr) {
         sys->SetManagerLoader(&LoadManager);
     }
 
+    // 设置服务器玩家对象子类
     UPlayerManager::SetPlayerCreator(&CreatePlayer);
 
+    // 注册日志
     GetWorld().DefineLogger(&InitLogger);
 
+    // 设置新连接处理
     GetWorld().FilterConnection([](const AConnectionPointer &conn) {
         if (conn != nullptr) {
             conn->SetHandler<UConnectionHandlerImpl>();
         }
     });
 
+    // 启动服务器
     GetWorld().Init();
     GetWorld().Run();
 

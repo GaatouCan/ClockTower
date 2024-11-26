@@ -17,7 +17,7 @@
 
 auto main(int argc, char *argv[]) -> int {
     spdlog::set_level(spdlog::level::trace);
-    spdlog::info("卧槽 你不支持中文？");
+    spdlog::info("Welcome To ClockTower!");
 
     if (const auto sys = GetSystem<UConfigSystem>(); sys != nullptr) {
 #ifdef WIN32

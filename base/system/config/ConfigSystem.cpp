@@ -58,6 +58,8 @@ void UConfigSystem::Init() {
             filepath = StringReplace(filepath, '\\', '.');
 #elifdef __linux__
             filepath = StringReplace(filepath, '/', '.');
+#else
+            filepath = StringReplace(filepath, '/', '.');
 #endif
 
             mJSONConfigMap[filepath] = nlohmann::json::parse(fs);
@@ -110,7 +112,13 @@ void UConfigSystem::ReloadConfig() {
                 strlen(jsonPath.c_str()) + 1,
                 filepath.length() - 6 - strlen(jsonPath.c_str()));
 
+#ifdef WIN32
             filepath = StringReplace(filepath, '\\', '.');
+#elifdef __linux__
+            filepath = StringReplace(filepath, '/', '.');
+#else
+            filepath = StringReplace(filepath, '/', '.');
+#endif
 
             mJSONConfigMap[filepath] = nlohmann::json::parse(fs);
             spdlog::info("\tLoaded {}.", filepath);

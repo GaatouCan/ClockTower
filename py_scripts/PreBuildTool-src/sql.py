@@ -13,8 +13,11 @@ sql_type_map = {
     'INT(11)': "int32",
     'int(11)': "int32",
 
-    'TINYINT(4)': "int16",
-    'tinyint(4)': "int16",
+    'SMALLINT(6)': "int16",
+    'smallint(6)': "int16",
+
+    'TINYINT(4)': "int8",
+    'tinyint(4)': "int8",
 
     'VARCHAR(255)': "string",
     'varchar(255)': "string",
@@ -31,6 +34,8 @@ cpp_type_map = {
     "uint32": "uint32_t",
     "int16": "int16_t",
     "uint16": "uint16_t",
+    "int8": "int8_t",
+    "uint8": "uint8_t",
     "string": "std::string",
 }
 
@@ -76,14 +81,15 @@ def generate_orm_clazz(src: str, dist: str):
     assert src, 'sql输入路径错误'
     assert dist, 'orm输出路径错误'
 
-    print('sql 输入路径: ' + os.getcwd() + '\\' + src)
-    print('orm 输出路径: ' + os.getcwd() + '\\' + dist)
+    print(f'sql 输入路径: {os.getcwd()}\\{src}')
+    print(f'orm 输出路径: {os.getcwd()}\\{dist}')
 
     if not os.path.exists(dist):
         os.makedirs(dist)
         print("创建ORM文件夹")
 
     sql_list = {}
+    table_name_set = set()
 
     for root, dirs, files in os.walk(src):
         for file in files:
@@ -93,6 +99,8 @@ def generate_orm_clazz(src: str, dist: str):
             table_info = {}
             table_info['field'] = {}
             table_info['origin'] = ""
+            table_info['key'] = []
+
             next = False
 
             with open(os.path.join(root, file), 'r', encoding='utf-8') as file:
@@ -108,10 +116,16 @@ def generate_orm_clazz(src: str, dist: str):
                     # 表名
                     if line.startswith("CREATE TABLE"):
                         if next:
+                            if table_info['name'] in table_name_set:
+                                raise NameError(f"{table_info['name']}重复定义") 
+                    
+                            table_name_set.add(table_info['name'])
+                            
                             sql_list[file_name].append(table_info)
                             table_info = {}
                             table_info['field'] = {}
                             table_info['origin'] = ""
+                            table_info['key'] = []
                         
                         next = True
                     
@@ -137,6 +151,7 @@ def generate_orm_clazz(src: str, dist: str):
 
                         for key in temp:
                             table_info['field'][key.strip()[1:-1]]['key'] = True
+                            table_info['key'].append(key.strip())
 
                     # 表定义结束
                     if line.startswith(')'):
@@ -153,9 +168,13 @@ def generate_orm_clazz(src: str, dist: str):
                     line = file.readline()   
 
                 if next:
+                    if table_info['name'] in table_name_set:
+                        raise NameError(f"{table_info['name']}重复定义") 
+                    
+                    table_name_set.add(table_info['name'])
                     sql_list[file_name].append(table_info)
 
-                print("\t已加载 %s" % file.name)    
+                print(f"\t已加载 {file.name}")    
 
     # 生成JSON数据文件
     with open(os.path.join(dist[:-4], 'struct.json'), 'w', encoding='utf-8') as file:

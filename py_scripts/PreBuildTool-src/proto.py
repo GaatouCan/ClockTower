@@ -5,26 +5,21 @@ VERSION = '0.1'
 
 def generate_protobuf_define(src: str, dist: str, proto: list, expt: list, include_dir: str):
     """生成协议枚举类型、回调函数声明头文件和回调注册源文件"""
+    
     assert src, 'proto输入路径错误'
     assert dist, 'proto输出路径错误'
 
-    print('proto 输入路径: ' + os.getcwd() + '\\' + src)
-    print('proto 输出路径: ' + os.getcwd() + '\\' + dist)
+    print(f'proto 输入路径: {os.getcwd()}\\{src}')
+    print(f'proto 输出路径: {os.getcwd()}\\{dist}')
 
     if not os.path.exists(dist):
         os.makedirs(dist)
         print("创建协议相关文件夹")
 
     proto_data = []
+    proto_name_set = []
 
     for val in proto:
-
-
-    # for root, dirs, files in os.walk(src):
-    #     for file in files:
-    #         if not file.endswith('.proto'):
-    #             continue
-
         with open(os.path.join(src, val + '.proto'), 'r', encoding='utf-8') as file:
             package = {'list': []}
 
@@ -38,19 +33,28 @@ def generate_protobuf_define(src: str, dist: str, proto: list, expt: list, inclu
                 if line.startswith('message'):
                     line = line[8:-1].strip()
                     if line.startswith('CS'):
+                        if line in proto_name_set:
+                            raise f"{line}重复定义"
+
                         if line in expt:
                             package['list'].append({'proto': line, 'callback': 0})
                         else:
                             package['list'].append({'proto': line, 'callback': 1})
+                        
+                        proto_name_set.append(line)
 
                     if line.startswith("SC"):
+                        if line in proto_name_set:
+                            raise NameError(f"{line}重复定义")
+
                         package['list'].append({'proto': line, 'callback': 0})
+                        proto_name_set.append(line)
 
                 line = file.readline()
 
             proto_data.append(package)
 
-            print("\t已加载 %s" % file.name)
+            print(f"\t已加载 {file.name}")
 
 
     with open(os.path.join(dist, 'ProtoType.h'), 'w', encoding='utf-8') as file:

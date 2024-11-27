@@ -242,6 +242,26 @@ try:
                     sql_list.append(sql_str)
                     modify = True
 
+            if modify:
+                print(f"更新表`{table["name"]}`")
+
+    # 删除旧表
+    for table in origin_table_list:
+        if table["name"] not in lastest_filed_name:
+            sql_str = f"DROP TABLE {table["name"]}"
+            temporary_cursor.execute(sql_str)
+            sql_list.append(sql_str)
+
+            print(f"表`{table["name"]}`已删除")
+
+    print(f"临时数据库`{TEMPORARY_DATABASE}`结构更新成功，正在应用至数据库`{SOURCE_DATABASE}`")
+
+    for str in sql_list:
+        print(str)
+        source_cursor.execute(str)
+
+    source_conn.commit()
+    print(f"数据库`{SOURCE_DATABASE}`更新成功")
 
     temporary_cursor.execute(f'DROP DATABASE {TEMPORARY_DATABASE}')
     temporary_conn.commit()

@@ -63,6 +63,10 @@ def parse_table_field(line: str) -> dict:
         if str.startswith('COMMENT'):
             field_info['comment'] = temp[idx + 1][1:-1]
 
+        if str.startswith('NOT'):
+            if temp[idx + 1] == "NULL":
+                field_info['null'] = False
+
     return field_info
 
 
@@ -88,6 +92,7 @@ def generate_orm_clazz(src: str, dist: str):
 
             table_info = {}
             table_info['field'] = {}
+            table_info['origin'] = ""
             next = False
 
             with open(os.path.join(root, file), 'r', encoding='utf-8') as file:
@@ -106,19 +111,25 @@ def generate_orm_clazz(src: str, dist: str):
                             sql_list[file_name].append(table_info)
                             table_info = {}
                             table_info['field'] = {}
+                            table_info['origin'] = ""
                         
                         next = True
                     
                         temp = line.split(' ')
                         table_info['name'] = temp[2][1:-1]
+                        table_info['origin'] += line
+                        if not line.endswith("("):
+                            table_info['origin'] += " ("
 
                     # 字段
                     if line.startswith('`'):
+                        table_info['origin'] += line
                         field_info = parse_table_field(line)
                         table_info['field'][field_info['name']] = field_info
 
                     # 键
                     if line.startswith("PRIMARY KEY"):
+                        table_info['origin'] += line
                         position = line.index('(')
                         line = line[position + 1:-1]
 
@@ -129,6 +140,7 @@ def generate_orm_clazz(src: str, dist: str):
 
                     # 表定义结束
                     if line.startswith(')'):
+                        table_info['origin'] += line
                         line = line[1:]
                         if line.endswith(';'):
                             line = line[:-1]
@@ -496,3 +508,5 @@ def generate_orm_clazz(src: str, dist: str):
 #         file_count += 1
 
     print('已完成%d个文件转换' % file_count)
+
+generate_orm_clazz("struct/sql", "struct/orm")

@@ -7,11 +7,11 @@ import json
 import os
 
 def main(argv):
-    BUILD_JSON = "build.json"
+    CONFIG_JSON = "config.json"
 
     for arg in argv:
         if arg.startswith('--config='):
-            BUILD_JSON = arg[9:]
+            CONFIG_JSON = arg[9:]
 
     if os.getcwd().endswith("src"):
         parent_dir = os.path.dirname(os.getcwd())
@@ -22,7 +22,7 @@ def main(argv):
         os.chdir(parent_dir)
 
     config = {}
-    with open(BUILD_JSON, 'r') as file:
+    with open(CONFIG_JSON, 'r') as file:
         config = json.load(file)
 
     if not config["only_xlsx"]:
@@ -36,7 +36,8 @@ def main(argv):
 
         sql.generate_orm_clazz(
             config["sql"]["sql"],
-            config["sql"]["gen"]
+            config["sql"]["gen"],
+            config["sql"]["desc"]
         )
     
     # 生成配置

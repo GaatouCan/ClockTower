@@ -7,23 +7,30 @@ VERSION = '0.1'
 
 # sql类型
 sql_type_map = {
-    'BIGINT(20)': "int64",
-    'bigint(20)': "int64",
+    'BIGINT': "int64",
+    'bigint': "int64",
     
-    'INT(11)': "int32",
-    'int(11)': "int32",
+    'INT': "int32",
+    'int': "int32",
 
-    'SMALLINT(6)': "int16",
-    'smallint(6)': "int16",
+    'SMALLINT': "int16",
+    'smallint': "int16",
 
-    'TINYINT(4)': "int8",
-    'tinyint(4)': "int8",
+    'TINYINT': "int8",
+    'tinyint': "int8",
+
+    'DOUBLE': "double",
+    'double': "double",
+
+    'FLOAT': "float",
+    'float': "float",
+
 
     'VARCHAR(255)': "string",
     'varchar(255)': "string",
 
-    'TEXT': "string",
-    'text': "string",
+    'TEXT': "text",
+    'text': "text",
 }
 
 # cpp类型
@@ -36,7 +43,10 @@ cpp_type_map = {
     "uint16": "uint16_t",
     "int8": "int8_t",
     "uint8": "uint8_t",
+    "double": "double",
+    "float": "float",
     "string": "std::string",
+    "text": "std::string"
 }
 
 def to_upper_camel_case(x):
@@ -49,7 +59,10 @@ def parse_table_field(line: str) -> dict:
     if line.endswith(','):
         line = line[:-1]
 
-    field_info = {}
+    field_info = {
+        "null": True,
+        "default": ""
+    }
     temp = line.split(' ')
 
     # 类型解析
@@ -75,14 +88,16 @@ def parse_table_field(line: str) -> dict:
     return field_info
 
 
-def generate_orm_clazz(src: str, dist: str):
+def generate_orm_clazz(src: str, dist: str, desc: str):
     """生成ORM CPP类"""
 
     assert src, 'sql输入路径错误'
     assert dist, 'orm输出路径错误'
+    assert desc, 'desc输出路径错误'
 
     print(f'sql 输入路径: {os.getcwd()}\\{src}')
     print(f'orm 输出路径: {os.getcwd()}\\{dist}')
+    print(f'describe 输出路径: {os.getcwd()}\\{desc}')
 
     if not os.path.exists(dist):
         os.makedirs(dist)
@@ -151,7 +166,7 @@ def generate_orm_clazz(src: str, dist: str):
 
                         for key in temp:
                             table_info['field'][key.strip()[1:-1]]['key'] = True
-                            table_info['key'].append(key.strip())
+                            table_info['key'].append(key.strip()[1:-1])
 
                     # 表定义结束
                     if line.startswith(')'):
@@ -177,7 +192,7 @@ def generate_orm_clazz(src: str, dist: str):
                 print(f"\t已加载 {file.name}")    
 
     # 生成JSON数据文件
-    with open(os.path.join(dist[:-4], 'struct.json'), 'w', encoding='utf-8') as file:
+    with open(desc, 'w', encoding='utf-8') as file:
         file.write(json.dumps(sql_list, indent=4, ensure_ascii=False))
 
     
@@ -528,4 +543,4 @@ def generate_orm_clazz(src: str, dist: str):
 
     print('已完成%d个文件转换' % file_count)
 
-generate_orm_clazz("struct/sql", "struct/orm")
+generate_orm_clazz("struct/sql", "struct/orm", "struct/describe.json")

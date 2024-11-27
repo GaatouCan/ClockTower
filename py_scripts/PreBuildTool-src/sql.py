@@ -243,8 +243,8 @@ def generate_orm_clazz(src: str, dist: str, desc: str):
                     # 表字段映射为类成员变量
                     file.write("\t\t%s %s" % (cpp_type_map[field['type']], field['name']))
             
-                    if field['type'] != "string":
-                        if 'default' in field.keys():
+                    if field['type'] != "string" and field['type'] != "text":
+                        if 'default' in field.keys() and field['default'] != "":
                             file.write(' = %s' % field['default'])
                         else:
                             file.write(' = 0')
@@ -253,6 +253,8 @@ def generate_orm_clazz(src: str, dist: str, desc: str):
 
                     if 'int' in cpp_type_map[field['type']]:
                         construct_str = construct_str + 'const ' + cpp_type_map[field['type']] + ' ' + field['name'] + ",\n\t\t\t"
+                    elif field['type'] == "string" or field['type'] == "text":
+                        construct_str = construct_str + 'const ' + cpp_type_map[field['type']] + ' &' + field['name'] + ",\n\t\t\t"
                     else:
                         construct_str = construct_str + 'const ' + cpp_type_map[field['type']] + ' ' + field['name'] + ",\n\t\t\t"
                 

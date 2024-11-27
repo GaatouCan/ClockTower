@@ -218,7 +218,7 @@ def main(argv):
                     lastest_filed_name.append(name)
                 
                     # 添加字段
-                    if name not in origin_table_info["field"]:
+                    if name not in origin_table_info["field"].keys():
                         sql_str = f"ALTER TABLE {table["name"]} ADD COLUMN {name} {gen2sql[field["type"]]}"
 
                         if not field["null"]:
@@ -280,7 +280,7 @@ def main(argv):
                     modify = True
                 
                 for name, field in origin_table_info["field"].items():
-                    if not table["field"][name]:
+                    if name not in table["field"].keys():
                         sql_str = f"ALTER TABLE {table["name"]} DROP COLUMN {name}"
 
                         temporary_cursor.execute(sql_str)

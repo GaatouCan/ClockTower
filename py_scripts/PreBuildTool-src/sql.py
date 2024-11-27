@@ -211,6 +211,7 @@ def generate_orm_clazz(src: str, dist: str, desc: str):
  */\n\n''' % (platform.python_version(), VERSION, file_name))
 
             file.write('#pragma once\n\n')
+            file.write('#include <utility>\n\n')
             file.write('#include "../../base/system/database/DBTable.h"\n\n')
 
             file.write('namespace orm {\n\n')
@@ -254,11 +255,15 @@ def generate_orm_clazz(src: str, dist: str, desc: str):
                     if 'int' in cpp_type_map[field['type']]:
                         construct_str = construct_str + 'const ' + cpp_type_map[field['type']] + ' ' + field['name'] + ",\n\t\t\t"
                     elif field['type'] == "string" or field['type'] == "text":
-                        construct_str = construct_str + 'const ' + cpp_type_map[field['type']] + ' &' + field['name'] + ",\n\t\t\t"
+                        construct_str = construct_str + cpp_type_map[field['type']] + ' ' + field['name'] + ",\n\t\t\t"
                     else:
                         construct_str = construct_str + 'const ' + cpp_type_map[field['type']] + ' ' + field['name'] + ",\n\t\t\t"
                 
-                    init_str = init_str + field['name'] + '(' + field['name'] + "), \n\t\t\t"
+                    if field['type'] == "string" or field['type'] == "text":
+                        init_str = init_str + field['name'] + '(std::move(' + field['name'] + ")), \n\t\t\t"
+                    else:
+                        init_str = init_str + field['name'] + '(' + field['name'] + "), \n\t\t\t"
+                    
                     insert_field_str = insert_field_str + '\"' + field['name'] + '\", '
                     insert_value_str = insert_value_str + field['name'] + ', '
 
@@ -308,7 +313,7 @@ def generate_orm_clazz(src: str, dist: str, desc: str):
                 file.write('\t\t}\n\n')
 
                 file.write('\t\tvoid Read(mysqlx::Row &row) override {\n')
-                file.write('\t\t\tif (row.isNull())\n \t\t\treturn;\n\n')
+                file.write('\t\t\tif (row.isNull())\n \t\t\t\treturn;\n\n')
 
                 count = 0
                 for field in table['field'].values():
@@ -319,6 +324,12 @@ def generate_orm_clazz(src: str, dist: str, desc: str):
                     elif type == "uint16_t":
                         type = "uint32_t"
                         file.write('\t\t\t%s = static_cast<uint16_t>(row[%d].get<%s>());\n' % (field['name'], count, type))
+                    elif type == "int8_t":
+                        type = "int32_t"
+                        file.write('\t\t\t%s = static_cast<int8_t>(row[%d].get<%s>());\n' % (field['name'], count, type))
+                    elif type == "uint8_t":
+                        type = "uint32_t"
+                        file.write('\t\t\t%s = static_cast<uint8_t>(row[%d].get<%s>());\n' % (field['name'], count, type))
                     else:
                         file.write('\t\t\t%s = row[%d].get<%s>();\n' % (field['name'], count, type))
                     count += 1

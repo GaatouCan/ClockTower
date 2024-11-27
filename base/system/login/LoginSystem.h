@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../../Package.h"
 #include "../../SubSystem.h"
 #include "../../LoginHandler.h"
 
@@ -21,7 +20,7 @@ public:
 
     uint64_t VerifyToken(uint64_t pid, const std::string &token);
 
-    void OnLogin(const std::shared_ptr<UConnection> &conn, IPackage *pkg);
+    void OnLogin(const std::shared_ptr<UConnection> &conn, class IPackage *pkg);
 
     template<typename T>
     requires std::derived_from<T, ILoginHandler>

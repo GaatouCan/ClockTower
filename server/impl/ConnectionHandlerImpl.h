@@ -9,5 +9,5 @@ public:
 
     void OnConnected() override;
     void OnClosed() override;
-    void OnReadPackage(IPackage *pkg) override;
+    awaitable<void> OnReadPackage(IPackage *pkg) override;
 };

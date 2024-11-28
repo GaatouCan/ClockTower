@@ -154,7 +154,7 @@ awaitable<void> UConnection::WritePackage() {
 
             if (pkg->IsAvailable()) {
                 if (mHandler != nullptr) {
-                    mHandler->OnWritePackage(pkg);
+                    co_await mHandler->OnWritePackage(pkg);
                 }
                 mPool.Recycle(pkg);
             } else {
@@ -186,7 +186,7 @@ awaitable<void> UConnection::ReadPackage() {
                 mDeadline = std::chrono::steady_clock::now() + sExpireTime;
 
                 if (mHandler != nullptr) {
-                    mHandler->OnReadPackage(pkg);
+                    co_await mHandler->OnReadPackage(pkg);
                 }
             } else {
                 spdlog::warn("{} - Read failed", __FUNCTION__);

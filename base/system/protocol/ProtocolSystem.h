@@ -30,7 +30,7 @@ public:
         mHandler = std::make_unique<T>();
     }
 
-    void OnReadPackage(const std::shared_ptr<UConnection> &conn, IPackage *pkg) const;
+    awaitable<void> OnReadPackage(const std::shared_ptr<UConnection> &conn, IPackage *pkg) const;
 };
 
 #define REGISTER_PROTOCOL(proto) \

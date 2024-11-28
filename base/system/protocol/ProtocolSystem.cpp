@@ -18,15 +18,15 @@ AProtoFunctor UProtocolSystem::Find(const uint32_t proto) const {
     return AProtoFunctor();
 }
 
-void UProtocolSystem::OnReadPackage(const std::shared_ptr<UConnection> &conn, IPackage *pkg) const {
+awaitable<void> UProtocolSystem::OnReadPackage(const std::shared_ptr<UConnection> &conn, IPackage *pkg) const {
     if (mHandler == nullptr) {
         spdlog::critical("{} - handler not set.", __FUNCTION__);
-        return;
+        co_return;
     }
 
     if (!pkg->IsAvailable()) {
         spdlog::warn("{} - Package unavailable", __FUNCTION__);
-        return;
+        co_return;
     }
 
     if (const auto func = Find(pkg->GetID()); func) {

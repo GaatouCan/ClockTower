@@ -25,7 +25,7 @@ public:
 
     static void SetPlayerCreator(const std::function<std::shared_ptr<IAbstractPlayer>(const AConnectionPointer&, uint64_t)> &func);
 
-    void OnPlayerLogin(const std::shared_ptr<UConnection> &conn, uint64_t pid);
+    awaitable<void> OnPlayerLogin(const std::shared_ptr<UConnection> &conn, uint64_t pid);
     void OnPlayerLogout(uint64_t pid);
 
     std::shared_ptr<IAbstractPlayer> EmplacePlayer(const std::shared_ptr<UConnection> &conn, uint64_t pid);

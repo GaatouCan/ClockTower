@@ -8,21 +8,24 @@
 #pragma once
 
 #include <memory>
+#include <asio/awaitable.hpp>
 
 class IPackage;
-using AConnectionPointer = std::shared_ptr<class UConnection>;
 class IAbstractPlayer;
+
+using AConnectionPointer = std::shared_ptr<class UConnection>;
+using asio::awaitable;
 
 namespace protocol {
 
 	// Login
 
 	// Appearance
-	void CS_AppearanceRequest(const std::shared_ptr<IAbstractPlayer> &plr, IPackage *pkg);
+	awaitable<void> CS_AppearanceRequest(const std::shared_ptr<IAbstractPlayer> &plr, IPackage *pkg);
 
 	// Chat
-	void CS_ChatRoomRequest(const std::shared_ptr<IAbstractPlayer> &plr, IPackage *pkg);
-	void CS_ChatToRoomRequest(const std::shared_ptr<IAbstractPlayer> &plr, IPackage *pkg);
+	awaitable<void> CS_ChatRoomRequest(const std::shared_ptr<IAbstractPlayer> &plr, IPackage *pkg);
+	awaitable<void> CS_ChatToRoomRequest(const std::shared_ptr<IAbstractPlayer> &plr, IPackage *pkg);
 
 } // protocol
 

@@ -20,8 +20,8 @@ public:
 
     virtual void OnConnected() {}
 
-    virtual void OnReadPackage(IPackage *) {}
-    virtual void OnWritePackage(IPackage *) {}
+    virtual awaitable<void> OnReadPackage(IPackage *) { co_return; }
+    virtual awaitable<void> OnWritePackage(IPackage *) { co_return;}
 
     virtual void OnClosed() {}
 };

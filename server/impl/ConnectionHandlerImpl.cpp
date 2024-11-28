@@ -27,12 +27,12 @@ void UConnectionHandlerImpl::OnClosed() {
         spdlog::error("{} - Fail to Found PlayerManager", __FUNCTION__);
 }
 
-void UConnectionHandlerImpl::OnReadPackage(IPackage *pkg) {
+awaitable<void> UConnectionHandlerImpl::OnReadPackage(IPackage *pkg) {
     spdlog::trace("{} - Receive Package[{}] From {}.", __FUNCTION__, ProtoTypeToString(static_cast<protocol::EProtoType>(pkg->GetID())), mConn.lock()->RemoteAddress().to_string());
 
     if (!mConn.lock()->GetContext().has_value()) {
         if (const auto sys = GetSystem<ULoginSystem>(); sys != nullptr) {
-            sys->OnLogin(mConn.lock(), pkg);
+            co_await sys->OnLogin(mConn.lock(), pkg);
         } else {
             spdlog::critical("{}: LoginSystem not found.", __FUNCTION__);
             GetWorld().Shutdown();
@@ -40,11 +40,12 @@ void UConnectionHandlerImpl::OnReadPackage(IPackage *pkg) {
         }
     } else {
         if (const auto sys = GetSystem<UProtocolSystem>(); sys != nullptr) {
-            sys->OnReadPackage(mConn.lock(), pkg);
+            co_await sys->OnReadPackage(mConn.lock(), pkg);
         } else {
             spdlog::critical("{} - ProtocolSystem not found.", __FUNCTION__);
             GetWorld().Shutdown();
             exit(-1);
         }
     }
+    co_return;
 }

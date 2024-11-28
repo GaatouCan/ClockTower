@@ -9,8 +9,8 @@ def generate_config_json(src: str, dist: str):
     assert src, 'xlsx输入路径错误'
     assert dist, 'json输出路径错误'
 
-    print('xlsx 输入路径: ' + os.getcwd() + '\\' + src)
-    print('json 输出路径: ' + os.getcwd() + '\\' + dist)
+    print(f'xlsx 输入路径: {os.getcwd()}\\{src}')
+    print(f'json 输出路径: {os.getcwd()}\\{dist}')
 
     if not os.path.exists(dist):
         os.makedirs(dist)
@@ -27,7 +27,7 @@ def generate_config_json(src: str, dist: str):
 
             file_path = os.path.join(root, file)
             df = pandas.read_excel(file_path)
-            print('\t已加载 %s' % file_path)
+            print(f'\t已加载 {file_path}')
 
             df = df.drop([0])
 
@@ -59,7 +59,7 @@ def generate_config_json(src: str, dist: str):
             with open(json_file, 'w', encoding='utf-8') as file:
                 file.write(json.dumps(output_data, indent=4, ensure_ascii=False))
             
-            print('\t已生成 %s' % json_file)
+            print(f'\t已生成 {json_file}')
 
             # df.to_csv('%s/%s.csv' % (dist_dir, file[:-5]), index=False)
             count += 1

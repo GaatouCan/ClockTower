@@ -2,6 +2,8 @@
 
 #include "CommandObject.h"
 
+#include <asio.hpp>
+
 class IAbstractCommand {
 
 protected:
@@ -13,6 +15,6 @@ public:
     explicit IAbstractCommand(UCommandObject param);
     virtual ~IAbstractCommand() = default;
 
-    virtual void Execute() = 0;
+    virtual asio::awaitable<bool> Execute() = 0;
 };
 

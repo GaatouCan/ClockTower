@@ -6,7 +6,7 @@
 #include "SubSystem.h"
 
 #include <typeindex>
-
+#include <absl/random/random.h>
 
 class UGameWorld final {
 
@@ -16,6 +16,8 @@ class UGameWorld final {
     UMultiContextPool mPool;
 
     std::map<std::string, AConnectionPointer> mConnectionMap;
+    absl::BitGen mBitGen;
+
     ASteadyTimer mFullTimer;
 
     struct FSystemPriority {

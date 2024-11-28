@@ -151,10 +151,22 @@ awaitable<void> UGameWorld::WaitForConnect() {
                     continue;
                 }
 
+                std::string key;
+                int count = 0;
+
+                do {
+                    key = fmt::format("{}-{}-{}", addr.to_string(), UnixTime(), absl::Uniform(mBitGen, 100, 999));
+                    count++;
+                } while (mConnectionMap.contains(key) && count < 3);
+
+                if (count >= 3) {
+                    socket.close();
+                    spdlog::warn("Fail To Distribute Connection Key: {}", addr.to_string());
+                    continue;
+                }
+
                 const auto conn = std::make_shared<UConnection>(std::move(socket), pool);
                 spdlog::info("Accept Connection From: {}", addr.to_string());
-
-                const std::string key = fmt::format("{} - {}", addr.to_string(), UnixTime());
 
                 conn->SetThreadID(tid).SetKey(key);
 

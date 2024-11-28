@@ -5,6 +5,7 @@
 
 class UPackageCodecImpl final : public TPackageCodec<FPackage> {
 public:
-    awaitable<void> EncodeT(ATcpSocket &socket, FPackage *pkg) override;
-    awaitable<void> DecodeT(ATcpSocket &socket, FPackage *pkg) override;
+    explicit UPackageCodecImpl(const std::shared_ptr<UConnection> &conn) : TPackageCodec(conn) {}
+    awaitable<void> EncodeT(FPackage *pkg) override;
+    awaitable<void> DecodeT(FPackage *pkg) override;
 };

@@ -24,7 +24,7 @@ void UConnection::ConnectToClient() {
 
     spdlog::trace("{} - Connection from {} run in thread: {}", __FUNCTION__, RemoteAddress().to_string(), ThreadIdToInt(mThreadId));
     if (mHandler != nullptr)
-        mHandler->OnConnected(shared_from_this());
+        mHandler->OnConnected();
 
     co_spawn(mSocket.get_executor(), [self = shared_from_this()]() mutable -> awaitable<void> {
         try {
@@ -39,7 +39,7 @@ void UConnection::Disconnect() {
     if (mSocket.is_open()) {
         mSocket.close();
         if (mHandler != nullptr)
-            mHandler->OnClosed(shared_from_this());
+            mHandler->OnClosed();
     }
 
     while (!mOutput.IsEmpty()) {
@@ -150,11 +150,11 @@ awaitable<void> UConnection::WritePackage() {
         while (mSocket.is_open() && !mOutput.IsEmpty()) {
             const auto pkg = mOutput.PopFront();
 
-            co_await mCodec->Encode(mSocket, pkg);
+            co_await mCodec->Encode(pkg);
 
             if (pkg->IsAvailable()) {
                 if (mHandler != nullptr) {
-                    mHandler->OnWritePackage(shared_from_this());
+                    mHandler->OnWritePackage();
                 }
                 mPool.Recycle(pkg);
             } else {
@@ -180,13 +180,13 @@ awaitable<void> UConnection::ReadPackage() {
         while (mSocket.is_open()) {
             const auto pkg = BuildPackage();
 
-            co_await mCodec->Decode(mSocket, pkg);
+            co_await mCodec->Decode(pkg);
 
             if (pkg->IsAvailable()) {
                 mDeadline = std::chrono::steady_clock::now() + sExpireTime;
 
                 if (mHandler != nullptr) {
-                    mHandler->OnReadPackage(shared_from_this(), pkg);
+                    mHandler->OnReadPackage(pkg);
                 }
             } else {
                 spdlog::warn("{} - Read failed", __FUNCTION__);

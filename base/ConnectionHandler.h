@@ -3,20 +3,25 @@
 #include <memory>
 #include <asio/awaitable.hpp>
 
-#include "Package.h"
 
 class UConnection;
+class IPackage;
+
 using AConnectionPointer = std::shared_ptr<UConnection>;
 using asio::awaitable;
 
 class IConnectionHandler {
+protected:
+    std::weak_ptr<UConnection> mConn;
 public:
+    IConnectionHandler() = delete;
+    explicit IConnectionHandler(const AConnectionPointer &conn) : mConn(conn) {}
     virtual ~IConnectionHandler() = default;
 
-    virtual void OnConnected(const AConnectionPointer &) {}
+    virtual void OnConnected() {}
 
-    virtual void OnReadPackage(const AConnectionPointer &, IPackage *) {}
-    virtual void OnWritePackage(const AConnectionPointer &) {}
+    virtual void OnReadPackage(IPackage *) {}
+    virtual void OnWritePackage() {}
 
-    virtual void OnClosed(const AConnectionPointer &) {}
+    virtual void OnClosed() {}
 };

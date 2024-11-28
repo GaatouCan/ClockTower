@@ -9,17 +9,17 @@
 #include <manager/player/PlayerManager.h>
 
 
-void UConnectionHandlerImpl::OnConnected(const AConnectionPointer &conn) {
+void UConnectionHandlerImpl::OnConnected() {
 }
 
-void UConnectionHandlerImpl::OnClosed(const AConnectionPointer &conn) {
-    GetWorld().RemoveConnection(conn->GetKey());
+void UConnectionHandlerImpl::OnClosed() {
+    GetWorld().RemoveConnection(mConn.lock()->GetKey());
 
-    if (!conn->GetContext().has_value())
+    if (!mConn.lock()->GetContext().has_value())
         return;
 
-    const auto pid = std::any_cast<uint64_t>(conn->GetContext());
-    conn->ResetContext();
+    const auto pid = std::any_cast<uint64_t>(mConn.lock()->GetContext());
+    mConn.lock()->ResetContext();
 
     if (const auto plrMgr = GetManager<UPlayerManager>(); plrMgr != nullptr)
         plrMgr->OnPlayerLogout(pid);
@@ -27,12 +27,12 @@ void UConnectionHandlerImpl::OnClosed(const AConnectionPointer &conn) {
         spdlog::error("{} - Fail to Found PlayerManager", __FUNCTION__);
 }
 
-void UConnectionHandlerImpl::OnReadPackage(const AConnectionPointer &conn, IPackage *pkg) {
-    spdlog::trace("{} - Receive Package[{}] From {}.", __FUNCTION__, ProtoTypeToString(static_cast<protocol::EProtoType>(pkg->GetID())), conn->RemoteAddress().to_string());
+void UConnectionHandlerImpl::OnReadPackage(IPackage *pkg) {
+    spdlog::trace("{} - Receive Package[{}] From {}.", __FUNCTION__, ProtoTypeToString(static_cast<protocol::EProtoType>(pkg->GetID())), mConn.lock()->RemoteAddress().to_string());
 
-    if (!conn->GetContext().has_value()) {
+    if (!mConn.lock()->GetContext().has_value()) {
         if (const auto sys = GetSystem<ULoginSystem>(); sys != nullptr) {
-            sys->OnLogin(conn, pkg);
+            sys->OnLogin(mConn.lock(), pkg);
         } else {
             spdlog::critical("{}: LoginSystem not found.", __FUNCTION__);
             GetWorld().Shutdown();
@@ -40,7 +40,7 @@ void UConnectionHandlerImpl::OnReadPackage(const AConnectionPointer &conn, IPack
         }
     } else {
         if (const auto sys = GetSystem<UProtocolSystem>(); sys != nullptr) {
-            sys->OnReadPackage(conn, pkg);
+            sys->OnReadPackage(mConn.lock(), pkg);
         } else {
             spdlog::critical("{} - ProtocolSystem not found.", __FUNCTION__);
             GetWorld().Shutdown();

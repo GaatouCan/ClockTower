@@ -5,7 +5,6 @@
 #include "TSDeque.h"
 #include "PackagePool.h"
 
-#include <memory>
 #include <asio/experimental/awaitable_operators.hpp>
 
 using namespace std::literals::chrono_literals;
@@ -68,7 +67,7 @@ public:
         if (mCodec != nullptr)
             mCodec.reset();
 
-        mCodec = std::make_unique<T>();
+        mCodec = std::make_unique<T>(shared_from_this());
         return *this;
     }
 
@@ -80,7 +79,7 @@ public:
         if (mHandler != nullptr)
             mHandler.reset();
 
-        mHandler = std::make_unique<T>();
+        mHandler = std::make_unique<T>(shared_from_this());
         return *this;
     }
 

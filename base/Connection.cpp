@@ -154,7 +154,7 @@ awaitable<void> UConnection::WritePackage() {
 
             if (pkg->IsAvailable()) {
                 if (mHandler != nullptr) {
-                    mHandler->OnWritePackage();
+                    mHandler->OnWritePackage(pkg);
                 }
                 mPool.Recycle(pkg);
             } else {

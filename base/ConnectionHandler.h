@@ -21,7 +21,7 @@ public:
     virtual void OnConnected() {}
 
     virtual void OnReadPackage(IPackage *) {}
-    virtual void OnWritePackage() {}
+    virtual void OnWritePackage(IPackage *) {}
 
     virtual void OnClosed() {}
 };

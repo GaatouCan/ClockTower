@@ -39,8 +39,9 @@ void IAbstractPlayer::Send(IPackage *pkg) const {
     mConn->Send(pkg);
 }
 
-void IAbstractPlayer::OnLogin() {
+awaitable<void> IAbstractPlayer::OnLogin() {
     mLoginTime = std::chrono::steady_clock::now();
+    co_return;
 }
 
 void IAbstractPlayer::OnLogout() {

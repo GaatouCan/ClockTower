@@ -37,10 +37,10 @@ UEventModule &UPlayer::GetEventModule() {
     return mEventModule;
 }
 
-void UPlayer::OnLogin() {
+awaitable<void> UPlayer::OnLogin() {
     if (!IsSameThread()) {
         RunInThread(&UPlayer::OnLogin, this);
-        return;
+        co_return;
     }
     IAbstractPlayer::OnLogin();
     spdlog::info("{} - Player[{}] Login Successfully.", __FUNCTION__, GetPlayerID());

@@ -40,7 +40,7 @@ awaitable<void> UPlayerManager::OnPlayerLogin(const std::shared_ptr<UConnection>
     const auto plr = EmplacePlayer(conn, pid);
     spdlog::info("{} - New Player[{}] Login", __FUNCTION__, pid);
 
-    plr->OnLogin();
+    co_await plr->OnLogin();
 }
 
 void UPlayerManager::OnPlayerLogout(const uint64_t pid) {

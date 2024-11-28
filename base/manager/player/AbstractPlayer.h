@@ -42,7 +42,7 @@ public:
     IPackage *BuildPackage() const;
     void Send(IPackage *pkg) const;
 
-    virtual void OnLogin();
+    virtual awaitable<void> OnLogin();
     virtual void OnLogout();
 
     bool IsOnline() const;

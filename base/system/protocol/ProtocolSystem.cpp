@@ -30,7 +30,7 @@ awaitable<void> UProtocolSystem::OnReadPackage(const std::shared_ptr<UConnection
     }
 
     if (const auto func = Find(pkg->GetID()); func) {
-        mHandler->Execute(func, conn, pkg);
+       co_await mHandler->Execute(func, conn, pkg);
     } else {
         spdlog::warn("{} - Package[{}] Protocol functor unavailable.", __FUNCTION__, pkg->GetID());
     }

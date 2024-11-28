@@ -40,7 +40,7 @@ public:
     UComponentModule &GetComponentModule();
     UEventModule &GetEventModule();
 
-    void OnLogin() override;
+    awaitable<void> OnLogin() override;
     void OnLogout() override;
 
     template<typename FUNC, typename... ARGS>

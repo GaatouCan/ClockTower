@@ -87,7 +87,11 @@ void UPlayer::OnLogout() {
             }
             return false;
         }, [pid = this->GetPlayerID()](bool ret) {
-            spdlog::warn("UPlayer::OnLogout() - Player[{}] Login Failed.", pid);
+            if (!ret) {
+                spdlog::info("UPlayer::OnLogout() - Player[{}] Serialize Success.", pid);
+            } else {
+                spdlog::warn("UPlayer::OnLogout() - Player[{}] Serialize Failed.", pid);
+            }
         });
     }
 

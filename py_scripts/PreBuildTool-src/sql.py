@@ -255,7 +255,7 @@ def generate_orm_clazz(src: str, dist: str, desc: str):
                     if 'int' in cpp_type_map[field['type']]:
                         construct_str = f"{construct_str}const {cpp_type_map[field['type']]} {field['name']},\n\t\t\t"
                     elif field['type'] == "string" or field['type'] == "text":
-                        construct_str = f"{construct_str} {cpp_type_map[field['type']]} {field['name']},\n\t\t\t"
+                        construct_str = f"{construct_str}{cpp_type_map[field['type']]} {field['name']},\n\t\t\t"
                     else:
                         construct_str = f"{construct_str}const {cpp_type_map[field['type']]} {field['name']},\n\t\t\t"
                 

@@ -49,8 +49,15 @@ public:
         }
     }
 
+    awaitable<void> OnClientCommand(
+        const std::shared_ptr<IAbstractPlayer> &player,
+        const std::string &type,
+        const std::string &args);
 
-    awaitable<void> OnClientCommand(const std::shared_ptr<IAbstractPlayer> &player, const std::string &type, const std::string &args);
-
-    awaitable<void> OnOperateCommand(uint64_t command_id, const std::string &type, const std::string &args);
+    awaitable<void> OnOperateCommand(
+        uint64_t commandID,
+        uint64_t createTime,
+        const std::string &creator,
+        const std::string &type,
+        const std::string &args);
 };

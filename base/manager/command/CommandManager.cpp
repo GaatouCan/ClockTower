@@ -33,7 +33,11 @@ void UCommandManager::SetOperateCommandRegister(const std::function<void(UComman
     sOperateCommandRegister = func;
 }
 
-awaitable<void> UCommandManager::OnClientCommand(const std::shared_ptr<IAbstractPlayer> &player, const std::string &type, const std::string &args) {
+awaitable<void> UCommandManager::OnClientCommand(
+    const std::shared_ptr<IAbstractPlayer> &player,
+    const std::string &type,
+    const std::string &args)
+{
     const auto iter = mClientCommandMap.find(type);
     if (iter == mClientCommandMap.end()) {
         co_return;
@@ -47,7 +51,13 @@ awaitable<void> UCommandManager::OnClientCommand(const std::shared_ptr<IAbstract
     }
 }
 
-awaitable<void> UCommandManager::OnOperateCommand(uint64_t command_id, const std::string &type, const std::string &args) {
+awaitable<void> UCommandManager::OnOperateCommand(
+    const uint64_t commandID,
+    const uint64_t createTime,
+    const std::string &creator,
+    const std::string &type,
+    const std::string &args)
+{
     const auto iter = mOperateCommandMap.find(type);
     if (iter == mOperateCommandMap.end()) {
         co_return;
@@ -56,7 +66,9 @@ awaitable<void> UCommandManager::OnOperateCommand(uint64_t command_id, const std
     const UCommandObject obj(type, args);
 
     if (const auto cmd = std::dynamic_pointer_cast<IOperateCommand>(std::invoke(iter->second, obj)); cmd != nullptr) {
-        cmd->SetCommandID(command_id);
+        cmd->SetCommandID(commandID);
+        cmd->SetCreateTime(createTime);
+        cmd->SetCreator(creator);
         bool res = co_await cmd->Execute();
     }
 }

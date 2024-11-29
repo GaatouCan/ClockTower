@@ -47,9 +47,13 @@ awaitable<void> UPlayer::OnLogin() {
     spdlog::info("{} - Player[{}] Login Successfully.", __FUNCTION__, GetPlayerID());
 
     if (const auto sys = GetSystem<UDatabaseSystem>(); sys != nullptr) {
-        sys->PushTask([this](mysqlx::Schema &schema) {
+        const bool ret = co_await sys->AsyncTask([this](mysqlx::Schema &schema) {
             mComponentModule.Deserialize(schema);
-        });
+            return true;
+        }, asio::use_awaitable);
+        if (!ret) {
+            spdlog::warn("{} - Player[{}] Deserialize Failed.", __FUNCTION__, GetPlayerID());
+        }
     }
 
     mComponentModule.OnLogin();
@@ -76,8 +80,14 @@ void UPlayer::OnLogout() {
     mTimerMap.clear();
 
     if (const auto sys = GetSystem<UDatabaseSystem>(); sys != nullptr) {
-        sys->PushTask([this](mysqlx::Schema &schema) {
-            mComponentModule.Serialize(schema);
+        sys->PushTask([self = shared_from_this()](mysqlx::Schema &schema) {
+            if (const auto plr = std::dynamic_pointer_cast<UPlayer>(self)) {
+                plr->GetComponentModule().Serialize(schema);
+                return true;
+            }
+            return false;
+        }, [pid = this->GetPlayerID()](bool ret) {
+            spdlog::warn("UPlayer::OnLogout() - Player[{}] Login Failed.", pid);
         });
     }
 

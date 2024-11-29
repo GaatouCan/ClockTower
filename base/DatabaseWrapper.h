@@ -4,7 +4,7 @@
 #include <memory>
 #include <utility>
 
-using ADatabaseTask = std::function<void(mysqlx::Schema &)>;
+using ADatabaseTask = std::function<bool(mysqlx::Schema &)>;
 
 class IDatabaseWrapper {
 public:
@@ -12,7 +12,7 @@ public:
     virtual void Execute(mysqlx::Schema &) = 0;
 };
 
-template<class Callback>
+template<typename Callback>
 class TDBSelectWrapper final : public IDatabaseWrapper {
 
     std::string mTableName;
@@ -38,15 +38,18 @@ public:
     }
 };
 
+template<typename Callback>
 class UDBTaskWrapper final : public IDatabaseWrapper {
 
     ADatabaseTask mTask;
+    Callback mCallback;
 
 public:
     UDBTaskWrapper() = delete;
-    explicit UDBTaskWrapper(ADatabaseTask task) : mTask(std::move(task)) {}
+    UDBTaskWrapper(ADatabaseTask task, Callback &&cb) : mTask(std::move(task)),  mCallback(std::forward<Callback>(cb)) {}
 
     void Execute(mysqlx::Schema &schema) override {
-        std::invoke(mTask, schema);
+        const bool ret = std::invoke(mTask, schema);
+        std::invoke(std::move(mCallback), ret);
     }
 };

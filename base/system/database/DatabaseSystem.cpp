@@ -81,7 +81,5 @@ void UDatabaseSystem::BlockSelect(const std::string &tableName, const std::strin
 }
 
 void UDatabaseSystem::PushTask(const ADatabaseTask &task) {
-    const auto &[th, sess, queue, tid] = mNodeList[mNextNodeIndex++];
-    mNextNodeIndex = mNextNodeIndex % mNodeList.size();
-    queue->PushBack(new UDBTaskWrapper(task));
+    PushTask(task, [](bool){});
 }

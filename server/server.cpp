@@ -27,6 +27,7 @@ auto main(int argc, char *argv[]) -> int {
         sys->SetYAMLPath("../config");
 #endif
         sys->SetLogicConfigLoader(&LoadLogicConfig);
+        sys->SetLoggerLoader(&InitLogger);
     }
 
     // 注册程式生成协议定义以及协议处理器
@@ -47,9 +48,6 @@ auto main(int argc, char *argv[]) -> int {
 
     // 设置服务器玩家对象子类
     UPlayerManager::SetPlayerCreator(&CreatePlayer);
-
-    // 注册日志
-    GetWorld().DefineLogger(&InitLogger);
 
     // 设置新连接处理
     GetWorld().FilterConnection([](const AConnectionPointer &conn) {

@@ -5,7 +5,8 @@
 #include <spdlog/spdlog.h>
 
 UConfigSystem::UConfigSystem()
-    : mLogicConfigLoader(nullptr) {
+    : mLogicConfigLoader(nullptr),
+      mLoggerLoader(nullptr) {
 }
 
 UConfigSystem::~UConfigSystem() {
@@ -70,6 +71,10 @@ void UConfigSystem::Init() {
     if (mLogicConfigLoader) {
         std::invoke(mLogicConfigLoader, this);
     }
+
+    if (mLoggerLoader) {
+        std::invoke(mLoggerLoader, mConfig);
+    }
 }
 
 void UConfigSystem::SetYAMLPath(const std::string &path) {
@@ -82,6 +87,10 @@ void UConfigSystem::SetJSONPath(const std::string &path) {
 
 void UConfigSystem::SetLogicConfigLoader(const std::function<void(UConfigSystem *)> &loader) {
     mLogicConfigLoader = loader;
+}
+
+void UConfigSystem::SetLoggerLoader(const std::function<void(const YAML::Node &)> &loader) {
+    mLoggerLoader = loader;
 }
 
 const YAML::Node &UConfigSystem::GetConfig() const {
@@ -125,10 +134,10 @@ void UConfigSystem::ReloadConfig() {
         }
     });
 
-    for (auto &[type, cfg] : mLogicConfigMap) {
+    for (auto &[type, cfg]: mLogicConfigMap) {
         if (auto vec = mLogicLoadMap.find(type); vec != mLogicLoadMap.end()) {
             std::vector<nlohmann::json> configs;
-            for (const auto &path : vec->second) {
+            for (const auto &path: vec->second) {
                 if (const auto iter = mJSONConfigMap.find(path); iter != mJSONConfigMap.end()) {
                     configs.push_back(iter->second);
                 }

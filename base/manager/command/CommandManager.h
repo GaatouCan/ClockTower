@@ -5,6 +5,8 @@
 #include "ClientCommand.h"
 #include "OperateCommand.h"
 
+#include <spdlog/spdlog.h>
+
 class IAbstractPlayer;
 class UCommandObject;
 
@@ -17,6 +19,9 @@ class UCommandManager final : public IManager {
 
     std::unordered_map<std::string, ACommandCreator> mOperateCommandMap;
     std::unordered_map<std::string, ACommandCreator> mClientCommandMap;
+
+    std::shared_ptr<spdlog::logger> mClientLogger;
+    std::shared_ptr<spdlog::logger> mOperateLogger;
 
 public:
     explicit UCommandManager(FContextNode &ctx);
@@ -48,6 +53,8 @@ public:
             };
         }
     }
+
+    void OnTick(ATimePoint now) override;
 
     awaitable<void> OnClientCommand(
         const std::shared_ptr<IAbstractPlayer> &player,

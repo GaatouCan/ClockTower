@@ -25,6 +25,7 @@ class UConfigSystem final : public ISubSystem {
     std::unordered_map<std::type_index, ILogicConfig *> mLogicConfigMap;
 
     std::function<void(UConfigSystem *)> mLogicConfigLoader;
+    std::function<void(const YAML::Node&)> mLoggerLoader;
 
 public:
     UConfigSystem();
@@ -37,6 +38,7 @@ public:
     void SetJSONPath(const std::string &path);
 
     void SetLogicConfigLoader(const std::function<void(UConfigSystem *)> &loader);
+    void SetLoggerLoader(const std::function<void(const YAML::Node&)> &loader);
 
     template<LOGIC_CONFIG_TYPE T>
     void CreateLogicConfig(const std::vector<std::string> &pathList) {

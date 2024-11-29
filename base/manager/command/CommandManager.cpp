@@ -24,11 +24,22 @@ UCommandManager::UCommandManager(FContextNode &ctx)
         spdlog::info("UCommandManager - Client Command Registered");
     }
 
-    const auto sys = GetSystem<UDatabaseSystem>();
-    if (sys == nullptr) {
-        spdlog::info("UCommandManager - Database System Not Found");
-        return;
+    mClientLogger = spdlog::get("client_command_logger");
+    mOperateLogger = spdlog::get("operate_command_logger");
+
+    if (mClientLogger == nullptr || mOperateLogger == nullptr) {
+        spdlog::warn("{} - Please Define Logger For Command Manager", __FUNCTION__);
     }
+
+    // const auto sys = GetSystem<UDatabaseSystem>();
+    // if (sys == nullptr) {
+    //     spdlog::warn("UCommandManager - Database System Not Found");
+    //     return;
+    // }
+    //
+    // sys->SyncSelect("command", "update_time == 0", [this](mysqlx::Row row) {
+    //     // TODO
+    // });
 }
 
 UCommandManager::~UCommandManager() {
@@ -40,6 +51,16 @@ void UCommandManager::SetClientCommandRegister(const std::function<void(UCommand
 
 void UCommandManager::SetOperateCommandRegister(const std::function<void(UCommandManager *)> &func) {
     sOperateCommandRegister = func;
+}
+
+void UCommandManager::OnTick(ATimePoint now) {
+    IManager::OnTick(now);
+
+    const auto sys = GetSystem<UDatabaseSystem>();
+    if (sys == nullptr) {
+        spdlog::warn("UCommandManager - Database System Not Found");
+        return;
+    }
 }
 
 awaitable<void> UCommandManager::OnClientCommand(

@@ -14,7 +14,6 @@ UGameWorld::UGameWorld()
     : mAcceptor(mContext),
       mFullTimer(mContext),
       mConnectionFilter(nullptr),
-      mLoggerLoader(nullptr),
       bInited(false),
       bRunning(false) {
     // Create Sub System
@@ -69,9 +68,6 @@ UGameWorld &UGameWorld::Init() {
     // Set PackagePool static option
     UPackagePool::LoadConfig(config);
 
-    if (mLoggerLoader)
-        std::invoke(mLoggerLoader, config);
-
     mPool.Start(config["server"]["work_thread"].as<size_t>());
 
     mMainThreadId = std::this_thread::get_id();
@@ -114,10 +110,6 @@ UGameWorld &UGameWorld::Shutdown() {
 
 void UGameWorld::FilterConnection(const std::function<void(const AConnectionPointer &)> &filter) {
     mConnectionFilter = filter;
-}
-
-void UGameWorld::DefineLogger(const std::function<void(const YAML::Node &)> &func) {
-    mLoggerLoader = func;
 }
 
 awaitable<void> UGameWorld::WaitForConnect() {

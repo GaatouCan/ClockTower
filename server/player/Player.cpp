@@ -86,7 +86,7 @@ void UPlayer::OnLogout() {
                 return true;
             }
             return false;
-        }, [pid = this->GetPlayerID()](bool ret) {
+        }, [pid = this->GetPlayerID()](const bool ret) {
             if (!ret) {
                 spdlog::info("UPlayer::OnLogout() - Player[{}] Serialize Success.", pid);
             } else {

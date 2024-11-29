@@ -43,7 +43,7 @@ awaitable<void> UCommandManager::OnClientCommand(const std::shared_ptr<IAbstract
 
     if (const auto cmd = std::dynamic_pointer_cast<IClientCommand>(std::invoke(iter->second, obj)); cmd != nullptr) {
         cmd->SetSender(player->GetPlayerID());
-        co_await cmd->Execute();
+        bool res = co_await cmd->Execute();
     }
 }
 
@@ -57,6 +57,6 @@ awaitable<void> UCommandManager::OnOperateCommand(uint64_t command_id, const std
 
     if (const auto cmd = std::dynamic_pointer_cast<IOperateCommand>(std::invoke(iter->second, obj)); cmd != nullptr) {
         cmd->SetCommandID(command_id);
-        co_await cmd->Execute();
+        bool res = co_await cmd->Execute();
     }
 }

@@ -6,6 +6,7 @@
 
 #include <thread>
 #include <vector>
+#include <utility>
 
 
 struct FDatabaseNode {
@@ -45,19 +46,19 @@ public:
         queue->PushBack(new TDBCallbackWrapper<Callback>(task, std::forward<Callback>(cb)));
     }
 
-    template<asio::completion_token_for<void()> CompletionToken>
+    template<asio::completion_token_for<void(ARowResultPointer)> CompletionToken>
     auto AsyncPushTask(const ADatabaseTask &task, CompletionToken &&token) {
-        auto init = [this](asio::completion_handler_for<void()> auto handler, const ADatabaseTask &func) {
+        auto init = [this](asio::completion_handler_for<void(ARowResultPointer)> auto handler, const ADatabaseTask &func) {
             auto work = asio::make_work_guard(handler);
 
-            PushTask(func, [handler = std::move(handler), work = std::move(work)]() mutable {
+            PushTask(func, [handler = std::move(handler), work = std::move(work)](ARowResultPointer result) mutable {
                 auto alloc = asio::get_associated_allocator(handler, asio::recycling_allocator<void>());
-                asio::dispatch(work.get_executor(), asio::bind_allocator( alloc, [handler = std::move(handler)]() mutable {
-                    std::move(handler)();
+                asio::dispatch(work.get_executor(), asio::bind_allocator(alloc,[handler = std::move(handler), result]() mutable {
+                    std::move(handler)(result);
                 }));
             });
         };
 
-        return asio::async_initiate<CompletionToken, void()>(init, token, task);
+        return asio::async_initiate<CompletionToken, void(ARowResultPointer)>(init, token, task);
     }
 };

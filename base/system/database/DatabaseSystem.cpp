@@ -81,5 +81,5 @@ void UDatabaseSystem::SyncSelect(const std::string &tableName, const std::string
 }
 
 void UDatabaseSystem::PushTask(const ADatabaseTask &task) {
-    PushTask(task, [] {});
+    PushTask(task, [](ARowResultPointer) {});
 }

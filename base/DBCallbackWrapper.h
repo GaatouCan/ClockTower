@@ -1,9 +1,11 @@
 #pragma once
 
 #include <mysqlx/xdevapi.h>
+#include <memory>
 #include <utility>
 
-using ADatabaseTask = std::function<void(mysqlx::Schema &)>;
+using ARowResultPointer = std::shared_ptr<mysqlx::RowResult>;
+using ADatabaseTask = std::function<mysqlx::RowResult(mysqlx::Schema &)>;
 
 class IDBCallbackWrapper {
 public:
@@ -22,7 +24,7 @@ public:
     }
 
     void Execute(mysqlx::Schema &schema) override {
-        std::invoke(mTask, schema);
-        std::invoke(std::move(mCallback));
+        auto res = std::make_shared<mysqlx::RowResult>(std::invoke(mTask, schema));
+        std::invoke(std::move(mCallback), res);
     }
 };

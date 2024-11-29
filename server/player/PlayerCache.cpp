@@ -33,8 +33,9 @@ awaitable<std::optional<FCacheNode>> UPlayerCache::FindCacheNode(const uint64_t 
         co_return std::nullopt;
     }
 
-    co_await sys->AsyncPushTask([this, pid](mysqlx::Schema &schema) {
+    co_await sys->AsyncPushTask([this, pid](mysqlx::Schema &schema) -> mysqlx::RowResult {
         // TODO
+        return {};
     }, asio::use_awaitable);
 
     std::shared_lock lock(mSharedMutex);

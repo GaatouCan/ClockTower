@@ -4,7 +4,6 @@
 #include <memory>
 #include <utility>
 
-using ARowResultPointer = std::shared_ptr<mysqlx::RowResult>;
 using ADatabaseTask = std::function<mysqlx::RowResult(mysqlx::Schema &)>;
 
 class IDBCallbackWrapper {

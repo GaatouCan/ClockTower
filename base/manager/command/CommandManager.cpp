@@ -2,8 +2,11 @@
 #include "CommandObject.h"
 
 #include "../player/AbstractPlayer.h"
+#include "../../system/database/DatabaseSystem.h"
 
 #include <spdlog/spdlog.h>
+
+#include "../../GameWorld.h"
 
 std::function<void(UCommandManager*)> UCommandManager::sClientCommandRegister = nullptr;
 std::function<void(UCommandManager*)> UCommandManager::sOperateCommandRegister = nullptr;
@@ -19,6 +22,12 @@ UCommandManager::UCommandManager(FContextNode &ctx)
     if (sClientCommandRegister) {
         std::invoke(sClientCommandRegister, this);
         spdlog::info("UCommandManager - Client Command Registered");
+    }
+
+    const auto sys = GetSystem<UDatabaseSystem>();
+    if (sys == nullptr) {
+        spdlog::info("UCommandManager - Database System Not Found");
+        return;
     }
 }
 

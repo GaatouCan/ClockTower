@@ -67,4 +67,7 @@ public:
         const std::string &creator,
         const std::string &type,
         const std::string &args);
+
+private:
+    awaitable<void> FetchOperateCommand();
 };

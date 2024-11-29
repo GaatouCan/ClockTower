@@ -3,10 +3,10 @@
 
 #include "../player/AbstractPlayer.h"
 #include "../../system/database/DatabaseSystem.h"
+#include "../../GameWorld.h"
 
 #include <spdlog/spdlog.h>
 
-#include "../../GameWorld.h"
 
 std::function<void(UCommandManager*)> UCommandManager::sClientCommandRegister = nullptr;
 std::function<void(UCommandManager*)> UCommandManager::sOperateCommandRegister = nullptr;
@@ -56,11 +56,7 @@ void UCommandManager::SetOperateCommandRegister(const std::function<void(UComman
 void UCommandManager::OnTick(ATimePoint now) {
     IManager::OnTick(now);
 
-    const auto sys = GetSystem<UDatabaseSystem>();
-    if (sys == nullptr) {
-        spdlog::warn("UCommandManager - Database System Not Found");
-        return;
-    }
+    co_spawn(GetIOContext(), FetchOperateCommand(), detached);
 }
 
 awaitable<void> UCommandManager::OnClientCommand(
@@ -101,4 +97,20 @@ awaitable<void> UCommandManager::OnOperateCommand(
         cmd->SetCreator(creator);
         bool res = co_await cmd->Execute();
     }
+}
+
+awaitable<void> UCommandManager::FetchOperateCommand() {
+    const auto sys = GetSystem<UDatabaseSystem>();
+    if (sys == nullptr) {
+        spdlog::warn("UCommandManager - Database System Not Found");
+        co_return;
+    }
+
+    auto res = co_await sys->AsyncPushTask([](mysqlx::Schema &schema) -> mysqlx::RowResult {
+        mysqlx::Table table = schema.getTable("command");
+        if (!table.existsInDatabase())
+            return {};
+
+        return table.select().where("update_time = 0").execute();
+    }, asio::use_awaitable);
 }

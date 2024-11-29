@@ -10,7 +10,7 @@ class UCommandObject;
 
 class UCommandManager final : public IManager {
 
-    using ACommandCreator = std::function<IAbstractCommand*(const UCommandObject&)>;
+    using ACommandCreator = std::function<std::shared_ptr<IAbstractCommand>(const UCommandObject&)>;
 
     static std::function<void(UCommandManager*)> sClientCommandRegister;
     static std::function<void(UCommandManager*)> sOperateCommandRegister;
@@ -34,7 +34,7 @@ public:
     void RegisterClientCommand(const std::string &cmd) {
         if (!mClientCommandMap.contains(cmd)) {
             mClientCommandMap[cmd] = [](const UCommandObject &obj) -> IAbstractCommand* {
-                return new T(obj);
+                return std::make_shared<T>(obj);
             };
         }
     }
@@ -50,5 +50,7 @@ public:
     }
 
 
-    void OnClientCommand(const std::shared_ptr<IAbstractPlayer> &player, const std::string &type, const std::string &args);
+    awaitable<void> OnClientCommand(const std::shared_ptr<IAbstractPlayer> &player, const std::string &type, const std::string &args);
+
+    awaitable<void> OnOperateCommand(uint64_t command_id, const std::string &type, const std::string &args);
 };

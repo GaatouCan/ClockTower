@@ -33,18 +33,30 @@ void UCommandManager::SetOperateCommandRegister(const std::function<void(UComman
     sOperateCommandRegister = func;
 }
 
-void UCommandManager::OnClientCommand(const std::shared_ptr<IAbstractPlayer> &player, const std::string &type, const std::string &args) {
+awaitable<void> UCommandManager::OnClientCommand(const std::shared_ptr<IAbstractPlayer> &player, const std::string &type, const std::string &args) {
     const auto iter = mClientCommandMap.find(type);
     if (iter == mClientCommandMap.end()) {
-        return;
+        co_return;
     }
 
     const UCommandObject obj(type, args);
 
-    if (const auto cmd = dynamic_cast<IClientCommand*>(std::invoke(iter->second, obj)); cmd != nullptr) {
+    if (const auto cmd = std::dynamic_pointer_cast<IClientCommand>(std::invoke(iter->second, obj)); cmd != nullptr) {
         cmd->SetSender(player->GetPlayerID());
-        cmd->Execute();
+        co_await cmd->Execute();
+    }
+}
 
-        delete cmd;
+awaitable<void> UCommandManager::OnOperateCommand(uint64_t command_id, const std::string &type, const std::string &args) {
+    const auto iter = mOperateCommandMap.find(type);
+    if (iter == mOperateCommandMap.end()) {
+        co_return;
+    }
+
+    const UCommandObject obj(type, args);
+
+    if (const auto cmd = std::dynamic_pointer_cast<IOperateCommand>(std::invoke(iter->second, obj)); cmd != nullptr) {
+        cmd->SetCommandID(command_id);
+        co_await cmd->Execute();
     }
 }

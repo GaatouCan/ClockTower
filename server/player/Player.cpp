@@ -5,6 +5,7 @@
 #include <GameWorld.h>
 #include <impl/Package.h>
 #include <system/event/EventSystem.h>
+#include <system/database/DatabaseSystem.h>
 
 #include <utility>
 #include <ranges>
@@ -42,10 +43,15 @@ awaitable<void> UPlayer::OnLogin() {
         RunInThread(&UPlayer::OnLogin, this);
         co_return;
     }
-    IAbstractPlayer::OnLogin();
+    co_await IAbstractPlayer::OnLogin();
     spdlog::info("{} - Player[{}] Login Successfully.", __FUNCTION__, GetPlayerID());
 
-    mLoginTime = std::chrono::steady_clock::now();
+    if (const auto sys = GetSystem<UDatabaseSystem>(); sys != nullptr) {
+        sys->PushTask([this](mysqlx::Schema &schema) {
+            mComponentModule.Deserialize(schema);
+        });
+    }
+
     mComponentModule.OnLogin();
 
     Login::SC_LoginResponse response;
@@ -68,6 +74,12 @@ void UPlayer::OnLogout() {
     }
     IAbstractPlayer::OnLogout();
     mTimerMap.clear();
+
+    if (const auto sys = GetSystem<UDatabaseSystem>(); sys != nullptr) {
+        sys->PushTask([this](mysqlx::Schema &schema) {
+            mComponentModule.Serialize(schema);
+        });
+    }
 
     mComponentModule.OnLogout();
     spdlog::info("{} - Player[{}] Logout.", __FUNCTION__, GetPlayerID());

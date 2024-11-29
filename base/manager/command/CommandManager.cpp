@@ -106,11 +106,7 @@ awaitable<void> UCommandManager::FetchOperateCommand() {
         co_return;
     }
 
-    auto res = co_await sys->AsyncPushTask([](mysqlx::Schema &schema) -> mysqlx::RowResult {
-        mysqlx::Table table = schema.getTable("command");
-        if (!table.existsInDatabase())
-            return {};
-
-        return table.select().where("update_time = 0").execute();
-    }, asio::use_awaitable);
+    auto res = co_await sys->AsyncSelect("command", "finish_time = 0" ,asio::use_awaitable);
+    if (res == nullptr)
+        co_return;
 }

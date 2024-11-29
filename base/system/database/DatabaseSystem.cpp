@@ -30,7 +30,7 @@ void UDatabaseSystem::Init() {
             cfg["database"]["mysql"]["user"].as<std::string>(),
             cfg["database"]["mysql"]["passwd"].as<std::string>()
         );
-        node.queue = std::make_unique<TSDeque<IDBCallbackWrapper *> >();
+        node.queue = std::make_unique<TSDeque<IDatabaseWrapper *> >();
 
         node.th = std::make_unique<std::thread>([this, &node, &schemaName] {
             node.tid = std::this_thread::get_id();
@@ -54,7 +54,7 @@ void UDatabaseSystem::Init() {
     }
 }
 
-void UDatabaseSystem::SyncSelect(const std::string &tableName, const std::string &where, const std::function<void(mysqlx::Row)> &cb) {
+void UDatabaseSystem::BlockSelect(const std::string &tableName, const std::string &where, const std::function<void(mysqlx::Row)> &cb) {
     if (mNodeList.empty()) {
         spdlog::error("{} - {}", __FUNCTION__, __LINE__);
         return;
@@ -81,5 +81,7 @@ void UDatabaseSystem::SyncSelect(const std::string &tableName, const std::string
 }
 
 void UDatabaseSystem::PushTask(const ADatabaseTask &task) {
-    PushTask(task, [](const std::shared_ptr<mysqlx::RowResult> &) {});
+    const auto &[th, sess, queue, tid] = mNodeList[mNextNodeIndex++];
+    mNextNodeIndex = mNextNodeIndex % mNodeList.size();
+    queue->PushBack(new UDBTaskWrapper(task));
 }

@@ -1,9 +1,11 @@
 #include "CommandManager.h"
 #include "CommandObject.h"
 
-#include "../player/AbstractPlayer.h"
-#include "../../system/database/DatabaseSystem.h"
-#include "../../GameWorld.h"
+#include "../player/Player.h"
+
+#include <system/database/DatabaseSystem.h>
+#include <system/database/Deserializer.h>
+#include <GameWorld.h>
 
 #include <spdlog/spdlog.h>
 
@@ -30,16 +32,6 @@ UCommandManager::UCommandManager(FContextNode &ctx)
     if (mClientLogger == nullptr || mOperateLogger == nullptr) {
         spdlog::warn("{} - Please Define Logger For Command Manager", __FUNCTION__);
     }
-
-    // const auto sys = GetSystem<UDatabaseSystem>();
-    // if (sys == nullptr) {
-    //     spdlog::warn("UCommandManager - Database System Not Found");
-    //     return;
-    // }
-    //
-    // sys->SyncSelect("command", "update_time == 0", [this](mysqlx::Row row) {
-    //     // TODO
-    // });
 }
 
 UCommandManager::~UCommandManager() {
@@ -106,7 +98,32 @@ awaitable<void> UCommandManager::FetchOperateCommand() {
         co_return;
     }
 
-    auto res = co_await sys->AsyncSelect("command", "finish_time = 0" ,asio::use_awaitable);
+    const auto res = co_await sys->AsyncSelect("command", "finish_time = 0" ,asio::use_awaitable);
     if (res == nullptr)
         co_return;
+
+    // UDeserializer deserializer((std::move(*res)));
+    // res.reset();
+    //
+    // while (deserializer.HasMore()) {
+    //
+    // }
+    for (auto row : res->fetchAll()) {
+        const uint64_t id = row[0].get<uint64_t>();
+        auto creator = row[1].get<std::string>();
+        auto type = row[2].get<std::string>();
+        auto param = row[3].get<std::string>();
+        const uint64_t create_time = row[4].get<uint64_t>();
+        const uint64_t finish_time = row[5].get<uint64_t>();
+        auto extend = row[6].get<std::string>();
+
+        co_await OnOperateCommand(id, create_time, creator, type, param);
+        sys->PushTask([id](mysqlx::Schema &schema) -> bool {
+            if (auto table = schema.getTable("command"); table.existsInDatabase()) {
+                table.update().set("finish_time", 1).where("id = : id").bind("id", id).execute();
+                return true;
+            }
+            return false;
+        });
+    }
 }

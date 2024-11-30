@@ -1,11 +1,12 @@
 #pragma once
 
-#include "../../system/manager/Manager.h"
 
 #include "ClientCommand.h"
 #include "OperateCommand.h"
 
+#include <system/manager/Manager.h>
 #include <spdlog/spdlog.h>
+
 
 class IAbstractPlayer;
 class UCommandObject;
@@ -22,6 +23,8 @@ class UCommandManager final : public IManager {
 
     std::shared_ptr<spdlog::logger> mClientLogger;
     std::shared_ptr<spdlog::logger> mOperateLogger;
+
+    std::set<uint64_t> mCurrentOperateCommandSet;
 
 public:
     explicit UCommandManager(FContextNode &ctx);

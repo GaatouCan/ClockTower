@@ -3,7 +3,7 @@
 #include <system/manager/ManagerSystem.h>
 
 #include <manager/player/PlayerManager.h>
-#include <manager/command/CommandManager.h>
+#include "../command/CommandManager.h"
 
 #include "../player/PlayerCache.h"
 #include "../world/manager/chat/ChatManager.h"

@@ -1,5 +1,11 @@
-//
-// Created by admin on 24-11-30.
-//
-
 #include "Scene.h"
+
+UScene::UScene() {
+}
+
+UScene::~UScene() {
+}
+
+uint32_t UScene::GetSceneID() const {
+    return mSceneID;
+}

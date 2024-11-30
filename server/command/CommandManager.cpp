@@ -8,6 +8,7 @@
 #include <GameWorld.h>
 
 #include <spdlog/spdlog.h>
+#include <orm/command.orm.h>
 
 
 std::function<void(UCommandManager*)> UCommandManager::sClientCommandRegister = nullptr;
@@ -98,32 +99,33 @@ awaitable<void> UCommandManager::FetchOperateCommand() {
         co_return;
     }
 
-    const auto res = co_await sys->AsyncSelect("command", "finish_time = 0" ,asio::use_awaitable);
+    auto res = co_await sys->AsyncSelect("command", "finish_time = 0" ,asio::use_awaitable);
     if (res == nullptr)
         co_return;
 
-    // UDeserializer deserializer((std::move(*res)));
-    // res.reset();
-    //
-    // while (deserializer.HasMore()) {
-    //
-    // }
-    for (auto row : res->fetchAll()) {
-        const uint64_t id = row[0].get<uint64_t>();
-        auto creator = row[1].get<std::string>();
-        auto type = row[2].get<std::string>();
-        auto param = row[3].get<std::string>();
-        const uint64_t create_time = row[4].get<uint64_t>();
-        const uint64_t finish_time = row[5].get<uint64_t>();
-        auto extend = row[6].get<std::string>();
+    UDeserializer deserializer((std::move(*res)));
+    res.reset();
 
-        co_await OnOperateCommand(id, create_time, creator, type, param);
-        sys->PushTask([id](mysqlx::Schema &schema) -> bool {
-            if (auto table = schema.getTable("command"); table.existsInDatabase()) {
-                table.update().set("finish_time", 1).where("id = : id").bind("id", id).execute();
-                return true;
-            }
-            return false;
-        });
+    while (deserializer.HasMore()) {
+        auto row = deserializer.TDeserialize<orm::UDBTable_Command>();
+        co_await OnOperateCommand(row.id, row.create_time, row.creator, row.type, row.param);
     }
+    // for (auto row : res->fetchAll()) {
+    //     const uint64_t id = row[0].get<uint64_t>();
+    //     auto creator = row[1].get<std::string>();
+    //     auto type = row[2].get<std::string>();
+    //     auto param = row[3].get<std::string>();
+    //     const uint64_t create_time = row[4].get<uint64_t>();
+    //     const uint64_t finish_time = row[5].get<uint64_t>();
+    //     auto extend = row[6].get<std::string>();
+    //
+    //     co_await OnOperateCommand(id, create_time, creator, type, param);
+    //     sys->PushTask([id](mysqlx::Schema &schema) -> bool {
+    //         if (auto table = schema.getTable("command"); table.existsInDatabase()) {
+    //             table.update().set("finish_time", 1).where("id = : id").bind("id", id).execute();
+    //             return true;
+    //         }
+    //         return false;
+    //     });
+    // }
 }

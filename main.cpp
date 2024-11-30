@@ -2,6 +2,29 @@
 #include <asio.hpp>
 #include <thread>
 
+struct node {
+
+    node() = default;
+
+    node(const node &) {
+        spdlog::info("copy constructor");
+    }
+
+    node(node &&) noexcept {
+        spdlog::info("move constructor");
+    }
+
+    node &operator=(const node &) {
+        spdlog::info("copy assignment");
+        return *this;
+    }
+
+    node &operator=(node &&) noexcept {
+        spdlog::info("move assignment");
+        return *this;
+    }
+};
+
 
 template<typename Callback>
 void func(int a, Callback && cb) {
@@ -13,28 +36,30 @@ void func(int a, Callback && cb) {
         ss << std::this_thread::get_id();
         spdlog::info("func - {}", ss.str());
 
-        std::move(cb)();
+        node n;
+
+        std::move(cb)(std::move(n));
     }).detach();
 }
 
-template<asio::completion_token_for<void()> CompletionToken>
+template<asio::completion_token_for<void(node)> CompletionToken>
 auto async_func(int a, CompletionToken &&token) {
-    auto init = [](asio::completion_handler_for<void()> auto handler, int param) {
+    auto init = [](asio::completion_handler_for<void(node)> auto handler, int param) {
         auto work = asio::make_work_guard(handler);
 
-        func(param, [handler = std::move(handler), work = std::move(work)]() mutable {
+        func(param, [handler = std::move(handler), work = std::move(work)](node n) mutable {
             auto alloc = asio::get_associated_allocator(handler, asio::recycling_allocator<void>());
-            asio::dispatch(work.get_executor(), asio::bind_allocator(alloc, [handler = std::move(handler)]() mutable {
-                std::move(handler)();
+            asio::dispatch(work.get_executor(), asio::bind_allocator(alloc, [handler = std::move(handler), n = std::forward<node>(n)]() mutable {
+                std::move(handler)(std::move(n));
             }));
         });
     };
 
-    return asio::async_initiate<CompletionToken, void()>(init, token, a);
+    return asio::async_initiate<CompletionToken, void(node)>(init, token, a);
 }
 
 asio::awaitable<void> test() {
-    co_await async_func(11, asio::use_awaitable);
+    node n = co_await async_func(11, asio::use_awaitable);
     spdlog::info("async completed");
     std::stringstream ss;
     ss << std::this_thread::get_id();

@@ -83,19 +83,19 @@ public:
      * @param token 完成令牌
      * @return mysqlx::RowResult的完成令牌包装器
      */
-    template<asio::completion_token_for<void(std::shared_ptr<mysqlx::RowResult>)> CompletionToken>
+    template<asio::completion_token_for<void(std::optional<mysqlx::RowResult>)> CompletionToken>
     auto AsyncSelect(const std::string &table, const std::string &where, CompletionToken &&token) {
-        auto init = [this](asio::completion_handler_for<void(std::shared_ptr<mysqlx::RowResult>)> auto handler, const std::string &tableName, const std::string &whereExpression) {
+        auto init = [this](asio::completion_handler_for<void(std::optional<mysqlx::RowResult>)> auto handler, const std::string &tableName, const std::string &whereExpression) {
             auto work = asio::make_work_guard(handler);
 
-            PushSelectTask(tableName, whereExpression, [handler = std::move(handler), work = std::move(work)](std::shared_ptr<mysqlx::RowResult> result) mutable {
+            PushSelectTask(tableName, whereExpression, [handler = std::move(handler), work = std::move(work)](std::optional<mysqlx::RowResult> result) mutable {
                 auto alloc = asio::get_associated_allocator(handler, asio::recycling_allocator<void>());
-                asio::dispatch(work.get_executor(), asio::bind_allocator(alloc, [handler = std::move(handler), result]() mutable {
-                    std::move(handler)(result);
+                asio::dispatch(work.get_executor(), asio::bind_allocator(alloc, [handler = std::move(handler), result = std::forward<std::optional<mysqlx::RowResult>>(result)]() mutable {
+                    std::move(handler)(std::move(result));
                 }));
             });
         };
 
-        return asio::async_initiate<CompletionToken, void(std::shared_ptr<mysqlx::RowResult>)>(init, token, table, where);
+        return asio::async_initiate<CompletionToken, void(std::optional<mysqlx::RowResult>)>(init, token, table, where);
     }
 };

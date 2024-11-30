@@ -100,11 +100,10 @@ awaitable<void> UCommandManager::FetchOperateCommand() {
     }
 
     auto res = co_await sys->AsyncSelect("command", "finish_time = 0" ,asio::use_awaitable);
-    if (res == nullptr)
+    if (!res.has_value())
         co_return;
 
     UDeserializer deserializer((std::move(*res)));
-    res.reset();
 
     while (deserializer.HasMore()) {
         auto row = deserializer.TDeserialize<orm::UDBTable_Command>();

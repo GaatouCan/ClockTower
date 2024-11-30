@@ -1,7 +1,6 @@
 #pragma once
 
 #include <mysqlx/xdevapi.h>
-#include <memory>
 #include <utility>
 
 using ADatabaseTask = std::function<bool(mysqlx::Schema &)>;
@@ -31,10 +30,11 @@ public:
 
     void Execute(mysqlx::Schema &schema) override {
         if (auto table = schema.getTable(mTableName); table.existsInDatabase()) {
-            auto res = std::make_shared<mysqlx::RowResult>(table.select().where(mWhereExpress).execute());
-            std::invoke(std::move(mCallback), res);
-        } else
-            std::invoke(std::move(mCallback), nullptr);
+            auto res = std::make_optional(table.select().where(mWhereExpress).execute());
+            std::invoke(std::move(mCallback), std::move(res));
+        } else {
+            std::invoke(std::move(mCallback), std::nullopt);
+        }
     }
 };
 

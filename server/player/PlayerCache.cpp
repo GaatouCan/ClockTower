@@ -40,7 +40,7 @@ awaitable<std::optional<FCacheNode>> UPlayerCache::FindCacheNode(const uint64_t 
 
     auto result = co_await sys->AsyncSelect("player_cache", fmt::format("pid = {}", pid), asio::use_awaitable);
 
-    if (result != nullptr) {
+    if (result.has_value()) {
         // TODO: 根据数据库构造返回
     }
 

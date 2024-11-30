@@ -1,7 +1,12 @@
 #include "LoginSystem.h"
 #include "../../Connection.h"
+#include "../scene/SceneSystem.h"
+#include "../scene/Scene.h"
+#include "../scene/AbstractPlayer.h"
+#include "../../GameWorld.h"
 
 #include <spdlog/spdlog.h>
+
 
 void ULoginSystem::Init() {
 
@@ -32,6 +37,15 @@ awaitable<void> ULoginSystem::OnLogin(const std::shared_ptr<UConnection> &conn, 
     spdlog::trace("{} - Player id: {}, token: {}", __FUNCTION__, info.pid, info.token);
     if (const auto pid = VerifyToken(info.pid, info.token); pid != 0) {
         conn->SetContext(std::make_any<uint64_t>(pid));
+
+        if (const auto sys = GetSystem<USceneSystem>(); sys != nullptr) {
+            if (const auto scene = sys->GetMainScene(); scene != nullptr) {
+                if (const auto plr = scene->CreatePlayer(conn); plr != nullptr) {
+                    plr->OnLogin();
+                }
+            }
+        }
+
         co_await mHandler->OnPlayerLogin(conn, info);
     }
 }

@@ -65,3 +65,9 @@ bool IAbstractPlayer::IsInScene(const uint32_t id) const {
 
     return mOwnerScene->GetSceneID() == id;
 }
+
+uint32_t IAbstractPlayer::GetCurrentSceneID() const {
+    if (mOwnerScene == nullptr)
+        return 0;
+    return mOwnerScene->GetSceneID();
+}

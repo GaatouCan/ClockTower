@@ -3,7 +3,7 @@
 #include "ComponentModule.h"
 #include "EventModule.h"
 
-#include <manager/player/AbstractPlayer.h>
+#include <Character.h>
 #include <Connection.h>
 #include <RepeatedTimer.h>
 #include <utils.h>
@@ -20,7 +20,13 @@ struct FEP_PlayerLogout final : IEventParam {
     uint64_t pid;
 };
 
-class UPlayer final : public IAbstractPlayer {
+class UPlayer final : public UCharacter {
+
+    AConnectionPointer mConn;
+    uint64_t mId;
+
+    ATimePoint mLoginTime;
+    ATimePoint mLogoutTime;
 
     UComponentModule mComponentModule;
     UEventModule mEventModule;
@@ -30,8 +36,29 @@ class UPlayer final : public IAbstractPlayer {
     FPlatformInfo mPlatform;
 
 public:
+    UPlayer() = delete;
+
     explicit UPlayer(AConnectionPointer conn);
     ~UPlayer() override;
+
+    void SetConnection(const AConnectionPointer &conn);
+    AConnectionPointer GetConnection() const;
+
+    ATcpSocket &GetSocket() const;
+
+    uint64_t GetPlayerID() const;
+
+    template<typename FUNC, typename... ARGS>
+    void RunInThread(FUNC &&func, ARGS &&... args) {
+        co_spawn(mConn->GetSocket().get_executor(), [func = std::forward<FUNC>(func), ...args = std::forward<ARGS>(args)]() -> awaitable<void> {
+            try {
+                std::invoke(func, args...);
+            } catch (std::exception &e) {
+                spdlog::error("Player::RunInThread: {}", e.what());
+            }
+            co_return;
+        }, detached);
+    }
 
     [[nodiscard]] AThreadID GetThreadID() const;
 
@@ -40,8 +67,10 @@ public:
     UComponentModule &GetComponentModule();
     UEventModule &GetEventModule();
 
-    awaitable<void> OnLogin() override;
-    void OnLogout() override;
+    awaitable<void> OnLogin();
+    void OnLogout();
+
+    bool IsOnline() const;
 
     template<typename FUNC, typename... ARGS>
     uint64_t SetTimer(const std::chrono::duration<uint32_t> expire, const bool repeat, FUNC &&func, ARGS &&... args) {
@@ -61,13 +90,14 @@ public:
 
     void StopTimer(uint64_t timerID);
 
+    IPackage *BuildPackage() const;
+
+    void Send(IPackage *pkg) const;
     void Send(uint32_t id, std::string_view data) const;
     void Send(uint32_t id, const std::stringstream &ss) const;
 
     void SyncCache(struct FCacheNode *node);
 };
-
-std::shared_ptr<UPlayer> CreatePlayer(const AConnectionPointer &, uint64_t);
 
 #define SEND_PACKAGE(sender, proto, data) \
     (sender)->Send(static_cast<uint32_t>(protocol::EProtoType::proto), data.SerializeAsString());

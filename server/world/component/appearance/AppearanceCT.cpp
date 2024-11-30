@@ -81,7 +81,7 @@ void UAppearanceCT::SendInfo() const {
     SEND_PACKAGE(this, SC_AppearanceResponse, res)
 }
 
-awaitable<void> protocol::CS_AppearanceRequest(const std::shared_ptr<IAbstractPlayer> &character, IPackage *pkg) {
+awaitable<void> protocol::CS_AppearanceRequest(const std::shared_ptr<UCharacter> &character, IPackage *pkg) {
     if (character == nullptr)
         co_return;
 

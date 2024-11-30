@@ -52,7 +52,7 @@ void UCommandManager::OnTick(ATimePoint now) {
 }
 
 awaitable<void> UCommandManager::OnClientCommand(
-    const std::shared_ptr<IAbstractPlayer> &player,
+    const std::shared_ptr<UPlayer> &player,
     const std::string &type,
     const std::string &args)
 {

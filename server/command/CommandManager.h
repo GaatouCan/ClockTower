@@ -8,7 +8,7 @@
 #include <spdlog/spdlog.h>
 
 
-class IAbstractPlayer;
+class UPlayer;
 class UCommandObject;
 
 class UCommandManager final : public IManager {
@@ -60,7 +60,7 @@ public:
     void OnTick(ATimePoint now) override;
 
     awaitable<void> OnClientCommand(
-        const std::shared_ptr<IAbstractPlayer> &player,
+        const std::shared_ptr<UPlayer> &player,
         const std::string &type,
         const std::string &args);
 

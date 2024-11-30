@@ -2,7 +2,7 @@
 
 #include <system/manager/ManagerSystem.h>
 
-#include <manager/player/PlayerManager.h>
+#include "../player/PlayerManager.h"
 #include "../command/CommandManager.h"
 
 #include "../player/PlayerCache.h"

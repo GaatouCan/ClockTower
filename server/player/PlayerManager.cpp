@@ -1,7 +1,7 @@
 ﻿#include "PlayerManager.h"
-#include "../../GameWorld.h"
+#include "Player.h"
 
-std::function<std::shared_ptr<IAbstractPlayer>(const AConnectionPointer&, uint64_t)> UPlayerManager::sPlayerCreator = nullptr;
+#include <GameWorld.h>
 
 UPlayerManager::UPlayerManager(FContextNode &ctx)
     : IManager(ctx) {
@@ -11,11 +11,12 @@ UPlayerManager::~UPlayerManager() {
     mPlayerMap.clear();
 }
 
-void UPlayerManager::SetPlayerCreator(const std::function<std::shared_ptr<IAbstractPlayer>(const AConnectionPointer &, uint64_t)> &func) {
-    sPlayerCreator = func;
-}
-
 awaitable<void> UPlayerManager::OnPlayerLogin(const std::shared_ptr<UConnection> &conn, const uint64_t pid) {
+    if (conn == nullptr || std::any_cast<uint64_t>(conn->GetContext()) != pid) {
+        spdlog::error("{} - Null Connection Pointer Or Player ID Not Equal," __FUNCTION__);
+        co_return;
+    }
+
     if (const auto plr = FindPlayer(pid); plr != nullptr) {
         spdlog::info("{} - Player[{}] Over Login", __FUNCTION__, pid);
 
@@ -50,16 +51,13 @@ void UPlayerManager::OnPlayerLogout(const uint64_t pid) {
     }
 }
 
-std::shared_ptr<IAbstractPlayer> UPlayerManager::EmplacePlayer(const std::shared_ptr<UConnection> &conn, const uint64_t pid) {
-    if (!sPlayerCreator)
-        return nullptr;
-
-    const auto plr = std::invoke(sPlayerCreator, conn, pid);
+std::shared_ptr<UPlayer> UPlayerManager::EmplacePlayer(const std::shared_ptr<UConnection> &conn, const uint64_t pid) {
+    const auto plr = std::make_shared<UPlayer>(conn);
     PushPlayer(plr);
     return plr;
 }
 
-void UPlayerManager::PushPlayer(const std::shared_ptr<IAbstractPlayer> &plr) {
+void UPlayerManager::PushPlayer(const std::shared_ptr<UPlayer> &plr) {
     if (!IsSameThread()) {
         RunInThread(&UPlayerManager::PushPlayer, this, plr);
         return;
@@ -69,7 +67,7 @@ void UPlayerManager::PushPlayer(const std::shared_ptr<IAbstractPlayer> &plr) {
     mPlayerMap[plr->GetPlayerID()] = plr;
 }
 
-std::shared_ptr<IAbstractPlayer> UPlayerManager::FindPlayer(const uint64_t pid) {
+std::shared_ptr<UPlayer> UPlayerManager::FindPlayer(const uint64_t pid) {
     std::shared_lock lock(mSharedMutex);
     if (const auto it = mPlayerMap.find(pid); it != mPlayerMap.end()) {
         return it->second;
@@ -77,7 +75,7 @@ std::shared_ptr<IAbstractPlayer> UPlayerManager::FindPlayer(const uint64_t pid) 
     return nullptr;
 }
 
-std::shared_ptr<IAbstractPlayer> UPlayerManager::RemovePlayer(const uint64_t pid) {
+std::shared_ptr<UPlayer> UPlayerManager::RemovePlayer(const uint64_t pid) {
     std::scoped_lock lock(mMutex);
     if (const auto it = mPlayerMap.find(pid); it != mPlayerMap.end()) {
         auto res = it->second;

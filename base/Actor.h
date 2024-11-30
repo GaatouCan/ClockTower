@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Object.h"
-
-class UActor : public UObject {
-
+class UActor {
+public:
+    virtual ~UActor() = default;
 };

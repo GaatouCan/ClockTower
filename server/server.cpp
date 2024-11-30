@@ -3,8 +3,6 @@
 #include <system/protocol/ProtocolSystem.h>
 #include <system/login/LoginSystem.h>
 
-#include <manager/player/PlayerManager.h>
-
 #include "impl/ConnectionHandlerImpl.h"
 #include "impl/ProtocolHandlerImpl.h"
 #include "impl/LoginHandlerImpl.h"
@@ -45,9 +43,6 @@ auto main(int argc, char *argv[]) -> int {
     if (const auto sys = GetSystem<UManagerSystem>(); sys != nullptr) {
         sys->SetManagerLoader(&LoadManager);
     }
-
-    // 设置服务器玩家对象子类
-    UPlayerManager::SetPlayerCreator(&CreatePlayer);
 
     // 设置新连接处理
     GetWorld().FilterConnection([](const AConnectionPointer &conn) {

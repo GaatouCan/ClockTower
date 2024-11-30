@@ -15,7 +15,7 @@ class IPackage;
 class UPackagePool final {
 
     std::queue<IPackage *> mQueue;
-    size_t mUseCount = 0;
+    size_t mUseCount;
     ATimePoint mCollectTime;
 
     // 扩容和收缩临界点和比例
@@ -38,6 +38,8 @@ public:
     ~UPackagePool();
 
     DISABLE_COPY_MOVE(UPackagePool)
+
+    [[nodiscard]] size_t GetCapacity() const;
 
     /**
      * 从池里获取一个数据包

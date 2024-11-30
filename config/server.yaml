@@ -14,8 +14,8 @@ package:
     minimum_capacity: 64
     expanse_rate: 0.3
     expanse_scale: 0.7
-    collect_rate: 1.0
-    collect_scale: 0.7
+    collect_rate: 0.8
+    collect_scale: 0.5
 
 database:
   pool: 2

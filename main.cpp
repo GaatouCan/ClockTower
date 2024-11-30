@@ -2,6 +2,7 @@
 #include <asio.hpp>
 #include <thread>
 
+
 struct node {
 
     node() = default;
@@ -69,15 +70,15 @@ asio::awaitable<void> test() {
 int main() {
     spdlog::info("Hello World!");
 
-    std::stringstream ss;
-    ss << std::this_thread::get_id();
-    spdlog::info("main - {}", ss.str());
-
-    asio::io_context ctx;
-
-    asio::co_spawn(ctx, test(), asio::detached);
-
-    ctx.run();
+    // std::stringstream ss;
+    // ss << std::this_thread::get_id();
+    // spdlog::info("main - {}", ss.str());
+    //
+    // asio::io_context ctx;
+    //
+    // asio::co_spawn(ctx, test(), asio::detached);
+    //
+    // ctx.run();
 
     return 0;
 }

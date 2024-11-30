@@ -15,7 +15,7 @@ float UPackagePool::sCollectRate = 1.f;
 float UPackagePool::sCollectScale = 0.7f;
 
 std::function<IPackage*()> UPackagePool::sCreatePackage = nullptr;
-std::function<void(IPackage*)> UPackagePool::sInitPackage = nullptr;
+std::function<void(IPackage *)> UPackagePool::sInitPackage = nullptr;
 
 IPackage *DefaultPackage() {
     return new FPackage();
@@ -45,7 +45,8 @@ void PackageDefaultInit(IPackage *pkg) {
     }
 }
 
-UPackagePool::UPackagePool(const size_t capacity) {
+UPackagePool::UPackagePool(const size_t capacity)
+    : mUseCount(0) {
     for (size_t i = 0; i < capacity; i++) {
         IPackage *pkg = nullptr;
         if (sCreatePackage)
@@ -66,6 +67,10 @@ UPackagePool::~UPackagePool() {
         mQueue.pop();
         delete pkg;
     }
+}
+
+size_t UPackagePool::GetCapacity() const {
+    return mUseCount + mQueue.size();
 }
 
 IPackage *UPackagePool::Acquire() {
@@ -154,10 +159,10 @@ void UPackagePool::Expanse() {
     if (mUseCount == 0)
         return;
 
-    if (std::floor(mQueue.size() / mUseCount) >= sExpanseRate)
+    if (std::floor(mQueue.size() / GetCapacity()) >= sExpanseRate)
         return;
 
-    const auto num = static_cast<size_t>(std::ceil(static_cast<float>(mUseCount) * sExpanseScale));
+    const auto num = static_cast<size_t>(std::ceil(static_cast<float>(GetCapacity()) * sExpanseScale));
     spdlog::trace("{} - Pool Rest[{}], Current Using[{}], Expand Number[{}].", __FUNCTION__, mQueue.size(), mUseCount, num);
 
     for (size_t i = 0; i < num; i++) {
@@ -181,12 +186,12 @@ void UPackagePool::Collect() {
     if (now - mCollectTime < std::chrono::seconds(3))
         return;
 
-    if (mQueue.size() <= sMinCapacity || std::floor(mQueue.size() / (mUseCount == 0 ? 1 : mUseCount)) < sCollectRate)
+    if (mQueue.size() <= sMinCapacity || std::floor(mQueue.size() / GetCapacity()) < sCollectRate)
         return;
 
     mCollectTime = now;
 
-    const auto num = static_cast<size_t>(std::ceil(static_cast<float>(mQueue.size()) * sCollectScale));
+    const auto num = static_cast<size_t>(std::ceil(static_cast<float>(GetCapacity()) * sCollectScale));
     spdlog::trace("{} - Pool Rest[{}], Current Using[{}], Collect Number[{}].", __FUNCTION__, mQueue.size(), mUseCount, num);
 
     for (size_t i = 0; i < num && mQueue.size() > sMinCapacity; i++) {

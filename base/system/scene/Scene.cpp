@@ -28,6 +28,11 @@ std::shared_ptr<IAbstractPlayer> UScene::CreatePlayer(const std::shared_ptr<UCon
 }
 
 void UScene::PlayerEnterScene(const std::shared_ptr<IAbstractPlayer> &player) {
+    if (std::this_thread::get_id() != GetWorld().GetThreadID()) {
+        RunInThread(&UScene::PlayerEnterScene, this, player);
+        return;
+    }
+
     if (player == nullptr)
         return;
 
@@ -39,6 +44,11 @@ void UScene::PlayerEnterScene(const std::shared_ptr<IAbstractPlayer> &player) {
 }
 
 void UScene::PlayerLeaveScene(const std::shared_ptr<IAbstractPlayer> &player) {
+    if (std::this_thread::get_id() != GetWorld().GetThreadID()) {
+        RunInThread(&UScene::PlayerLeaveScene, this, player);
+        return;
+    }
+
     if (player == nullptr)
         return;
 

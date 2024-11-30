@@ -24,12 +24,16 @@ public:
 
     [[nodiscard]] AConnectionPointer GetConnection() const;
     [[nodiscard]] ATcpSocket &GetSocket() const;
+    [[nodiscard]] uint64_t GetPlayerID() const;
 
     [[nodiscard]] IPackage *BuildPackage() const;
     void Send(IPackage *pkg) const;
 
-    void EnterScene(UScene *scene);
-    void LeaveScene();
+    void OnEnterScene(UScene *scene);
+    void OnLeaveScene(UScene *scene);
+
+    virtual void OnLogin() = 0;
+    virtual void OnLogout() = 0;
 
     bool IsInScene(uint32_t id = 0) const;
 };

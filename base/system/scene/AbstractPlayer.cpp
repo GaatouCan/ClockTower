@@ -25,6 +25,10 @@ ATcpSocket &IAbstractPlayer::GetSocket() const {
     return mConn->GetSocket();
 }
 
+uint64_t IAbstractPlayer::GetPlayerID() const {
+    return mPlayerID;
+}
+
 IPackage *IAbstractPlayer::BuildPackage() const {
     return mConn->BuildPackage();
 }
@@ -33,7 +37,7 @@ void IAbstractPlayer::Send(IPackage *pkg) const {
     mConn->Send(pkg);
 }
 
-void IAbstractPlayer::EnterScene(UScene *scene) {
+void IAbstractPlayer::OnEnterScene(UScene *scene) {
     if (mOwnerScene != nullptr) {
         // TODO
     }
@@ -41,7 +45,7 @@ void IAbstractPlayer::EnterScene(UScene *scene) {
     mEnterTime = std::chrono::steady_clock::now();
 }
 
-void IAbstractPlayer::LeaveScene() {
+void IAbstractPlayer::OnLeaveScene(UScene *scene) {
     if (mOwnerScene == nullptr)
         return;
 

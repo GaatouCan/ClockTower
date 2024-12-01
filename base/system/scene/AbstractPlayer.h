@@ -32,9 +32,6 @@ public:
     void OnEnterScene(UScene *scene);
     void OnLeaveScene(UScene *scene);
 
-    virtual void OnLogin() = 0;
-    virtual void OnLogout() = 0;
-
     bool IsInScene(uint32_t id = 0) const;
     uint32_t GetCurrentSceneID() const;
 };

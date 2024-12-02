@@ -13,7 +13,7 @@
 
 
 UPlayer::UPlayer(AConnectionPointer conn)
-    : mConn(std::move(conn)),
+    : IAbstractPlayer(std::move(conn)),
       mId(std::any_cast<uint64_t>(mConn->GetContext())),
       mComponentModule(this),
       mEventModule(this) {
@@ -21,42 +21,6 @@ UPlayer::UPlayer(AConnectionPointer conn)
 
 UPlayer::~UPlayer() {
     spdlog::trace("{} - {}", __FUNCTION__, mId);
-}
-
-void UPlayer::SetConnection(const AConnectionPointer &conn) {
-    if (std::any_cast<uint64_t>(conn->GetContext()) == mId) {
-        mConn = conn;
-    } else {
-        spdlog::warn("{} - New Connection 's Context Not Equal Old Player ID", __FUNCTION__);
-    }
-}
-
-AConnectionPointer UPlayer::GetConnection() const {
-    return mConn;
-}
-
-ATcpSocket &UPlayer::GetSocket() const {
-    return mConn->GetSocket();
-}
-
-uint64_t UPlayer::GetPlayerID() const {
-    return mId;
-}
-
-IPackage *UPlayer::BuildPackage() const {
-    return mConn->BuildPackage();
-}
-
-void UPlayer::Send(IPackage *pkg) const {
-    mConn->Send(pkg);
-}
-
-AThreadID UPlayer::GetThreadID() const {
-    return GetConnection()->GetThreadID();
-}
-
-bool UPlayer::IsSameThread() const {
-    return std::this_thread::get_id() == GetThreadID();
 }
 
 UComponentModule &UPlayer::GetComponentModule() {
@@ -95,7 +59,7 @@ awaitable<void> UPlayer::OnLogin() {
     SEND_PACKAGE(this, SC_LoginResponse, response)
 
     const auto param = new FEP_PlayerLogin;
-    param->pid = GetPlayerID();
+    param->pid = GetFullID();
 
     DISPATCH_EVENT(PLAYER_LOGIN, param)
 }
@@ -105,37 +69,37 @@ void UPlayer::OnLogout() {
         RunInThread(&UPlayer::OnLogin, this);
         return;
     }
-    mLoginTime = std::chrono::steady_clock::now();
+    mLoginTime = NowTimePoint();
     mTimerMap.clear();
 
     if (const auto sys = GetSystem<UDatabaseSystem>(); sys != nullptr) {
         sys->PushTask([self = shared_from_this()](mysqlx::Schema &schema) {
-                          if (const auto plr = std::dynamic_pointer_cast<UPlayer>(self)) {
-                              plr->GetComponentModule().Serialize(schema);
-                              return true;
-                          }
-                          return false;
-                      }, [pid = this->GetPlayerID()](const bool ret) {
-                          if (!ret) {
-                              spdlog::info("UPlayer::OnLogout() - Player[{}] Serialize Success.", pid);
-                          } else {
-                              spdlog::warn("UPlayer::OnLogout() - Player[{}] Serialize Failed.", pid);
-                          }
-                      });
+            if (const auto plr = std::dynamic_pointer_cast<UPlayer>(self)) {
+                plr->GetComponentModule().Serialize(schema);
+                return true;
+            }
+            return false;
+        }, [pid = this->GetPlayerID()](const bool ret) {
+            if (!ret) {
+                spdlog::info("UPlayer::OnLogout() - Player[{}] Serialize Success.", pid);
+            } else {
+                spdlog::warn("UPlayer::OnLogout() - Player[{}] Serialize Failed.", pid);
+            }
+        });
     }
 
     mComponentModule.OnLogout();
     spdlog::info("{} - Player[{}] Logout.", __FUNCTION__, GetPlayerID());
 
     const auto param = new FEP_PlayerLogout;
-    param->pid = GetPlayerID();
+    param->pid = GetFullID();
 
     DISPATCH_EVENT(PLAYER_LOGOUT, param);
 }
 
 bool UPlayer::IsOnline() const {
     constexpr ATimePoint zeroTimePoint{};
-    const auto now = std::chrono::steady_clock::now();
+    const auto now = NowTimePoint();
 
     return (mLoginTime > zeroTimePoint && mLoginTime < now)
            && (mLogoutTime > zeroTimePoint && mLoginTime < now)
@@ -152,13 +116,13 @@ void UPlayer::StopTimer(const uint64_t timerID) {
 void UPlayer::Send(const uint32_t id, const std::string_view data) const {
     const auto pkg = dynamic_cast<FPackage *>(BuildPackage());
     pkg->SetPackageID(id).SetData(data);
-    Send(pkg);
+    IAbstractPlayer::Send(pkg);
 }
 
 void UPlayer::Send(const uint32_t id, const std::stringstream &ss) const {
     const auto pkg = dynamic_cast<FPackage *>(BuildPackage());
     pkg->SetPackageID(id).SetData(ss.str());
-    Send(pkg);
+    IAbstractPlayer::Send(pkg);
 }
 
 void UPlayer::SyncCache(FCacheNode *node) {

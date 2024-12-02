@@ -3,7 +3,7 @@
 #include "ComponentModule.h"
 #include "EventModule.h"
 
-#include <Character.h>
+#include <system/scene/AbstractPlayer.h>
 #include <Connection.h>
 #include <RepeatedTimer.h>
 #include <utils.h>
@@ -20,7 +20,7 @@ struct FEP_PlayerLogout final : IEventParam {
     uint64_t pid;
 };
 
-class UPlayer final : public UCharacter {
+class UPlayer final : public IAbstractPlayer {
 
     AConnectionPointer mConn;
     uint64_t mId;
@@ -40,29 +40,6 @@ public:
 
     explicit UPlayer(AConnectionPointer conn);
     ~UPlayer() override;
-
-    void SetConnection(const AConnectionPointer &conn);
-    AConnectionPointer GetConnection() const;
-
-    ATcpSocket &GetSocket() const;
-
-    uint64_t GetPlayerID() const;
-
-    template<typename FUNC, typename... ARGS>
-    void RunInThread(FUNC &&func, ARGS &&... args) {
-        co_spawn(mConn->GetSocket().get_executor(), [func = std::forward<FUNC>(func), ...args = std::forward<ARGS>(args)]() -> awaitable<void> {
-            try {
-                std::invoke(func, args...);
-            } catch (std::exception &e) {
-                spdlog::error("Player::RunInThread: {}", e.what());
-            }
-            co_return;
-        }, detached);
-    }
-
-    [[nodiscard]] AThreadID GetThreadID() const;
-
-    bool IsSameThread() const;
 
     UComponentModule &GetComponentModule();
     UEventModule &GetEventModule();
@@ -89,10 +66,6 @@ public:
     }
 
     void StopTimer(uint64_t timerID);
-
-    IPackage *BuildPackage() const;
-
-    void Send(IPackage *pkg) const;
     void Send(uint32_t id, std::string_view data) const;
     void Send(uint32_t id, const std::stringstream &ss) const;
 

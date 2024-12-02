@@ -25,6 +25,14 @@ ATcpSocket &IAbstractPlayer::GetSocket() const {
     return mConn->GetSocket();
 }
 
+AThreadID IAbstractPlayer::GetThreadID() const {
+    return mConn->GetThreadID();
+}
+
+bool IAbstractPlayer::IsSameThread() const {
+    return std::this_thread::get_id() == GetThreadID();
+}
+
 uint32_t IAbstractPlayer::GetLocalID() const {
     return mPlayerID.GetLocalID();
 }

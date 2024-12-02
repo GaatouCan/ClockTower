@@ -4,7 +4,7 @@
 
 #include <memory>
 
-class UCharacter : public UActor, public std::enable_shared_from_this<UCharacter> {
+class UCharacter : public UActor {
 public:
     ~UCharacter() override = default;
 };

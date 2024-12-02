@@ -5,6 +5,8 @@
 #include "../../Connection.h"
 #include "../login/PlatformInfo.h"
 
+#include <spdlog/spdlog.h>
+
 class IAbstractPlayer : public UCharacter, public std::enable_shared_from_this<IAbstractPlayer> {
 
     class UScene *mOwnerScene;
@@ -26,6 +28,9 @@ public:
     [[nodiscard]] AConnectionPointer GetConnection() const;
     [[nodiscard]] ATcpSocket &GetSocket() const;
 
+    [[nodiscard]] AThreadID GetThreadID() const;
+    bool IsSameThread() const;
+
     [[nodiscard]] uint32_t GetLocalID() const;
     [[nodiscard]] uint32_t GetCrossID() const;
     [[nodiscard]] const FPlayerID &GetPlayerID() const;
@@ -45,6 +50,18 @@ public:
 
     void SetPlatformInfo(const FPlatformInfo &platform);
     const FPlatformInfo &GetPlatformInfo() const;
+
+    template<typename FUNC, typename... ARGS>
+    void RunInThread(FUNC &&func, ARGS &&... args) {
+        co_spawn(mConn->GetSocket().get_executor(), [func = std::forward<FUNC>(func), ...args = std::forward<ARGS>(args)]() -> awaitable<void> {
+            try {
+                std::invoke(func, args...);
+            } catch (std::exception &e) {
+                spdlog::error("IAbstractPlayer::RunInThread: {}", e.what());
+            }
+            co_return;
+        }, detached);
+    }
 };
 
 using APlayerPointer = std::shared_ptr<IAbstractPlayer>;

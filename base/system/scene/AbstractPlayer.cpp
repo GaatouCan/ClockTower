@@ -71,3 +71,19 @@ uint32_t IAbstractPlayer::GetCurrentSceneID() const {
         return 0;
     return mOwnerScene->GetSceneID();
 }
+
+ATimePoint IAbstractPlayer::GetEnterSceneTime() const {
+    return mEnterTime;
+}
+
+ATimePoint IAbstractPlayer::GetLeaveSceneTime() const {
+    return mLeaveTime;
+}
+
+void IAbstractPlayer::SetPlatformInfo(const FPlatformInfo &platform) {
+    mPlatform = platform;
+}
+
+FPlatformInfo IAbstractPlayer::GetPlatformInfo() const {
+    return mPlatform;
+}

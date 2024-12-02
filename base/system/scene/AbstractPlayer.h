@@ -34,6 +34,12 @@ public:
 
     bool IsInScene(uint32_t id = 0) const;
     uint32_t GetCurrentSceneID() const;
+
+    ATimePoint GetEnterSceneTime() const;
+    ATimePoint GetLeaveSceneTime() const;
+
+    void SetPlatformInfo(const FPlatformInfo &platform);
+    FPlatformInfo GetPlatformInfo() const;
 };
 
 using APlayerPointer = std::shared_ptr<IAbstractPlayer>;

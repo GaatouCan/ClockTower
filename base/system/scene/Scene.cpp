@@ -1,5 +1,6 @@
 #include "Scene.h"
 #include "AbstractPlayer.h"
+#include "SceneSystem.h"
 
 std::function<APlayerPointer(const AConnectionPointer &)> UScene::sPlayerCreator = nullptr;
 
@@ -40,13 +41,22 @@ void UScene::PlayerEnterScene(const APlayerPointer &player) {
     if (mPlayerMap.contains(player->GetPlayerID()))
         return;
 
+    // Change Scene From Other Scene
+    if (const auto otherSceneID = player->GetCurrentSceneID(); otherSceneID != 0 && otherSceneID != mSceneID) {
+        if (const auto sys = GetSystem<USceneSystem>(); sys != nullptr) {
+            if (const auto scene = sys->GetSceneByID(otherSceneID); scene != nullptr && scene != this) {
+                scene->PlayerLeaveScene(player, true);
+            }
+        }
+    }
+
     mPlayerMap[player->GetPlayerID()] = player;
     player->OnEnterScene(this);
 }
 
-void UScene::PlayerLeaveScene(const APlayerPointer &player) {
+void UScene::PlayerLeaveScene(const APlayerPointer &player, const bool bChange) {
     if (std::this_thread::get_id() != GetWorld().GetThreadID()) {
-        RunInThread(&UScene::PlayerLeaveScene, this, player);
+        RunInThread(&UScene::PlayerLeaveScene, this, player, bChange);
         return;
     }
 
@@ -57,7 +67,9 @@ void UScene::PlayerLeaveScene(const APlayerPointer &player) {
         return;
 
     mPlayerMap.erase(player->GetPlayerID());
-    player->OnLeaveScene(this);
+
+    if (!bChange)
+        player->OnLeaveScene(this);
 }
 
 void UScene::DefinePlayerCreator(const std::function<APlayerPointer(const AConnectionPointer &)> &creator) {

@@ -49,7 +49,7 @@ public:
     APlayerPointer CreatePlayer(const AConnectionPointer &conn);
 
     void PlayerEnterScene(const APlayerPointer &player);
-    void PlayerLeaveScene(const APlayerPointer &player);
+    void PlayerLeaveScene(const APlayerPointer &player, bool bChange = false);
 
     static void DefinePlayerCreator(const std::function<APlayerPointer(const AConnectionPointer &)> & creator);
 };

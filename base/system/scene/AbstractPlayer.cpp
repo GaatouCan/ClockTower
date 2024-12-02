@@ -37,6 +37,10 @@ const FPlayerID &IAbstractPlayer::GetPlayerID() const {
     return mPlayerID;
 }
 
+uint64_t IAbstractPlayer::GetFullID() const {
+    return mPlayerID.ToUInt64();
+}
+
 IPackage *IAbstractPlayer::BuildPackage() const {
     return mConn->BuildPackage();
 }

@@ -27,6 +27,10 @@ struct FPlayerID {
         return *this;
     }
 
+    bool operator<(const FPlayerID &other) const {
+        return ToUInt64() < other.ToUInt64();
+    }
+
     bool operator==(const FPlayerID& other) const {
         return localID == other.localID && crossID == other.crossID;
     }

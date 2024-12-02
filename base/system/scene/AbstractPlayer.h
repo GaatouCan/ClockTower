@@ -29,6 +29,7 @@ public:
     [[nodiscard]] uint32_t GetLocalID() const;
     [[nodiscard]] uint32_t GetCrossID() const;
     [[nodiscard]] const FPlayerID &GetPlayerID() const;
+    [[nodiscard]] uint64_t GetFullID() const;
 
     [[nodiscard]] IPackage *BuildPackage() const;
     void Send(IPackage *pkg) const;

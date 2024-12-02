@@ -21,7 +21,7 @@ class UScene final {
 
     uint32_t mSceneID;
 
-    std::map<uint64_t, std::shared_ptr<IAbstractPlayer>> mPlayerMap;
+    std::map<FPlayerID, std::shared_ptr<IAbstractPlayer>> mPlayerMap;
 
     static std::function<APlayerPointer(const AConnectionPointer &)> sPlayerCreator;
 

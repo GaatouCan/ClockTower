@@ -37,10 +37,10 @@ void UScene::PlayerEnterScene(const APlayerPointer &player) {
     if (player == nullptr)
         return;
 
-    if (mPlayerMap.contains(player->GetPlayerID()))
+    if (mPlayerMap.contains(player->GetPlayerID().ToUInt64()))
         return;
 
-    mPlayerMap[player->GetPlayerID()] = player;
+    mPlayerMap[player->GetPlayerID().ToUInt64()] = player;
     player->OnEnterScene(this);
 }
 
@@ -53,10 +53,10 @@ void UScene::PlayerLeaveScene(const APlayerPointer &player) {
     if (player == nullptr)
         return;
 
-    if (!mPlayerMap.contains(player->GetPlayerID()))
+    if (!mPlayerMap.contains(player->GetPlayerID().ToUInt64()))
         return;
 
-    mPlayerMap.erase(player->GetPlayerID());
+    mPlayerMap.erase(player->GetPlayerID().ToUInt64());
     player->OnLeaveScene(this);
 }
 

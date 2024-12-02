@@ -5,6 +5,7 @@
 #include <functional>
 
 #include "../../GameWorld.h"
+#include "../../PlayerID.h"
 
 #ifdef __linux__
 #include <cstdint>

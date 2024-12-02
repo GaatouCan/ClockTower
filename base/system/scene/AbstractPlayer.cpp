@@ -33,8 +33,8 @@ uint32_t IAbstractPlayer::GetCrossID() const {
     return mPlayerID.GetCrossID();
 }
 
-uint64_t IAbstractPlayer::GetPlayerID() const {
-    return mPlayerID.ToUInt64();
+const FPlayerID &IAbstractPlayer::GetPlayerID() const {
+    return mPlayerID;
 }
 
 IPackage *IAbstractPlayer::BuildPackage() const {

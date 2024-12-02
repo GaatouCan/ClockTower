@@ -40,3 +40,5 @@ unsigned int GetDayOfMonth(std::chrono::time_point<std::chrono::system_clock> po
 unsigned int GetDayOfYear(std::chrono::time_point<std::chrono::system_clock> point = std::chrono::system_clock::now());
 
 unsigned int GetPassedDays(std::chrono::time_point<std::chrono::system_clock> pointX, std::chrono::time_point<std::chrono::system_clock> pointY = std::chrono::system_clock::now());
+
+std::chrono::time_point<std::chrono::system_clock> GetDayZeroTime(std::chrono::time_point<std::chrono::system_clock> point);

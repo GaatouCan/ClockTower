@@ -151,4 +151,6 @@ unsigned int GetPassedDays(const std::chrono::time_point<std::chrono::system_clo
     return diff.count() + 1;
 }
 
-
+std::chrono::time_point<std::chrono::system_clock> GetDayZeroTime(const std::chrono::time_point<std::chrono::system_clock> point) {
+    return std::chrono::floor<std::chrono::days>(point);
+}

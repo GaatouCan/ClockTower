@@ -11,7 +11,7 @@
 IAbstractPlayer::IAbstractPlayer(AConnectionPointer conn)
     : mOwnerScene(nullptr),
       mConn(std::move(conn)),
-      mPlayerID(std::any_cast<uint64_t>(mConn->GetContext())) {
+      mPlayerID(std::any_cast<FPlayerID>(mConn->GetContext())) {
 }
 
 IAbstractPlayer::~IAbstractPlayer() {
@@ -25,8 +25,16 @@ ATcpSocket &IAbstractPlayer::GetSocket() const {
     return mConn->GetSocket();
 }
 
+uint32_t IAbstractPlayer::GetLocalID() const {
+    return mPlayerID.GetLocalID();
+}
+
+uint32_t IAbstractPlayer::GetCrossID() const {
+    return mPlayerID.GetCrossID();
+}
+
 uint64_t IAbstractPlayer::GetPlayerID() const {
-    return mPlayerID;
+    return mPlayerID.ToUInt64();
 }
 
 IPackage *IAbstractPlayer::BuildPackage() const {

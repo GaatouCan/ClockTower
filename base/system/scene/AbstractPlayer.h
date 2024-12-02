@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../PlayerID.h"
 #include "../../Character.h"
 #include "../../Connection.h"
 #include "../login/PlatformInfo.h"
@@ -9,7 +10,7 @@ class IAbstractPlayer : public UCharacter, public std::enable_shared_from_this<I
     class UScene *mOwnerScene;
 
     AConnectionPointer mConn;
-    uint64_t mPlayerID;
+    FPlayerID mPlayerID;
 
     ATimePoint mEnterTime;
     ATimePoint mLeaveTime;
@@ -24,6 +25,9 @@ public:
 
     [[nodiscard]] AConnectionPointer GetConnection() const;
     [[nodiscard]] ATcpSocket &GetSocket() const;
+
+    [[nodiscard]] uint32_t GetLocalID() const;
+    [[nodiscard]] uint32_t GetCrossID() const;
     [[nodiscard]] uint64_t GetPlayerID() const;
 
     [[nodiscard]] IPackage *BuildPackage() const;

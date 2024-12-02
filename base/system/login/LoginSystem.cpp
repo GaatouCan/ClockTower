@@ -18,7 +18,7 @@ bool ULoginSystem::VerifyAddress(const asio::ip::address &addr) {
     return true;
 }
 
-uint64_t ULoginSystem::VerifyToken(uint64_t pid, const std::string &token) {
+FPlayerID ULoginSystem::VerifyToken(FPlayerID pid, const std::string &token) {
     // TODO
     return pid;
 }
@@ -30,14 +30,14 @@ awaitable<void> ULoginSystem::OnLogin(const AConnectionPointer &conn, IPackage *
     }
 
     const auto info = co_await mHandler->ParseLoginInfo(pkg);
-    if (info.pid == 0) {
+    if (!info.pid.IsValid()) {
         spdlog::warn("{} - Connection[{}] context is null but not receive the login request", conn->RemoteAddress().to_string(), __FUNCTION__);
         co_return;
     }
 
-    spdlog::trace("{} - Player id: {}, token: {}", __FUNCTION__, info.pid, info.token);
-    if (const auto pid = VerifyToken(info.pid, info.token); pid != 0) {
-        conn->SetContext(std::make_any<uint64_t>(pid));
+    spdlog::trace("{} - Player id: {}, token: {}", __FUNCTION__, info.pid.ToUInt64(), info.token);
+    if (const auto pid = VerifyToken(info.pid, info.token); pid.IsValid()) {
+        conn->SetContext(std::make_any<FPlayerID>(pid));
 
         if (const auto sys = GetSystem<USceneSystem>(); sys != nullptr) {
             if (const auto scene = sys->GetMainScene(); scene != nullptr) {

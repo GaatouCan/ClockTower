@@ -1,5 +1,7 @@
 #pragma once
 
+#include "PlayerID.h"
+
 #include <memory>
 #include <string>
 #include <asio/awaitable.hpp>
@@ -11,7 +13,7 @@ using APlayerPointer = std::shared_ptr<IAbstractPlayer>;
 using asio::awaitable;
 
 struct FLoginInfo {
-    uint64_t pid = 0;
+    FPlayerID pid;
     std::string token;
 };
 

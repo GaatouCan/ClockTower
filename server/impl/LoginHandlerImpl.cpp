@@ -28,10 +28,12 @@ awaitable<FLoginInfo> ULoginHandlerImpl::ParseLoginInfo(IPackage *pkg) {
         Login::CS_LoginRequest request;
         request.ParseFromString(tmp->GetData());
 
-        co_return FLoginInfo {
-            request.player_id(),
-            request.token()
-        };
+        FLoginInfo info;
+
+        info.pid.FromUInt64(request.player_id());
+        info.token = request.token();
+
+        co_return info;
     } catch (std::exception &e) {
         spdlog::warn("{} - {}", __FUNCTION__, e.what());
         co_return FLoginInfo{};

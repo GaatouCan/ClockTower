@@ -19,7 +19,7 @@ public:
 
     bool VerifyAddress(const asio::ip::address &addr);
 
-    uint64_t VerifyToken(uint64_t pid, const std::string &token);
+    FPlayerID VerifyToken(FPlayerID pid, const std::string &token);
 
     awaitable<void> OnLogin(const AConnectionPointer &conn, class IPackage *pkg);
 

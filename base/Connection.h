@@ -22,7 +22,7 @@ class UConnection final : public std::enable_shared_from_this<UConnection> {
 
     std::string mKey;
 
-    ASteadyTimer mWatchdogTimer;
+    ASystemTimer mWatchdogTimer;
     ATimePoint mDeadline;
 
     AThreadID mThreadId;

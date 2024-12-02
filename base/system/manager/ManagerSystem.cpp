@@ -39,7 +39,7 @@ void UManagerSystem::Init() {
 
     co_spawn(mContextNode.ctx, [this]() mutable -> awaitable<void> {
         try {
-            ATimePoint point = std::chrono::steady_clock::now();
+            ATimePoint point = std::chrono::system_clock::now();
             point = std::chrono::floor<std::chrono::seconds>(point);
 
             while (!mContextNode.ctx.stopped()) {

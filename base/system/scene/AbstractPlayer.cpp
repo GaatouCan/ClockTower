@@ -54,7 +54,7 @@ void IAbstractPlayer::OnEnterScene(UScene *scene) {
         // TODO
     }
     mOwnerScene = scene;
-    mEnterTime = std::chrono::steady_clock::now();
+    mEnterTime = std::chrono::system_clock::now();
 }
 
 void IAbstractPlayer::OnLeaveScene(UScene *scene) {
@@ -63,7 +63,7 @@ void IAbstractPlayer::OnLeaveScene(UScene *scene) {
 
     // TODO
 
-    mLeaveTime = std::chrono::steady_clock::now();
+    mLeaveTime = std::chrono::system_clock::now();
     mOwnerScene = nullptr;
 }
 

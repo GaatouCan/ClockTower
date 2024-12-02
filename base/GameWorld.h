@@ -18,7 +18,7 @@ class UGameWorld final {
     std::map<std::string, AConnectionPointer> mConnectionMap;
     absl::BitGen mBitGen;
 
-    ASteadyTimer mFullTimer;
+    ASystemTimer mFullTimer;
 
     struct FSystemPriority {
         int priority;

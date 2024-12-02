@@ -14,7 +14,7 @@
 
 #include <chrono>
 
-using ATimePoint = std::chrono::time_point<std::chrono::steady_clock>;
+using ATimePoint = std::chrono::time_point<std::chrono::system_clock>;
 
 #include <asio.hpp>
 
@@ -35,7 +35,7 @@ using AIOContext = asio::io_context;
 using ATcpSocket = deferred_t::as_default_on_t<tcp::socket>;
 using ATcpAcceptor = deferred_t::as_default_on_t<tcp::acceptor>;
 
-using ASteadyTimer = default_token::as_default_on_t<asio::steady_timer>;
+using ASystemTimer = default_token::as_default_on_t<asio::system_timer>;
 
 #include <thread>
 using AThreadID = std::thread::id;

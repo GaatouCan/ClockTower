@@ -60,7 +60,7 @@ URepeatedTimer &URepeatedTimer::Start() {
     co_spawn(mContext, [this]() mutable -> awaitable<void> {
         try {
             bRunning = true;
-            ATimePoint point = std::chrono::steady_clock::now();
+            auto point = std::chrono::system_clock::now();
 
             do {
                 point += mExpire;

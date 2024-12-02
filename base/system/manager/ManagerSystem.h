@@ -11,7 +11,7 @@ class UManagerSystem final : public ISubSystem {
     std::function<void(UManagerSystem *)> mManagerLoader;
 
     FContextNode mContextNode;
-    ASteadyTimer mTickTimer;
+    ASystemTimer mTickTimer;
 
     std::thread mManagerThread;
 

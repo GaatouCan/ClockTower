@@ -14,7 +14,7 @@ std::string PascalToUnderline(const std::string &src);
 
 long long UnixTime();
 
-long long ToUnixTime(std::chrono::time_point<std::chrono::steady_clock> point);
+long long ToUnixTime(std::chrono::time_point<std::chrono::system_clock> point);
 
 uint64_t SetBit(uint64_t, uint32_t);
 
@@ -27,3 +27,5 @@ bool CheckBit(uint64_t, uint32_t);
 std::vector<std::string> SplitString(const std::string &src, char delimiter);
 
 std::vector<int> SplitStringToInt(const std::string &src, char delimiter);
+
+int GetDayOfWeek(std::chrono::time_point<std::chrono::system_clock> point = std::chrono::system_clock::now());

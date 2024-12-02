@@ -8,7 +8,7 @@ using ATimerFunctor = std::function<void()>;
 class URepeatedTimer final {
 
     AIOContext &mContext;
-    ASteadyTimer mTimer;
+    ASystemTimer mTimer;
 
     ATimerID mTimerId;
     ATimerFunctor mFunctor;

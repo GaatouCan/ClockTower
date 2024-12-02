@@ -1,6 +1,8 @@
 #include "utils.h"
 
 #include <cassert>
+#include <ctime>
+#include <spdlog/fmt/bundled/chrono.h>
 
 
 void TraverseFolder(const std::string &folder, const std::function<void(const std::filesystem::directory_entry &)> &func) {
@@ -60,7 +62,7 @@ long long UnixTime() {
     return secondsSinceEpoch.count();
 }
 
-long long ToUnixTime(const std::chrono::time_point<std::chrono::steady_clock> point) {
+long long ToUnixTime(const std::chrono::time_point<std::chrono::system_clock> point) {
     const auto durationSinceEpoch = point.time_since_epoch();
     const auto secondsSinceEpoch = std::chrono::duration_cast<std::chrono::seconds>(durationSinceEpoch);
     return secondsSinceEpoch.count();
@@ -109,3 +111,15 @@ std::vector<int> SplitStringToInt(const std::string &src, const char delimiter) 
 
     return result;
 }
+
+int GetDayOfWeek(const std::chrono::time_point<std::chrono::system_clock> point) {
+    const std::time_t current_time = std::chrono::system_clock::to_time_t(point);
+    std::tm tm;
+#ifdef WIN32
+    localtime_s(&tm, &current_time);
+#else
+    localtime_r(&current_time, &tm);
+#endif
+    return tm.tm_wday;
+}
+

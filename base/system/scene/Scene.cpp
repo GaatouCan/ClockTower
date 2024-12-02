@@ -1,15 +1,16 @@
 #include "Scene.h"
 #include "AbstractPlayer.h"
 
-std::function<std::shared_ptr<IAbstractPlayer>(const std::shared_ptr<UConnection> &)> UScene::sPlayerCreator = nullptr;
+std::function<APlayerPointer(const AConnectionPointer &)> UScene::sPlayerCreator = nullptr;
 
-UScene::UScene() {
+UScene::UScene(const uint32_t id)
+    : mSceneID(id) {
 }
 
 UScene::~UScene() {
 }
 
-void UScene::SetSceneID(uint32_t id) {
+void UScene::SetSceneID(const uint32_t id) {
     mSceneID = id;
 }
 
@@ -17,7 +18,7 @@ uint32_t UScene::GetSceneID() const {
     return mSceneID;
 }
 
-std::shared_ptr<IAbstractPlayer> UScene::CreatePlayer(const std::shared_ptr<UConnection> &conn) {
+APlayerPointer UScene::CreatePlayer(const AConnectionPointer &conn) {
     if (sPlayerCreator == nullptr)
         return nullptr;
 
@@ -27,7 +28,7 @@ std::shared_ptr<IAbstractPlayer> UScene::CreatePlayer(const std::shared_ptr<UCon
     return plr;
 }
 
-void UScene::PlayerEnterScene(const std::shared_ptr<IAbstractPlayer> &player) {
+void UScene::PlayerEnterScene(const APlayerPointer &player) {
     if (std::this_thread::get_id() != GetWorld().GetThreadID()) {
         RunInThread(&UScene::PlayerEnterScene, this, player);
         return;
@@ -43,7 +44,7 @@ void UScene::PlayerEnterScene(const std::shared_ptr<IAbstractPlayer> &player) {
     player->OnEnterScene(this);
 }
 
-void UScene::PlayerLeaveScene(const std::shared_ptr<IAbstractPlayer> &player) {
+void UScene::PlayerLeaveScene(const APlayerPointer &player) {
     if (std::this_thread::get_id() != GetWorld().GetThreadID()) {
         RunInThread(&UScene::PlayerLeaveScene, this, player);
         return;
@@ -59,6 +60,6 @@ void UScene::PlayerLeaveScene(const std::shared_ptr<IAbstractPlayer> &player) {
     player->OnLeaveScene(this);
 }
 
-void UScene::DefinePlayerCreator(const std::function<std::shared_ptr<IAbstractPlayer>(const std::shared_ptr<UConnection> &)> &creator) {
+void UScene::DefinePlayerCreator(const std::function<APlayerPointer(const AConnectionPointer &)> &creator) {
     sPlayerCreator = creator;
 }

@@ -1,6 +1,10 @@
 #include "LoginSystem.h"
+
 #include "../../Connection.h"
 #include "../../GameWorld.h"
+
+#include "../scene/SceneSystem.h"
+#include "../scene/Scene.h"
 
 #include <spdlog/spdlog.h>
 
@@ -19,7 +23,7 @@ uint64_t ULoginSystem::VerifyToken(uint64_t pid, const std::string &token) {
     return pid;
 }
 
-awaitable<void> ULoginSystem::OnLogin(const std::shared_ptr<UConnection> &conn, IPackage *pkg) {
+awaitable<void> ULoginSystem::OnLogin(const AConnectionPointer &conn, IPackage *pkg) {
     if (mHandler == nullptr) {
         spdlog::critical("{} - handler not set.", __FUNCTION__);
         co_return;
@@ -34,6 +38,13 @@ awaitable<void> ULoginSystem::OnLogin(const std::shared_ptr<UConnection> &conn, 
     spdlog::trace("{} - Player id: {}, token: {}", __FUNCTION__, info.pid, info.token);
     if (const auto pid = VerifyToken(info.pid, info.token); pid != 0) {
         conn->SetContext(std::make_any<uint64_t>(pid));
-        co_await mHandler->OnPlayerLogin(conn, info);
+
+        if (const auto sys = GetSystem<USceneSystem>(); sys != nullptr) {
+            if (const auto scene = sys->GetMainScene(); scene != nullptr) {
+                if (const auto plr = scene->CreatePlayer(conn); plr != nullptr) {
+                    co_await mHandler->OnPlayerLogin(plr, info);
+                }
+            }
+        }
     }
 }

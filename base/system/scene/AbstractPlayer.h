@@ -35,3 +35,5 @@ public:
     bool IsInScene(uint32_t id = 0) const;
     uint32_t GetCurrentSceneID() const;
 };
+
+using APlayerPointer = std::shared_ptr<IAbstractPlayer>;

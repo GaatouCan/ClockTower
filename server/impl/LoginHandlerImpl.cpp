@@ -9,9 +9,11 @@
 #include <spdlog/spdlog.h>
 
 
-awaitable<void> ULoginHandlerImpl::OnPlayerLogin(const std::shared_ptr<UConnection> &conn, const FLoginInfo &info) {
+awaitable<void> ULoginHandlerImpl::OnPlayerLogin(const APlayerPointer &plr, const FLoginInfo &info) {
     if (const auto plrMgr = GetManager<UPlayerManager>(); plrMgr != nullptr) {
-        co_await plrMgr->OnPlayerLogin(conn, info.pid);
+        // FIXME
+        // co_await plrMgr->OnPlayerLogin(conn, info.pid);
+        co_return;
     } else
         spdlog::warn("{} - PlayerManager not found", __FUNCTION__);
 }

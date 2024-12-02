@@ -15,8 +15,8 @@ USceneSystem::~USceneSystem() {
 
 void USceneSystem::Init() {
     for (uint32_t index = 0; index < kSceneCount; index++) {
-        auto scene = new UScene();
-        scene->SetSceneID(index + 1);
+        auto scene = new UScene(index + 1);
+        // scene->SetSceneID(index + 1);
         mSceneVector.emplace_back(scene);
     }
 }

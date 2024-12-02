@@ -13,16 +13,21 @@
 class IAbstractPlayer;
 class UConnection;
 
+using AConnectionPointer = std::shared_ptr<UConnection>;
+using APlayerPointer = std::shared_ptr<IAbstractPlayer>;
+
 class UScene final {
 
     uint32_t mSceneID;
 
     std::map<uint64_t, std::shared_ptr<IAbstractPlayer>> mPlayerMap;
 
-    static std::function<std::shared_ptr<IAbstractPlayer>(const std::shared_ptr<UConnection> &)> sPlayerCreator;
+    static std::function<APlayerPointer(const AConnectionPointer &)> sPlayerCreator;
 
 public:
-    UScene();
+    UScene() = delete;
+
+    explicit UScene(uint32_t id);
     ~UScene();
 
     void SetSceneID(uint32_t id);
@@ -34,17 +39,17 @@ public:
             try {
                 std::invoke(func, args...);
             } catch (std::exception &e) {
-                spdlog::error("Player::RunInThread: {}", e.what());
+                spdlog::error("UScene::RunInThread: {}", e.what());
             }
             co_return;
         }, detached);
     }
 
-    std::shared_ptr<IAbstractPlayer> CreatePlayer(const std::shared_ptr<UConnection> &conn);
+    APlayerPointer CreatePlayer(const AConnectionPointer &conn);
 
-    void PlayerEnterScene(const std::shared_ptr<IAbstractPlayer> &player);
-    void PlayerLeaveScene(const std::shared_ptr<IAbstractPlayer> &player);
+    void PlayerEnterScene(const APlayerPointer &player);
+    void PlayerLeaveScene(const APlayerPointer &player);
 
-    static void DefinePlayerCreator(const std::function<std::shared_ptr<IAbstractPlayer>(const std::shared_ptr<UConnection> &)>& creator);
+    static void DefinePlayerCreator(const std::function<APlayerPointer(const AConnectionPointer &)> & creator);
 };
 

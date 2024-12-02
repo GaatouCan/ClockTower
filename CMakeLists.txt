@@ -68,7 +68,7 @@ target_link_libraries(proto_static PRIVATE protobuf::libprotobuf)
 
 if (MSVC)
     execute_process(
-            COMMAND ./PreBuildTool.exe "--config=build.json"
+            COMMAND ./PreBuildTool.exe "--config=config.json"
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     )
 else ()

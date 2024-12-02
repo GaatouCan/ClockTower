@@ -84,7 +84,7 @@ Set-Location $SOURCE_DIR
 Set-Location ./protobuf
 # git submodule update --init --recursive
 
-& $cmake . -G "Visual Studio 17 2022" -B ./build -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR"/protobuf -DCMAKE_DEBUG_POSTFIX='d' -DBUILD_TESTING=OFF -DABSL_PROPAGATE_CXX_STD=ON -Dprotobuf_BUILD_LIBPROTOC=ON -Dprotobuf_BUILD_SHARED_LIBS=ON -Dprotobuf_BUILD_TESTS=OFF -DZLIB_INCLUDE_DIR="$ZLIB_INC_DIR" -DZLIB_LIBRARY_DEBUG="$ZLIB_LIB_DEBUG" -DZLIB_LIBRARY_RELEASE="$ZLIB_LIB_RELEASE"
+& $cmake . -G "Visual Studio 17 2022" -B ./build -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR"/protobuf -DCMAKE_DEBUG_POSTFIX='d' -DCMAKE_CXX_STANDARD=20 -DBUILD_TESTING=OFF -DABSL_PROPAGATE_CXX_STD=ON -Dprotobuf_BUILD_LIBPROTOC=ON -Dprotobuf_BUILD_SHARED_LIBS=ON -Dprotobuf_BUILD_TESTS=OFF -DZLIB_INCLUDE_DIR="$ZLIB_INC_DIR" -DZLIB_LIBRARY_DEBUG="$ZLIB_LIB_DEBUG" -DZLIB_LIBRARY_RELEASE="$ZLIB_LIB_RELEASE"
 Set-Location ./build
 & $cmake --build . --target install --config=Debug
 & $cmake --build . --target install --config=Release

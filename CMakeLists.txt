@@ -58,8 +58,6 @@ foreach (proto ${PROTOBUF_LIST})
             COMMAND ${PROTOBUF_PROTOC}
             ARGS --cpp_out ${PROTOBUF_GENERATED_DIR} -I ${PROTOBUF_DEFINE_DIR} ${proto}
             DEPENDS ${proto})
-#    add_library(${proto_name}.proto STATIC ${proto_src} ${proto_hdr})
-#    target_link_libraries(${proto_name}.proto PRIVATE protobuf::libprotobuf)
 
 #    list(APPEND PROTOBUF_LIBS ${proto_name}.proto)
     list(APPEND PROTOBUF_FILES ${proto_src} ${proto_hdr})
@@ -68,10 +66,17 @@ endforeach ()
 add_library(proto_static STATIC ${PROTOBUF_FILES})
 target_link_libraries(proto_static PRIVATE protobuf::libprotobuf)
 
-#execute_process(
-#        COMMAND ./PreBuildTool.exe "--config=build.json"
-#        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-#)
+if (MSVC)
+    execute_process(
+            COMMAND ./PreBuildTool.exe "--config=build.json"
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    )
+else ()
+    execute_process(
+            COMMAND ./PreBuildTool "--config=build.json"
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    )
+endif ()
 
 file(GLOB_RECURSE BASE_SRC
         ${CMAKE_SOURCE_DIR}/base/*.h

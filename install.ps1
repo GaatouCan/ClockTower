@@ -5,7 +5,11 @@ $INSTALL_DIR = "D:/library/install"
 
 $ASIO_DIR = "asio-1.30.2"
 
-$cmake = "cmake"
+$ZLIB_INC_DIR = "D:\library\install\zlib\include"
+$ZLIB_LIB_DEBUG = "D:\library\install\zlib\lib\zlibd.lib"
+$ZLIB_LIB_RELEASE = "D:\library\install\zlib\lib\zlib.lib"
+
+$cmake = "F:\MyApps\cmake-3.30.5-windows-x86_64\bin\cmake.exe"
 
 if (-not (Test-Path -Path $SOURCE_DIR)) {
     New-Item -ItemType Directory -Path $SOURCE_DIR
@@ -65,15 +69,25 @@ Set-Location $SOURCE_DIR
 # zlib
 # git clone -b v1.3.1 https://github.com/madler/zlib.git
 
-Set-Location ./zlib
-& $cmake . -G "Visual Studio 17 2022" -B ./build -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR"/zlib -DCMAKE_DEBUG_POSTFIX='d' -DINSTALL_BIN_DIR="$INSTALL_DIR"/zlib/bin -DINSTALL_INC_DIR="$INSTALL_DIR"/zlib/include -DINSTALL_LIB_DIR="$INSTALL_DIR"/zlib/lib -DINSTALL_MAN_DIR="$INSTALL_DIR"/zlib/share/man -DINSTALL_PKGCONFIG_DIR="$INSTALL_DIR"/zlib/share/pkgconfig
+# Set-Location ./zlib
+# & $cmake . -G "Visual Studio 17 2022" -B ./build -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR"/zlib -DCMAKE_DEBUG_POSTFIX='d' -DINSTALL_BIN_DIR="$INSTALL_DIR"/zlib/bin -DINSTALL_INC_DIR="$INSTALL_DIR"/zlib/include -DINSTALL_LIB_DIR="$INSTALL_DIR"/zlib/lib -DINSTALL_MAN_DIR="$INSTALL_DIR"/zlib/share/man -DINSTALL_PKGCONFIG_DIR="$INSTALL_DIR"/zlib/share/pkgconfig
 
+# Set-Location ./build
+# & $cmake --build . --target install --config=Debug
+# & $cmake --build . --target install --config=Release
+
+# Set-Location ../../
+
+# protobuf
+# git clone -b v29.0 https://github.com/protocolbuffers/protobuf.git
+
+Set-Location ./protobuf
+# git submodule update --init --recursive
+
+& $cmake . -G "Visual Studio 17 2022" -B ./build -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR"/protobuf -DCMAKE_DEBUG_POSTFIX='d' -DBUILD_TESTING=OFF -DABSL_PROPAGATE_CXX_STD=ON -Dprotobuf_BUILD_LIBPROTOC=ON -Dprotobuf_BUILD_SHARED_LIBS=ON -Dprotobuf_BUILD_TESTS=OFF -DZLIB_INCLUDE_DIR="$ZLIB_INC_DIR" -DZLIB_LIBRARY_DEBUG="$ZLIB_LIB_DEBUG" -DZLIB_LIBRARY_RELEASE="$ZLIB_LIB_RELEASE"
 Set-Location ./build
 & $cmake --build . --target install --config=Debug
 & $cmake --build . --target install --config=Release
-
 Set-Location ../../
-
-
 
 Set-Location ../

@@ -24,6 +24,16 @@ FGeneratedID FGeneratedID::RandGenerate() {
     };
 }
 
+bool FGeneratedID::operator<(const FGeneratedID &other) const {
+    if (time < other.time) {
+        return true;
+    }
+    if (time == other.time) {
+        return random < other.random;
+    }
+    return false;
+}
+
 bool FGeneratedID::operator==(const FGeneratedID &other) const {
     return time == other.time && random == other.random;
 }

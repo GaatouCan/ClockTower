@@ -17,6 +17,8 @@ struct FGeneratedID {
 
     static FGeneratedID RandGenerate();
 
+    bool operator<(const FGeneratedID &other) const;
+
     bool operator==(const FGeneratedID& other) const;
     bool operator!=(const FGeneratedID& other) const;
 };

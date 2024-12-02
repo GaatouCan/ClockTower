@@ -44,7 +44,7 @@ public:
     ATimePoint GetLeaveSceneTime() const;
 
     void SetPlatformInfo(const FPlatformInfo &platform);
-    FPlatformInfo GetPlatformInfo() const;
+    const FPlatformInfo &GetPlatformInfo() const;
 };
 
 using APlayerPointer = std::shared_ptr<IAbstractPlayer>;

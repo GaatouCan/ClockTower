@@ -9,7 +9,6 @@ class USceneSystem final : public ISubSystem {
     std::vector<UScene *> mSceneVector;
 
 public:
-    USceneSystem();
     ~USceneSystem() override;
 
     void Init() override;

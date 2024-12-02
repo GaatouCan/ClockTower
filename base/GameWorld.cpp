@@ -6,6 +6,7 @@
 #include "system/config/ConfigSystem.h"
 #include "system/protocol/ProtocolSystem.h"
 #include "system/login/LoginSystem.h"
+#include "system/scene/SceneSystem.h"
 #include "system/manager/ManagerSystem.h"
 #include "system/event/EventSystem.h"
 
@@ -20,6 +21,7 @@ UGameWorld::UGameWorld()
     CreateSystem<UConfigSystem>(0);
     CreateSystem<UProtocolSystem>(1);
     CreateSystem<ULoginSystem>(2);
+    CreateSystem<USceneSystem>(8);
     CreateSystem<UManagerSystem>(9);
     CreateSystem<UEventSystem>(10);
 }

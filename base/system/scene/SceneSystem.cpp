@@ -3,10 +3,6 @@
 
 constexpr int kSceneCount = 10;
 
-USceneSystem::USceneSystem() {
-
-}
-
 USceneSystem::~USceneSystem() {
     for (const auto scene : mSceneVector) {
         delete scene;

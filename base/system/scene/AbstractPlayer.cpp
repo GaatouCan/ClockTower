@@ -96,6 +96,6 @@ void IAbstractPlayer::SetPlatformInfo(const FPlatformInfo &platform) {
     mPlatform = platform;
 }
 
-FPlatformInfo IAbstractPlayer::GetPlatformInfo() const {
+const FPlatformInfo &IAbstractPlayer::GetPlatformInfo() const {
     return mPlatform;
 }

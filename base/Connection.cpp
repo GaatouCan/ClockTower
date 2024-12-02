@@ -20,7 +20,7 @@ UConnection::~UConnection() {
 }
 
 void UConnection::ConnectToClient() {
-    mDeadline = std::chrono::system_clock::now() + sExpireTime;
+    mDeadline = NowTimePoint() + sExpireTime;
 
     spdlog::trace("{} - Connection from {} run in thread: {}", __FUNCTION__, RemoteAddress().to_string(), ThreadIdToInt(mThreadId));
     if (mHandler != nullptr)
@@ -119,7 +119,7 @@ awaitable<void> UConnection::Watchdog() {
         do {
             mWatchdogTimer.expires_at(mDeadline);
             co_await mWatchdogTimer.async_wait();
-            now = std::chrono::system_clock::now();
+            now = NowTimePoint();
 
             if (mContextNullCount != -1) {
                 if (!mContext.has_value()) {
@@ -183,7 +183,7 @@ awaitable<void> UConnection::ReadPackage() {
             co_await mCodec->Decode(pkg);
 
             if (pkg->IsAvailable()) {
-                mDeadline = std::chrono::system_clock::now() + sExpireTime;
+                mDeadline = NowTimePoint() + sExpireTime;
 
                 if (mHandler != nullptr) {
                     co_await mHandler->OnReadPackage(pkg);

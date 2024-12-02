@@ -72,7 +72,7 @@ awaitable<void> UPlayer::OnLogin() {
         RunInThread(&UPlayer::OnLogin, this);
         co_return;
     }
-    mLoginTime = std::chrono::system_clock::now();
+    mLoginTime = NowTimePoint();
     spdlog::info("{} - Player[{}] Login Successfully.", __FUNCTION__, GetPlayerID());
 
     if (const auto sys = GetSystem<UDatabaseSystem>(); sys != nullptr) {

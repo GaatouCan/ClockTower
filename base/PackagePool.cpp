@@ -180,7 +180,7 @@ void UPackagePool::Expanse() {
 }
 
 void UPackagePool::Collect() {
-    const auto now = std::chrono::system_clock::now();
+    const auto now = NowTimePoint();
 
     // 不要太频繁
     if (now - mCollectTime < std::chrono::seconds(3))

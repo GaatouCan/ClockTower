@@ -28,4 +28,15 @@ std::vector<std::string> SplitString(const std::string &src, char delimiter);
 
 std::vector<int> SplitStringToInt(const std::string &src, char delimiter);
 
+/**
+ * Get Day Of The Week
+ * @param point Time Point, Default Now
+ * @return From 0 To 6, Means Sunday(0) To StaterDay(6)
+ */
 int GetDayOfWeek(std::chrono::time_point<std::chrono::system_clock> point = std::chrono::system_clock::now());
+
+unsigned int GetDayOfMonth(std::chrono::time_point<std::chrono::system_clock> point = std::chrono::system_clock::now());
+
+unsigned int GetDayOfYear(std::chrono::time_point<std::chrono::system_clock> point = std::chrono::system_clock::now());
+
+unsigned int GetPassedDays(std::chrono::time_point<std::chrono::system_clock> pointX, std::chrono::time_point<std::chrono::system_clock> pointY = std::chrono::system_clock::now());

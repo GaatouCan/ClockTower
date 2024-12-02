@@ -114,7 +114,7 @@ std::vector<int> SplitStringToInt(const std::string &src, const char delimiter) 
 
 int GetDayOfWeek(const std::chrono::time_point<std::chrono::system_clock> point) {
     const std::time_t current_time = std::chrono::system_clock::to_time_t(point);
-    std::tm tm;
+    std::tm tm{};
 #ifdef WIN32
     localtime_s(&tm, &current_time);
 #else
@@ -122,4 +122,33 @@ int GetDayOfWeek(const std::chrono::time_point<std::chrono::system_clock> point)
 #endif
     return tm.tm_wday;
 }
+
+unsigned int GetDayOfMonth(const std::chrono::time_point<std::chrono::system_clock> point) {
+    const auto today = std::chrono::floor<std::chrono::days>(point);
+    const auto ymd = std::chrono::year_month_day{today};
+    return unsigned int{ymd.day()};
+}
+
+unsigned int GetDayOfYear(const std::chrono::time_point<std::chrono::system_clock> point) {
+    const auto today = std::chrono::floor<std::chrono::days>(point);
+    const auto ymd = std::chrono::year_month_day{today};
+    const auto current_year = ymd.year();
+    const auto first_day_of_year = std::chrono::year_month_day{current_year, std::chrono::January, std::chrono::day(1)};
+
+    const auto days_since_start_of_year = std::chrono::sys_days(ymd) - std::chrono::sys_days(first_day_of_year);
+
+    return days_since_start_of_year.count() + 1;
+}
+
+unsigned int GetPassedDays(const std::chrono::time_point<std::chrono::system_clock> pointX, const std::chrono::time_point<std::chrono::system_clock> pointY) {
+    if (pointY <= pointX)
+        return 0;
+
+    const auto daysX = std::chrono::floor<std::chrono::days>(pointX);
+    const auto daysY = std::chrono::floor<std::chrono::days>(pointY);
+
+    const auto diff = daysY - daysX;
+    return diff.count() + 1;
+}
+
 

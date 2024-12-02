@@ -11,7 +11,7 @@
 #include <asio/awaitable.hpp>
 
 class IPackage;
-class UCharacter;
+class IAbstractPlayer;
 
 using AConnectionPointer = std::shared_ptr<class UConnection>;
 using asio::awaitable;
@@ -21,11 +21,11 @@ namespace protocol {
 	// Login
 
 	// Appearance
-	awaitable<void> CS_AppearanceRequest(const std::shared_ptr<UCharacter> &plr, IPackage *pkg);
+	awaitable<void> CS_AppearanceRequest(const std::shared_ptr<IAbstractPlayer> &plr, IPackage *pkg);
 
 	// Chat
-	awaitable<void> CS_ChatRoomRequest(const std::shared_ptr<UCharacter> &plr, IPackage *pkg);
-	awaitable<void> CS_ChatToRoomRequest(const std::shared_ptr<UCharacter> &plr, IPackage *pkg);
+	awaitable<void> CS_ChatRoomRequest(const std::shared_ptr<IAbstractPlayer> &plr, IPackage *pkg);
+	awaitable<void> CS_ChatToRoomRequest(const std::shared_ptr<IAbstractPlayer> &plr, IPackage *pkg);
 
 } // protocol
 

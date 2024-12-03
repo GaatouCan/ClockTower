@@ -15,15 +15,12 @@ class IAbstractPlayer;
 class UConnection;
 
 using AConnectionPointer = std::shared_ptr<UConnection>;
-using APlayerPointer = std::shared_ptr<IAbstractPlayer>;
 
 class UScene final {
 
     uint32_t mSceneID;
 
     std::map<FPlayerID, std::shared_ptr<IAbstractPlayer>> mPlayerMap;
-
-    static std::function<APlayerPointer(const AConnectionPointer &)> sPlayerCreator;
 
 public:
     UScene() = delete;
@@ -46,11 +43,7 @@ public:
         }, detached);
     }
 
-    APlayerPointer CreatePlayer(const AConnectionPointer &conn);
-
-    void PlayerEnterScene(const APlayerPointer &player);
-    void PlayerLeaveScene(const APlayerPointer &player, bool bChange = false);
-
-    static void DefinePlayerCreator(const std::function<APlayerPointer(const AConnectionPointer &)> & creator);
+    void PlayerEnterScene(const std::shared_ptr<IAbstractPlayer> &player);
+    void PlayerLeaveScene(const std::shared_ptr<IAbstractPlayer> &player, bool bChange = false);
 };
 

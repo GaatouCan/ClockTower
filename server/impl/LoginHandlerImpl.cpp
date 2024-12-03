@@ -9,7 +9,7 @@
 #include <spdlog/spdlog.h>
 
 
-awaitable<void> ULoginHandlerImpl::OnPlayerLogin(const APlayerPointer &plr, const FLoginInfo &info) {
+awaitable<void> ULoginHandlerImpl::OnPlayerLogin(const std::shared_ptr<IAbstractPlayer> &plr, const FLoginInfo &info) {
     if (const auto plrMgr = GetManager<UPlayerManager>(); plrMgr != nullptr) {
         // FIXME
         // co_await plrMgr->OnPlayerLogin(conn, info.pid);

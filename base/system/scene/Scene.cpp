@@ -2,8 +2,6 @@
 #include "AbstractPlayer.h"
 #include "SceneSystem.h"
 
-std::function<APlayerPointer(const AConnectionPointer &)> UScene::sPlayerCreator = nullptr;
-
 UScene::UScene(const uint32_t id)
     : mSceneID(id) {
 }
@@ -19,17 +17,7 @@ uint32_t UScene::GetSceneID() const {
     return mSceneID;
 }
 
-APlayerPointer UScene::CreatePlayer(const AConnectionPointer &conn) {
-    if (sPlayerCreator == nullptr)
-        return nullptr;
-
-    auto plr = std::invoke(sPlayerCreator, conn);
-    PlayerEnterScene(plr);
-
-    return plr;
-}
-
-void UScene::PlayerEnterScene(const APlayerPointer &player) {
+void UScene::PlayerEnterScene(const std::shared_ptr<IAbstractPlayer> &player) {
     if (std::this_thread::get_id() != GetWorld().GetThreadID()) {
         RunInThread(&UScene::PlayerEnterScene, this, player);
         return;
@@ -54,7 +42,7 @@ void UScene::PlayerEnterScene(const APlayerPointer &player) {
     player->OnEnterScene(this);
 }
 
-void UScene::PlayerLeaveScene(const APlayerPointer &player, const bool bChange) {
+void UScene::PlayerLeaveScene(const std::shared_ptr<IAbstractPlayer> &player, const bool bChange) {
     if (std::this_thread::get_id() != GetWorld().GetThreadID()) {
         RunInThread(&UScene::PlayerLeaveScene, this, player, bChange);
         return;
@@ -70,8 +58,4 @@ void UScene::PlayerLeaveScene(const APlayerPointer &player, const bool bChange) 
 
     if (!bChange)
         player->OnLeaveScene(this);
-}
-
-void UScene::DefinePlayerCreator(const std::function<APlayerPointer(const AConnectionPointer &)> &creator) {
-    sPlayerCreator = creator;
 }

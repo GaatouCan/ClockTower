@@ -67,5 +67,3 @@ public:
         }, detached);
     }
 };
-
-using APlayerPointer = std::shared_ptr<IAbstractPlayer>;

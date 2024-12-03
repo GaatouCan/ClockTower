@@ -7,8 +7,8 @@
 #include <asio/awaitable.hpp>
 
 
+class UConnection;
 class IAbstractPlayer;
-using APlayerPointer = std::shared_ptr<IAbstractPlayer>;
 
 using asio::awaitable;
 
@@ -21,5 +21,5 @@ class ILoginHandler {
 public:
     virtual ~ILoginHandler() = default;
     virtual awaitable<FLoginInfo> ParseLoginInfo(class IPackage *) = 0;
-    virtual awaitable<void> OnPlayerLogin(const APlayerPointer&, const FLoginInfo&) = 0;
+    virtual awaitable<std::shared_ptr<IAbstractPlayer>> OnPlayerLogin(const std::shared_ptr<UConnection>&, const FLoginInfo&) = 0;
 };

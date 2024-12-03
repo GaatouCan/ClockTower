@@ -39,10 +39,10 @@ awaitable<void> ULoginSystem::OnLogin(const AConnectionPointer &conn, IPackage *
     if (const auto pid = VerifyToken(info.pid, info.token); pid.IsValid()) {
         conn->SetContext(std::make_any<FPlayerID>(pid));
 
-        if (const auto sys = GetSystem<USceneSystem>(); sys != nullptr) {
-            if (const auto scene = sys->GetMainScene(); scene != nullptr) {
-                if (const auto plr = scene->CreatePlayer(conn); plr != nullptr) {
-                    co_await mHandler->OnPlayerLogin(plr, info);
+        if (const auto plr = co_await mHandler->OnPlayerLogin(conn, info); plr != nullptr) {
+            if (const auto sys = GetSystem<USceneSystem>(); sys != nullptr) {
+                if (const auto scene = sys->GetMainScene(); scene != nullptr) {
+                    scene->PlayerEnterScene(plr);
                 }
             }
         }

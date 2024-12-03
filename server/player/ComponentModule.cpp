@@ -38,7 +38,7 @@ void UComponentModule::Deserialize(mysqlx::Schema &schema) {
     for (const auto& [comp, serialize] : std::views::values(mComponentMap)) {
         for (const auto& [tableName, node] : serialize) {
             if (mysqlx::Table table = schema.getTable(tableName); table.existsInDatabase()) {
-                mysqlx::RowResult result = table.select().where("pid = :pid").bind("pid", GetOwner()->GetPlayerID()).execute();
+                mysqlx::RowResult result = table.select().where("pid = :pid").bind("pid", GetOwner()->GetFullID()).execute();
                 if (node.deserializer) {
                     node.deserializer(comp, std::move(result));
                 }
@@ -59,10 +59,10 @@ void UComponentModule::OnLogout() {
     }
 }
 
-uint64_t UComponentModule::GetPlayerID() const {
+FPlayerID UComponentModule::GetPlayerID() const {
     if (mOwner)
         return mOwner->GetPlayerID();
-    return 0;
+    return {};
 }
 
 void UComponentModule::SyncCache(FCacheNode *node) {

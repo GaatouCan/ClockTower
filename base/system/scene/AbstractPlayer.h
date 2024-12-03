@@ -39,7 +39,7 @@ public:
     [[nodiscard]] uint64_t GetFullID() const;
 
     [[nodiscard]] IPackage *BuildPackage() const;
-    void Send(IPackage *pkg) const;
+    void SendPackage(IPackage *pkg) const;
 
     void OnEnterScene(UScene *scene);
     void OnLeaveScene(UScene *scene);

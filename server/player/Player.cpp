@@ -37,7 +37,7 @@ awaitable<void> UPlayer::OnLogin() {
         co_return;
     }
     mLoginTime = NowTimePoint();
-    spdlog::info("{} - Player[{}] Login Successfully.", __FUNCTION__, GetPlayerID());
+    spdlog::info("{} - Player[{}] Login Successfully.", __FUNCTION__, GetFullID());
 
     if (const auto sys = GetSystem<UDatabaseSystem>(); sys != nullptr) {
         const bool ret = co_await sys->AsyncTask([this](mysqlx::Schema &schema) {
@@ -45,7 +45,7 @@ awaitable<void> UPlayer::OnLogin() {
             return true;
         }, asio::use_awaitable);
         if (!ret) {
-            spdlog::warn("{} - Player[{}] Deserialize Failed.", __FUNCTION__, GetPlayerID());
+            spdlog::warn("{} - Player[{}] Deserialize Failed.", __FUNCTION__, GetFullID());
         }
     }
 
@@ -81,15 +81,15 @@ void UPlayer::OnLogout() {
             return false;
         }, [pid = this->GetPlayerID()](const bool ret) {
             if (!ret) {
-                spdlog::info("UPlayer::OnLogout() - Player[{}] Serialize Success.", pid);
+                spdlog::info("UPlayer::OnLogout() - Player[{}] Serialize Success.", pid.ToUInt64());
             } else {
-                spdlog::warn("UPlayer::OnLogout() - Player[{}] Serialize Failed.", pid);
+                spdlog::warn("UPlayer::OnLogout() - Player[{}] Serialize Failed.", pid.ToUInt64());
             }
         });
     }
 
     mComponentModule.OnLogout();
-    spdlog::info("{} - Player[{}] Logout.", __FUNCTION__, GetPlayerID());
+    spdlog::info("{} - Player[{}] Logout.", __FUNCTION__, GetFullID());
 
     const auto param = new FEP_PlayerLogout;
     param->pid = GetFullID();
@@ -116,13 +116,13 @@ void UPlayer::StopTimer(const uint64_t timerID) {
 void UPlayer::Send(const uint32_t id, const std::string_view data) const {
     const auto pkg = dynamic_cast<FPackage *>(BuildPackage());
     pkg->SetPackageID(id).SetData(data);
-    IAbstractPlayer::Send(pkg);
+    SendPackage(pkg);
 }
 
 void UPlayer::Send(const uint32_t id, const std::stringstream &ss) const {
     const auto pkg = dynamic_cast<FPackage *>(BuildPackage());
     pkg->SetPackageID(id).SetData(ss.str());
-    IAbstractPlayer::Send(pkg);
+    SendPackage(pkg);
 }
 
 void UPlayer::SyncCache(FCacheNode *node) {

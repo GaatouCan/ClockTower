@@ -45,6 +45,9 @@ awaitable<void> ULoginSystem::OnLogin(const AConnectionPointer &conn, IPackage *
                     scene->PlayerEnterScene(plr);
                 }
             }
+        } else {
+            conn->ResetContext();
+            conn->Disconnect();
         }
     }
 }

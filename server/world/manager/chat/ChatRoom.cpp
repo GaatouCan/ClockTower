@@ -24,7 +24,7 @@ UChatRoom &UChatRoom::SetRoomID(const FGeneratedID roomId) {
     return *this;
 }
 
-UChatRoom &UChatRoom::SetLeaderID(const uint64_t leaderId) {
+UChatRoom &UChatRoom::SetLeaderID(const FPlayerID &leaderId) {
     mLeaderId = leaderId;
     return *this;
 }
@@ -33,7 +33,7 @@ FGeneratedID UChatRoom::GetRoomID() const {
     return mRoomId;
 }
 
-uint64_t UChatRoom::GetLeaderID() const {
+FPlayerID UChatRoom::GetLeaderID() const {
     return mLeaderId;
 }
 
@@ -50,17 +50,17 @@ awaitable<void> UChatRoom::SendAllRoomInfo(const std::shared_ptr<UPlayer> &plr) 
     Chat::SC_ChatRoomResponse response;
 
     response.set_roomid(mRoomId.ToString());
-    response.set_leader(mLeaderId);
+    response.set_leader(mLeaderId.ToUInt64());
     response.set_reason(Chat::SC_ChatRoomResponse::NORMAL_SEND);
 
     for (const auto &memberId: mMemberSet) {
-        auto node = co_await cacheMgr->FindCacheNode(memberId);
+        auto node = co_await cacheMgr->FindCacheNode(memberId.ToUInt64());
         if (!node.has_value())
             continue;
 
         auto cacheNode = node.value();
         const auto member = response.add_memberlist();
-        member->set_pid(memberId);
+        member->set_pid(memberId.ToUInt64());
         member->set_online(cacheNode.IsOnline());
     }
 
@@ -74,7 +74,7 @@ awaitable<void> UChatRoom::SendAllRoomInfo(const std::shared_ptr<UPlayer> &plr) 
     }
 }
 
-awaitable<void> UChatRoom::UpdateMemberInfo(std::set<uint64_t> members, const std::vector<FCacheNode *> &cacheVec) const {
+awaitable<void> UChatRoom::UpdateMemberInfo(std::set<FPlayerID> members, const std::vector<FCacheNode *> &cacheVec) const {
     const auto cacheMgr = GetManager<UPlayerCache>();
     if (cacheMgr == nullptr)
         co_return;
@@ -86,31 +86,31 @@ awaitable<void> UChatRoom::UpdateMemberInfo(std::set<uint64_t> members, const st
     Chat::SC_ChatRoomResponse response;
 
     response.set_roomid(mRoomId.ToString());
-    response.set_leader(mLeaderId);
+    response.set_leader(mLeaderId.ToUInt64());
     response.set_reason(Chat::SC_ChatRoomResponse::MEMBER_UPDATE);
 
     for (const auto &cache: cacheVec) {
         if (cache == nullptr)
             continue;
 
-        if (!mMemberSet.contains(cache->pid))
-            continue;
+        // if (!mMemberSet.contains(cache->pid))
+        //     continue;
 
         const auto member = response.add_memberlist();
         member->set_pid(cache->pid);
         member->set_online(cache->IsOnline());
 
-        members.erase(cache->pid);
+        // members.erase(cache->pid);
     }
 
-    for (const uint64_t &memberId: members) {
-        auto node = co_await cacheMgr->FindCacheNode(memberId);
+    for (const auto &memberId: members) {
+        auto node = co_await cacheMgr->FindCacheNode(memberId.ToUInt64());
         if (!node.has_value())
             continue;
 
         auto cacheNode = node.value();
         const auto member = response.add_memberlist();
-        member->set_pid(memberId);
+        member->set_pid(memberId.ToUInt64());
         member->set_online(cacheNode.IsOnline());
     }
 
@@ -133,7 +133,7 @@ void UChatRoom::OnChat(const std::shared_ptr<UPlayer> &plr, const FChatContent &
         return;
     }
 
-    if (const auto now = std::chrono::steady_clock::now(); mLastUpdateTime != now) {
+    if (const auto now = NowTimePoint(); mLastUpdateTime != now) {
         mLastUpdateTime = now;
         mChatIndex = 1;
     }
@@ -154,7 +154,7 @@ void UChatRoom::OnChat(const std::shared_ptr<UPlayer> &plr, const FChatContent &
     Chat::SC_OnChatRoomResponse msg;
 
     msg.set_roomid(mRoomId.ToString());
-    msg.set_sender(plr->GetPlayerID());
+    msg.set_sender(plr->GetFullID());
     msg.set_content(content.content);
     msg.set_servertime(ToUnixTime(mLastUpdateTime));
     msg.set_serverindex(mChatIndex++);

@@ -3,8 +3,10 @@
 #include <typeindex>
 #include <mysqlx/xdevapi.h>
 #include <spdlog/spdlog.h>
+#include <PlayerID.h>
 
 #include "PlayerComponent.h"
+
 
 class UComponentModule final {
 
@@ -40,7 +42,7 @@ public:
         auto comp = new T(this);
         mComponentMap[typeid(T)].comp = comp;
 
-        spdlog::debug("{} - Player[{}] load {}", __FUNCTION__, GetPlayerID(), comp->GetComponentName());
+        spdlog::debug("{} - Player[{}] load {}", __FUNCTION__, GetPlayerID().ToUInt64(), comp->GetComponentName());
 
         return comp;
     }
@@ -78,7 +80,7 @@ public:
     void OnLogin();
     void OnLogout();
 
-    [[nodiscard]] uint64_t GetPlayerID() const;
+    [[nodiscard]] FPlayerID GetPlayerID() const;
 
     void SyncCache(FCacheNode *node);
 };

@@ -1,8 +1,8 @@
 #pragma once
 
 
-#include "ClientCommand.h"
-#include "OperateCommand.h"
+#include <system/command/ClientCommand.h>
+#include <system/command/OperateCommand.h>
 
 #include <system/manager/Manager.h>
 #include <spdlog/spdlog.h>

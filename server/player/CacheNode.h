@@ -10,7 +10,7 @@ struct FCacheNode {
 
     [[nodiscard]] bool IsOnline() const {
         constexpr auto zeroPoint = ATimePoint();
-        const auto now = std::chrono::steady_clock::now();
+        const auto now = NowTimePoint();
 
         return (lastLoginTime > zeroPoint && lastLoginTime <= now)
                && (lastLogoutTime > zeroPoint && lastLogoutTime <= now)

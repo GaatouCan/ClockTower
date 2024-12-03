@@ -5,6 +5,6 @@
 
 class ULoginHandlerImpl final : public ILoginHandler {
 public:
-    awaitable<void> OnPlayerLogin(const std::shared_ptr<IAbstractPlayer> &plr, const FLoginInfo &info) override;
+    awaitable<std::shared_ptr<IAbstractPlayer>> OnPlayerLogin(const std::shared_ptr<UConnection> &conn, const FLoginInfo &info) override;
     awaitable<FLoginInfo> ParseLoginInfo(IPackage *) override;
 };

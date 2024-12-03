@@ -15,7 +15,7 @@ awaitable<void> UProtocolHandlerImpl::Execute(const AProtoFunctor &func, const s
         co_return;
     }
 
-    const auto pid = std::any_cast<uint64_t>(conn->GetContext());
+    const auto pid = std::any_cast<FPlayerID>(conn->GetContext());
     if (const auto plr = plrMgr->FindPlayer(pid); plr != nullptr) {
         assert(plr->GetConnection() == conn);
         co_await std::invoke(func, plr, pkg);

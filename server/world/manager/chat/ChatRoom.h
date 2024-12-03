@@ -7,6 +7,7 @@
 #include <asio.hpp>
 
 #include <GeneratedID.h>
+#include <PlayerID.h>
 
 using asio::awaitable;
 
@@ -31,9 +32,9 @@ class UChatRoom final : public std::enable_shared_from_this<UChatRoom> {
     class UChatManager *mOwner;
 
     FGeneratedID mRoomId;
-    uint64_t mLeaderId;
+    FPlayerID mLeaderId;
 
-    std::set<uint64_t> mMemberSet;
+    std::set<FPlayerID> mMemberSet;
 
     ATimePoint mCreateTime;
     ATimePoint mLastUpdateTime;
@@ -49,12 +50,12 @@ public:
     UChatRoom &SetRoomID(FGeneratedID roomId);
     [[nodiscard]] FGeneratedID GetRoomID() const;
 
-    UChatRoom &SetLeaderID(uint64_t leaderId);
-    [[nodiscard]] uint64_t GetLeaderID() const;
+    UChatRoom &SetLeaderID(const FPlayerID &leaderId);
+    [[nodiscard]] FPlayerID GetLeaderID() const;
 
     awaitable<void> SendAllRoomInfo(const std::shared_ptr<UPlayer> &plr = nullptr) const;
 
-    awaitable<void> UpdateMemberInfo(std::set<uint64_t> members, const std::vector<FCacheNode *> &cacheVec = {}) const;
+    awaitable<void> UpdateMemberInfo(std::set<FPlayerID> members, const std::vector<FCacheNode *> &cacheVec = {}) const;
 
     void OnChat(const std::shared_ptr<UPlayer> &plr, const FChatContent &content);
 };

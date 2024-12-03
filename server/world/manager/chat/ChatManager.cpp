@@ -9,11 +9,11 @@ UChatManager::UChatManager(FContextNode &ctx)
 UChatManager::~UChatManager() {
 }
 
-awaitable<void> protocol::CS_ChatRoomRequest(const std::shared_ptr<UCharacter> &plr, IPackage *pkg) {
+awaitable<void> protocol::CS_ChatRoomRequest(const std::shared_ptr<IAbstractPlayer> &plr, IPackage *pkg) {
     // TODO
     co_return;
 }
 
-awaitable<void> protocol::CS_ChatToRoomRequest(const std::shared_ptr<UCharacter> &plr, IPackage *pkg) {
+awaitable<void> protocol::CS_ChatToRoomRequest(const std::shared_ptr<IAbstractPlayer> &plr, IPackage *pkg) {
     co_return;
 }

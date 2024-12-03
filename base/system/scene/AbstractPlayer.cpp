@@ -61,7 +61,7 @@ IPackage *IAbstractPlayer::BuildPackage() const {
     return mConn->BuildPackage();
 }
 
-void IAbstractPlayer::Send(IPackage *pkg) const {
+void IAbstractPlayer::SendPackage(IPackage *pkg) const {
     mConn->Send(pkg);
 }
 

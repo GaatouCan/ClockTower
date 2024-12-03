@@ -11,33 +11,42 @@ UPlayerManager::~UPlayerManager() {
     mPlayerMap.clear();
 }
 
-awaitable<void> UPlayerManager::OnPlayerLogin(const std::shared_ptr<UPlayer> &plr) {
-    if (plr == nullptr) {
+awaitable<std::shared_ptr<UPlayer>> UPlayerManager::OnPlayerLogin(const std::shared_ptr<UConnection> &conn, const FPlayerID &id) {
+    if (conn == nullptr || std::any_cast<FPlayerID>(conn->GetContext()) != id) {
         spdlog::error("{} - Null Connection Pointer Or Player ID Not Equal," __FUNCTION__);
-        co_return;
+        co_return nullptr;
     }
 
-    if (const auto oldPlr = FindPlayer(plr->GetPlayerID()); oldPlr != nullptr) {
+    if (const auto plr = FindPlayer(id); plr != nullptr) {
         spdlog::info("{} - Player[{}] Over Login", __FUNCTION__, plr->GetFullID());
 
-        // 首先断开旧连接
-        oldPlr->GetConnection()->ResetContext();
-        oldPlr->GetConnection()->Disconnect();
+        plr->TryLeaveScene();
 
-        // if (oldPlr->IsOnline()) {
-        //     oldPlr->OnLogout();
-        // }
+        // 首先断开旧连接
+        plr->GetConnection()->ResetContext();
+        plr->GetConnection()->Disconnect();
+
+        if (plr->IsOnline()) {
+            plr->OnLogout();
+        }
     }
 
-    mPlayerMap[plr->GetPlayerID()] = plr;
+    const auto plr = std::make_shared<UPlayer>(conn);
+
+    {
+        std::unique_lock lock(mMutex);
+        mPlayerMap[id] = plr;
+    }
     spdlog::info("{} - New Player[{}] Login", __FUNCTION__, plr->GetFullID());
 
     co_await plr->OnLogin();
+    co_return plr;
 }
 
 void UPlayerManager::OnPlayerLogout(const FPlayerID pid) {
-    spdlog::info("{} - Player[{}] Logout", __FUNCTION__, pid);
+    spdlog::info("{} - Player[{}] Logout", __FUNCTION__, pid.ToUInt64());
     if (const auto plr = RemovePlayer(pid); plr != nullptr) {
+        plr->TryLeaveScene();
         plr->OnLogout();
     }
 }
@@ -78,20 +87,20 @@ std::shared_ptr<UPlayer> UPlayerManager::RemovePlayer(const FPlayerID &pid) {
 //         pool->Recycle(pkg);
 //     }
 // }
-//
-// void UPlayerManager::SendToList(IPackage *pkg, const std::set<uint64_t>& players) {
-//     if (pkg == nullptr)
-//         return;
-//
-//     for (const auto pid : players) {
-//         if (const auto plr = FindPlayer(pid); plr != nullptr && plr->IsOnline()) {
-//             const auto tPkg = plr->GetConnection()->BuildPackage();
-//             tPkg->CopyFromOther(pkg);
-//             plr->Send(tPkg);
-//         }
-//     }
-//
-//     if (const auto pool = pkg->GetOwnerPool(); pool != nullptr) {
-//         pool->Recycle(pkg);
-//     }
-// }
+
+void UPlayerManager::SendToList(IPackage *pkg, const std::set<FPlayerID>& players) {
+    if (pkg == nullptr)
+        return;
+
+    for (const auto pid : players) {
+        if (const auto plr = FindPlayer(pid); plr != nullptr && plr->IsOnline()) {
+            const auto tPkg = plr->GetConnection()->BuildPackage();
+            tPkg->CopyFromOther(pkg);
+            plr->SendPackage(tPkg);
+        }
+    }
+
+    if (const auto pool = pkg->GetOwnerPool(); pool != nullptr) {
+        pool->Recycle(pkg);
+    }
+}

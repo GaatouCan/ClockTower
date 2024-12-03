@@ -81,11 +81,11 @@ void UAppearanceCT::SendInfo() const {
     SEND_PACKAGE(this, SC_AppearanceResponse, res)
 }
 
-awaitable<void> protocol::CS_AppearanceRequest(const std::shared_ptr<UCharacter> &character, IPackage *pkg) {
-    if (character == nullptr)
+awaitable<void> protocol::CS_AppearanceRequest(const std::shared_ptr<IAbstractPlayer> &plr, IPackage *pkg) {
+    if (plr == nullptr)
         co_return;
 
-    const auto player = std::dynamic_pointer_cast<UPlayer>(character);
+    const auto player = std::dynamic_pointer_cast<UPlayer>(plr);
     const auto package = dynamic_cast<FPackage *>(pkg);
 
     Appearance::CS_AppearanceRequest req;

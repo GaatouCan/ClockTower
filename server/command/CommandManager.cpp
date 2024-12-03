@@ -1,5 +1,4 @@
 #include "CommandManager.h"
-#include "CommandObject.h"
 
 #include "../player/Player.h"
 
@@ -65,7 +64,7 @@ awaitable<void> UCommandManager::OnClientCommand(
     const UCommandObject obj(type, args);
 
     if (const auto cmd = std::dynamic_pointer_cast<IClientCommand>(std::invoke(iter->second, obj)); cmd != nullptr) {
-        cmd->SetSender(player->GetPlayerID());
+        cmd->SetSender(player->GetFullID());
         bool res = co_await cmd->Execute();
     }
 }

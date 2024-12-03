@@ -1,6 +1,7 @@
 #include "LoginHandlerImpl.h"
 #include "../common/ProtoType.h"
 #include "../player/PlayerManager.h"
+#include "../player/Player.h"
 
 #include <impl/Package.h>
 #include <system/manager/ManagerSystem.h>
@@ -9,13 +10,14 @@
 #include <spdlog/spdlog.h>
 
 
-awaitable<void> ULoginHandlerImpl::OnPlayerLogin(const std::shared_ptr<IAbstractPlayer> &plr, const FLoginInfo &info) {
+awaitable<std::shared_ptr<IAbstractPlayer>> ULoginHandlerImpl::OnPlayerLogin(const std::shared_ptr<UConnection> &conn, const FLoginInfo &info) {
     if (const auto plrMgr = GetManager<UPlayerManager>(); plrMgr != nullptr) {
-        // FIXME
-        // co_await plrMgr->OnPlayerLogin(conn, info.pid);
-        co_return;
-    } else
-        spdlog::warn("{} - PlayerManager not found", __FUNCTION__);
+        auto plr = co_await plrMgr->OnPlayerLogin(conn, info.pid);
+        co_return plr;
+    }
+
+    spdlog::warn("{} - PlayerManager not found", __FUNCTION__);
+    co_return nullptr;
 }
 
 awaitable<FLoginInfo> ULoginHandlerImpl::ParseLoginInfo(IPackage *pkg) {

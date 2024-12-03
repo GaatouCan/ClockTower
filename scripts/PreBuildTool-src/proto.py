@@ -120,7 +120,7 @@ def generate_protobuf_define(src: str, dist: str, proto: list, expt: list, inclu
         file.write('#include <asio/awaitable.hpp>\n\n')
 
         file.write('class IPackage;\n')
-        file.write('class UCharacter;\n\n')
+        file.write('class IAbstractPlayer;\n\n')
 
         file.write('using AConnectionPointer = std::shared_ptr<class UConnection>;\n')
         file.write('using asio::awaitable;\n\n')
@@ -132,7 +132,7 @@ def generate_protobuf_define(src: str, dist: str, proto: list, expt: list, inclu
 
             for proto in package['list']:
                 if proto['callback'] == 1:
-                    file.write(f'\tawaitable<void> {proto['proto']}(const std::shared_ptr<UCharacter> &character, IPackage *pkg);\n')
+                    file.write(f'\tawaitable<void> {proto['proto']}(const std::shared_ptr<IAbstractPlayer> &plr, IPackage *pkg);\n')
 
             file.write('\n')
 

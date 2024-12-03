@@ -1,7 +1,7 @@
 #include "ComponentModule.h"
 #include "Player.h"
 
-#include "../world/component/appearance/AppearanceCT.h"
+// #include "../world/component/appearance/AppearanceCT.h"
 
 #include <ranges>
 
@@ -9,7 +9,7 @@
 UComponentModule::UComponentModule(UPlayer *plr)
     : mOwner(plr){
 
-    CreateComponent<UAppearanceCT>();
+    // CreateComponent<UAppearanceCT>();
 }
 
 UComponentModule::~UComponentModule() {

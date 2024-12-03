@@ -2,6 +2,8 @@
 
 #include "../player/Player.h"
 
+#include <system/command/AbstractCommand.h>
+#include <system/command/CommandSystem.h>
 #include <system/database/DatabaseSystem.h>
 #include <system/database/Deserializer.h>
 #include <GameWorld.h>
@@ -35,17 +37,17 @@ awaitable<void> UCommandManager::OnClientCommand(
     const std::string &type,
     const std::string &args)
 {
-    // const auto iter = mClientCommandMap.find(type);
-    // if (iter == mClientCommandMap.end()) {
-    //     co_return;
-    // }
+    const auto sys = GetSystem<UCommandSystem>();
+    if (sys == nullptr)
+        co_return;
 
-    const UCommandObject obj(type, args);
+    const auto cmd = sys->CreateClientCommand(type, args);
+    if (cmd == nullptr)
+        co_return;
 
-    // if (const auto cmd = std::dynamic_pointer_cast<IClientCommand>(std::invoke(iter->second, obj)); cmd != nullptr) {
-    //     cmd->SetSender(player->GetFullID());
-    //     bool res = co_await cmd->Execute();
-    // }
+    cmd->SetSender(player->GetFullID());
+    co_await cmd->Execute();
+    co_return;
 }
 
 awaitable<void> UCommandManager::OnOperateCommand(
@@ -55,12 +57,19 @@ awaitable<void> UCommandManager::OnOperateCommand(
     const std::string &type,
     const std::string &args)
 {
-    // const auto iter = mOperateCommandMap.find(type);
-    // if (iter == mOperateCommandMap.end()) {
-    //     co_return;
-    // }
+    const auto sys = GetSystem<UCommandSystem>();
+    if (sys == nullptr)
+        co_return;
 
-    const UCommandObject obj(type, args);
+    const auto cmd = sys->CreateOperateCommand(type, args);
+    if (cmd == nullptr)
+        co_return;
+
+    cmd->SetCommandID(commandID);
+    cmd->SetCreator(creator);
+    cmd->SetCreateTime(createTime);
+
+    mCurrentOperateCommandSet.emplace(commandID);
 
     // if (const auto cmd = std::dynamic_pointer_cast<IOperateCommand>(std::invoke(iter->second, obj)); cmd != nullptr) {
     //     cmd->SetCommandID(commandID);
@@ -68,6 +77,9 @@ awaitable<void> UCommandManager::OnOperateCommand(
     //     cmd->SetCreator(creator);
     //     bool res = co_await cmd->Execute();
     // }
+
+    co_await cmd->Execute();
+    co_return;
 }
 
 awaitable<void> UCommandManager::FetchOperateCommand() {

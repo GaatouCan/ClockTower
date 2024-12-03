@@ -5,7 +5,6 @@
 #include "../player/PlayerManager.h"
 #include "../command/CommandManager.h"
 
-#include "../player/PlayerCache.h"
 #include "../world/manager/chat/ChatManager.h"
 
 inline void LoadManager(UManagerSystem *sys) {
@@ -15,6 +14,5 @@ inline void LoadManager(UManagerSystem *sys) {
     sys->CreateManager<UPlayerManager>();
     // sys->CreateManager<UCommandManager>();
 
-    // sys->CreateManager<UPlayerCache>();
     // sys->CreateManager<UChatManager>();
 }

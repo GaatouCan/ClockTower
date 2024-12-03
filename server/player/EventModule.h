@@ -56,7 +56,6 @@ public:
     }
 
     void RegisterListener(EEvent event, void *ptr, const EventListener &listener);
-
     void RemoveListener(EEvent event, void *ptr);
 
     void Dispatch(EEvent event, IEventParam *parma);

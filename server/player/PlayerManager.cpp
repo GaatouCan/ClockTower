@@ -34,12 +34,15 @@ awaitable<std::shared_ptr<UPlayer>> UPlayerManager::OnPlayerLogin(const std::sha
     const auto plr = std::make_shared<UPlayer>(conn);
 
     {
-        std::unique_lock lock(mMutex);
+        std::unique_lock lock(mPlayerMutex);
         mPlayerMap[id] = plr;
     }
     spdlog::info("{} - New Player[{}] Login", __FUNCTION__, plr->GetFullID());
 
     co_await plr->OnLogin();
+
+    SyncCache(plr);
+
     co_return plr;
 }
 
@@ -52,7 +55,7 @@ void UPlayerManager::OnPlayerLogout(const FPlayerID pid) {
 }
 
 std::shared_ptr<UPlayer> UPlayerManager::FindPlayer(const FPlayerID &pid) {
-    std::shared_lock lock(mSharedMutex);
+    std::shared_lock lock(mPlayerSharedMutex);
     if (const auto it = mPlayerMap.find(pid); it != mPlayerMap.end()) {
         return it->second;
     }
@@ -60,7 +63,7 @@ std::shared_ptr<UPlayer> UPlayerManager::FindPlayer(const FPlayerID &pid) {
 }
 
 std::shared_ptr<UPlayer> UPlayerManager::RemovePlayer(const FPlayerID &pid) {
-    std::scoped_lock lock(mMutex);
+    std::scoped_lock lock(mPlayerMutex);
     if (const auto it = mPlayerMap.find(pid); it != mPlayerMap.end()) {
         auto res = it->second;
         mPlayerMap.erase(it);
@@ -103,4 +106,47 @@ void UPlayerManager::SendToList(IPackage *pkg, const std::set<FPlayerID>& player
     if (const auto pool = pkg->GetOwnerPool(); pool != nullptr) {
         pool->Recycle(pkg);
     }
+}
+
+void UPlayerManager::SyncCache(const std::shared_ptr<UPlayer> &plr) {
+    if (plr == nullptr)
+        return;
+
+    FCacheNode node;
+    plr->SyncCache(&node);
+
+    SyncCache(node);
+}
+
+void UPlayerManager::SyncCache(const FPlayerID &pid) {
+    if (!pid.IsValid())
+        return;
+
+    const auto plr = FindPlayer(pid);
+    SyncCache(plr);
+}
+
+void UPlayerManager::SyncCache(const FCacheNode &node) {
+    if (!node.pid.IsValid())
+        return;
+
+    std::scoped_lock lock(mCacheMutex);
+    mCacheMap[node.pid] = node;
+    spdlog::info("{} - Player[{}] Success.", __FUNCTION__, node.pid.ToUInt64());
+}
+
+awaitable<std::optional<FCacheNode>> UPlayerManager::FindCacheNode(const FPlayerID &pid) {
+    if (!pid.IsValid())
+        co_return std::nullopt;
+
+    if (const auto plr = FindPlayer(pid); plr != nullptr) {
+        SyncCache(plr);
+    }
+
+    std::shared_lock lock(mCacheSharedMutex);
+    if (const auto it = mCacheMap.find(pid); it != mCacheMap.end()) {
+        co_return std::make_optional(it->second);
+    }
+
+    co_return std::nullopt;
 }

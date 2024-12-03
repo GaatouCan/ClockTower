@@ -79,11 +79,11 @@ void UPlayer::OnLogout() {
                 return true;
             }
             return false;
-        }, [pid = this->GetPlayerID()](const bool ret) {
+        }, [pid = this->GetFullID()](const bool ret) {
             if (!ret) {
-                spdlog::info("UPlayer::OnLogout() - Player[{}] Serialize Success.", pid.ToUInt64());
+                spdlog::info("UPlayer::OnLogout() - Player[{}] Serialize Success.", pid);
             } else {
-                spdlog::warn("UPlayer::OnLogout() - Player[{}] Serialize Failed.", pid.ToUInt64());
+                spdlog::warn("UPlayer::OnLogout() - Player[{}] Serialize Failed.", pid);
             }
         });
     }

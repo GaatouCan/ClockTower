@@ -69,3 +69,14 @@ void UScene::PlayerLeaveScene(const std::shared_ptr<IAbstractPlayer> &player, co
     if (!bChange)
         player->OnLeaveScene(this);
 }
+
+std::shared_ptr<IAbstractPlayer> UScene::GetPlayer(const FPlayerID &pid) const {
+    if (!pid.IsValid())
+        return nullptr;
+
+    std::shared_lock lock(mSharedMutex);
+    if (const auto it = mPlayerMap.find(pid); it != mPlayerMap.end()) {
+        return it->second;
+    }
+    return nullptr;
+}

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "CacheNode.h"
+
 #include <system/manager/Manager.h>
 #include <PlayerID.h>
 
@@ -13,8 +15,12 @@ class UConnection;
 class UPlayerManager final : public IManager {
 
     std::map<FPlayerID, std::shared_ptr<UPlayer>> mPlayerMap;
-    std::mutex mMutex;
-    std::shared_mutex mSharedMutex;
+    std::mutex mPlayerMutex;
+    mutable std::shared_mutex mPlayerSharedMutex;
+
+    std::map<FPlayerID, FCacheNode> mCacheMap;
+    std::mutex mCacheMutex;
+    mutable std::shared_mutex mCacheSharedMutex;
 
 public:
     explicit UPlayerManager(FContextNode &ctx);
@@ -34,4 +40,10 @@ public:
     // void Broadcast(IPackage *pkg, const std::set<uint64_t> &except = {});
 
     void SendToList(IPackage *pkg, const std::set<FPlayerID>& players);
+
+    void SyncCache(const std::shared_ptr<UPlayer> &plr);
+    void SyncCache(const FPlayerID &pid);
+    void SyncCache(const FCacheNode &node);
+
+    awaitable<std::optional<FCacheNode>> FindCacheNode(const FPlayerID &pid);
 };

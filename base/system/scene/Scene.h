@@ -24,7 +24,7 @@ class UScene final {
 
     std::map<FPlayerID, std::shared_ptr<IAbstractPlayer>> mPlayerMap;
     std::mutex mMutex;
-    std::shared_mutex mSharedMutex;
+    mutable std::shared_mutex mSharedMutex;
 
 public:
     UScene() = delete;
@@ -49,5 +49,7 @@ public:
 
     void PlayerEnterScene(const std::shared_ptr<IAbstractPlayer> &player);
     void PlayerLeaveScene(const std::shared_ptr<IAbstractPlayer> &player, bool bChange = false);
+
+    std::shared_ptr<IAbstractPlayer> GetPlayer(const FPlayerID &pid) const;
 };
 

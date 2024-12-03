@@ -1,10 +1,10 @@
 #pragma once
 
-#include <cstdint>
+#include <PlayerID.h>
 #include <common.h>
 
 struct FCacheNode {
-    uint64_t pid;
+    FPlayerID pid;
     ATimePoint lastLoginTime;
     ATimePoint lastLogoutTime;
 

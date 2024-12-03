@@ -81,6 +81,16 @@ call %CMAKE% . -G "Visual Studio 17 2022" -B ./build -DCMAKE_INSTALL_PREFIX=%INS
 set TARGET_LIST=%TARGET_LIST% zlib
 cd ../
 
+for %%i in (%TARGET_LIST%) do (
+    cd %%i/build
+    cd
+
+    @REM call %CMAKE% --build . --target install --config=Debug
+    @REM call %CMAKE% --build . --target install --config=Release
+
+    cd ../../
+)
+
 @REM protobuf
 @REM git clone -b v29.0 https://github.com/protocolbuffers/protobuf.git
 
@@ -89,18 +99,11 @@ git submodule update --init --recursive
 
 call %CMAKE% . -G "Visual Studio 17 2022" -B ./build -DCMAKE_INSTALL_PREFIX=%INSTALL_DIR%/protobuf -DCMAKE_DEBUG_POSTFIX='d' -DCMAKE_CXX_STANDARD=20 -DBUILD_TESTING=OFF -DABSL_PROPAGATE_CXX_STD=ON -Dprotobuf_BUILD_LIBPROTOC=ON -Dprotobuf_BUILD_SHARED_LIBS=ON -Dprotobuf_BUILD_TESTS=OFF -DZLIB_INCLUDE_DIR=%ZLIB_INC_DIR% -DZLIB_LIBRARY_DEBUG=%ZLIB_LIB_DEBUG% -DZLIB_LIBRARY_RELEASE=%ZLIB_LIB_RELEASE%
 
-set TARGET_LIST=%TARGET_LIST% protobuf
-cd ../
+cd 。/build
+call %CMAKE% --build . --target install --config=Debug
+call %CMAKE% --build . --target install --config=Release
 
-for %%i in (%TARGET_LIST%) do (
-    cd %%i/build
-    cd
-    
-    @REM call %CMAKE% --build . --target install --config=Debug
-    @REM call %CMAKE% --build . --target install --config=Release
-
-    cd ../../
-)
+cd ../../
 
 cd ../
 

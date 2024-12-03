@@ -85,8 +85,8 @@ for %%i in (%TARGET_LIST%) do (
     cd %%i/build
     cd
 
-    @REM call %CMAKE% --build . --target install --config=Debug
-    @REM call %CMAKE% --build . --target install --config=Release
+    call %CMAKE% --build . --target install --config=Debug
+    call %CMAKE% --build . --target install --config=Release
 
     cd ../../
 )

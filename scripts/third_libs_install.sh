@@ -78,7 +78,7 @@ cd ../
 for elem in "${TARGET_LIST[@]}"; do
     cd "$elem"/build || exit
     pwd
-#    cmake --build . --target install --config=Release
+    cmake --build . --target install --config=Release
     cd ../../
 done
 

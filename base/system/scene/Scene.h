@@ -3,6 +3,8 @@
 #include <map>
 #include <memory>
 #include <functional>
+#include <mutex>
+#include <shared_mutex>
 
 #include "../../GameWorld.h"
 #include "../../PlayerID.h"
@@ -21,6 +23,8 @@ class UScene final {
     uint32_t mSceneID;
 
     std::map<FPlayerID, std::shared_ptr<IAbstractPlayer>> mPlayerMap;
+    std::mutex mMutex;
+    std::shared_mutex mSharedMutex;
 
 public:
     UScene() = delete;

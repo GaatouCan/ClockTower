@@ -18,16 +18,19 @@ uint32_t UScene::GetSceneID() const {
 }
 
 void UScene::PlayerEnterScene(const std::shared_ptr<IAbstractPlayer> &player) {
-    if (std::this_thread::get_id() != GetWorld().GetThreadID()) {
-        RunInThread(&UScene::PlayerEnterScene, this, player);
-        return;
-    }
+    // if (std::this_thread::get_id() != GetWorld().GetThreadID()) {
+    //     RunInThread(&UScene::PlayerEnterScene, this, player);
+    //     return;
+    // }
 
     if (player == nullptr)
         return;
 
-    if (mPlayerMap.contains(player->GetPlayerID()))
-        return;
+    {
+        std::shared_lock lock(mSharedMutex);
+        if (mPlayerMap.contains(player->GetPlayerID()))
+            return;
+    }
 
     // Change Scene From Other Scene
     if (const auto otherSceneID = player->GetCurrentSceneID(); otherSceneID != 0 && otherSceneID != mSceneID) {
@@ -38,23 +41,30 @@ void UScene::PlayerEnterScene(const std::shared_ptr<IAbstractPlayer> &player) {
         }
     }
 
-    mPlayerMap[player->GetPlayerID()] = player;
+    {
+        std::scoped_lock lock(mMutex);
+        mPlayerMap[player->GetPlayerID()] = player;
+    }
     player->OnEnterScene(this);
 }
 
 void UScene::PlayerLeaveScene(const std::shared_ptr<IAbstractPlayer> &player, const bool bChange) {
-    if (std::this_thread::get_id() != GetWorld().GetThreadID()) {
-        RunInThread(&UScene::PlayerLeaveScene, this, player, bChange);
-        return;
-    }
+    // if (std::this_thread::get_id() != GetWorld().GetThreadID()) {
+    //     RunInThread(&UScene::PlayerLeaveScene, this, player, bChange);
+    //     return;
+    // }
 
     if (player == nullptr)
         return;
 
-    if (!mPlayerMap.contains(player->GetPlayerID()))
-        return;
+    {
+        std::scoped_lock lock(mSharedMutex);
 
-    mPlayerMap.erase(player->GetPlayerID());
+        if (!mPlayerMap.contains(player->GetPlayerID()))
+            return;
+
+        mPlayerMap.erase(player->GetPlayerID());
+    }
 
     if (!bChange)
         player->OnLeaveScene(this);

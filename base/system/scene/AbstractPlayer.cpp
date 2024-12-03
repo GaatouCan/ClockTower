@@ -17,6 +17,14 @@ IAbstractPlayer::IAbstractPlayer(AConnectionPointer conn)
 IAbstractPlayer::~IAbstractPlayer() {
 }
 
+bool IAbstractPlayer::SetConnection(AConnectionPointer conn) {
+    if (std::any_cast<FPlayerID>(mConn->GetContext()) != mPlayerID) {
+        return false;
+    }
+    mConn = std::move(conn);
+    return true;
+}
+
 AConnectionPointer IAbstractPlayer::GetConnection() const {
     return mConn;
 }
@@ -75,6 +83,13 @@ void IAbstractPlayer::OnLeaveScene(UScene *scene) {
     mOwnerScene = nullptr;
 }
 
+bool IAbstractPlayer::TryLeaveScene() {
+    if (mOwnerScene == nullptr) {
+        return false;
+    }
+    mOwnerScene->PlayerLeaveScene(shared_from_this());
+    return true;
+}
 
 bool IAbstractPlayer::IsInScene(const uint32_t id) const {
     if (mOwnerScene == nullptr)

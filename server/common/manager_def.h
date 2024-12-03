@@ -13,8 +13,8 @@ inline void LoadManager(UManagerSystem *sys) {
         return;
 
     sys->CreateManager<UPlayerManager>();
-    sys->CreateManager<UCommandManager>();
+    // sys->CreateManager<UCommandManager>();
 
-    sys->CreateManager<UPlayerCache>();
-    sys->CreateManager<UChatManager>();
+    // sys->CreateManager<UPlayerCache>();
+    // sys->CreateManager<UChatManager>();
 }

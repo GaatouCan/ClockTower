@@ -25,6 +25,8 @@ public:
     explicit IAbstractPlayer(AConnectionPointer conn);
     ~IAbstractPlayer() override;
 
+    bool SetConnection(AConnectionPointer conn);
+
     [[nodiscard]] AConnectionPointer GetConnection() const;
     [[nodiscard]] ATcpSocket &GetSocket() const;
 
@@ -41,6 +43,8 @@ public:
 
     void OnEnterScene(UScene *scene);
     void OnLeaveScene(UScene *scene);
+
+    bool TryLeaveScene();
 
     bool IsInScene(uint32_t id = 0) const;
     uint32_t GetCurrentSceneID() const;

@@ -18,7 +18,7 @@ void UConnectionHandlerImpl::OnClosed() {
     if (!mConn.lock()->GetContext().has_value())
         return;
 
-    const auto pid = std::any_cast<uint64_t>(mConn.lock()->GetContext());
+    const auto pid = std::any_cast<FPlayerID>(mConn.lock()->GetContext());
     mConn.lock()->ResetContext();
 
     if (const auto plrMgr = GetManager<UPlayerManager>(); plrMgr != nullptr)

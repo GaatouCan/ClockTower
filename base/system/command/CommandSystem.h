@@ -41,4 +41,7 @@ public:
             };
         }
     }
+
+    std::shared_ptr<IAbstractCommand> CreateClientCommand(const std::string &cmd, const std::string &args) const;
+    std::shared_ptr<IAbstractCommand> CreateOperateCommand(const std::string &cmd, const std::string &args) const;
 };

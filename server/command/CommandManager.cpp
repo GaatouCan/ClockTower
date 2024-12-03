@@ -10,21 +10,8 @@
 #include <orm/command.orm.h>
 
 
-std::function<void(UCommandManager*)> UCommandManager::sClientCommandRegister = nullptr;
-std::function<void(UCommandManager*)> UCommandManager::sOperateCommandRegister = nullptr;
-
 UCommandManager::UCommandManager(FContextNode &ctx)
     : IManager(ctx) {
-
-    if (sOperateCommandRegister) {
-        std::invoke(sOperateCommandRegister, this);
-        spdlog::info("UCommandManager - Operate Command Registered");
-    }
-
-    if (sClientCommandRegister) {
-        std::invoke(sClientCommandRegister, this);
-        spdlog::info("UCommandManager - Client Command Registered");
-    }
 
     mClientLogger = spdlog::get("client_command_logger");
     mOperateLogger = spdlog::get("operate_command_logger");
@@ -35,14 +22,6 @@ UCommandManager::UCommandManager(FContextNode &ctx)
 }
 
 UCommandManager::~UCommandManager() {
-}
-
-void UCommandManager::SetClientCommandRegister(const std::function<void(UCommandManager *)> &func) {
-    sClientCommandRegister = func;
-}
-
-void UCommandManager::SetOperateCommandRegister(const std::function<void(UCommandManager *)> &func) {
-    sOperateCommandRegister = func;
 }
 
 void UCommandManager::OnTick(ATimePoint now) {
@@ -56,17 +35,17 @@ awaitable<void> UCommandManager::OnClientCommand(
     const std::string &type,
     const std::string &args)
 {
-    const auto iter = mClientCommandMap.find(type);
-    if (iter == mClientCommandMap.end()) {
-        co_return;
-    }
+    // const auto iter = mClientCommandMap.find(type);
+    // if (iter == mClientCommandMap.end()) {
+    //     co_return;
+    // }
 
     const UCommandObject obj(type, args);
 
-    if (const auto cmd = std::dynamic_pointer_cast<IClientCommand>(std::invoke(iter->second, obj)); cmd != nullptr) {
-        cmd->SetSender(player->GetFullID());
-        bool res = co_await cmd->Execute();
-    }
+    // if (const auto cmd = std::dynamic_pointer_cast<IClientCommand>(std::invoke(iter->second, obj)); cmd != nullptr) {
+    //     cmd->SetSender(player->GetFullID());
+    //     bool res = co_await cmd->Execute();
+    // }
 }
 
 awaitable<void> UCommandManager::OnOperateCommand(
@@ -76,19 +55,19 @@ awaitable<void> UCommandManager::OnOperateCommand(
     const std::string &type,
     const std::string &args)
 {
-    const auto iter = mOperateCommandMap.find(type);
-    if (iter == mOperateCommandMap.end()) {
-        co_return;
-    }
+    // const auto iter = mOperateCommandMap.find(type);
+    // if (iter == mOperateCommandMap.end()) {
+    //     co_return;
+    // }
 
     const UCommandObject obj(type, args);
 
-    if (const auto cmd = std::dynamic_pointer_cast<IOperateCommand>(std::invoke(iter->second, obj)); cmd != nullptr) {
-        cmd->SetCommandID(commandID);
-        cmd->SetCreateTime(createTime);
-        cmd->SetCreator(creator);
-        bool res = co_await cmd->Execute();
-    }
+    // if (const auto cmd = std::dynamic_pointer_cast<IOperateCommand>(std::invoke(iter->second, obj)); cmd != nullptr) {
+    //     cmd->SetCommandID(commandID);
+    //     cmd->SetCreateTime(createTime);
+    //     cmd->SetCreator(creator);
+    //     bool res = co_await cmd->Execute();
+    // }
 }
 
 awaitable<void> UCommandManager::FetchOperateCommand() {

@@ -126,7 +126,7 @@ int GetDayOfWeek(const std::chrono::time_point<std::chrono::system_clock> point)
 unsigned int GetDayOfMonth(const std::chrono::time_point<std::chrono::system_clock> point) {
     const auto today = std::chrono::floor<std::chrono::days>(point);
     const auto ymd = std::chrono::year_month_day{today};
-    return unsigned int{ymd.day()};
+    return static_cast<unsigned int>(ymd.day());
 }
 
 unsigned int GetDayOfYear(const std::chrono::time_point<std::chrono::system_clock> point) {

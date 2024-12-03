@@ -66,7 +66,6 @@ endforeach ()
 add_library(proto_static STATIC ${PROTOBUF_FILES})
 target_link_libraries(proto_static PRIVATE protobuf::libprotobuf)
 
-#if (MSVC)
 #    execute_process(
 #            COMMAND ./PreBuildTool.exe "--config=config.json"
 #            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}

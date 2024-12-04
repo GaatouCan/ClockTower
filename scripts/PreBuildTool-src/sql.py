@@ -556,4 +556,4 @@ def generate_orm_clazz(src: str, dist: str, desc: str):
 
     print(f'-- {file_count} files has done')
 
-generate_orm_clazz("struct/sql", "struct/orm", "struct/describe.json")
+# generate_orm_clazz("struct/sql", "struct/orm", "struct/describe.json")

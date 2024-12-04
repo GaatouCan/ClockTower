@@ -62,7 +62,7 @@ long long UnixTime() {
     return secondsSinceEpoch.count();
 }
 
-long long ToUnixTime(const std::chrono::time_point<std::chrono::system_clock> point) {
+long long ToUnixTime(const ATimePoint point) {
     const auto durationSinceEpoch = point.time_since_epoch();
     const auto secondsSinceEpoch = std::chrono::duration_cast<std::chrono::seconds>(durationSinceEpoch);
     return secondsSinceEpoch.count();
@@ -112,48 +112,48 @@ std::vector<int> SplitStringToInt(const std::string &src, const char delimiter) 
     return result;
 }
 
-int GetDayOfWeek(const std::chrono::time_point<std::chrono::system_clock> point) {
-    const std::time_t current_time = std::chrono::system_clock::to_time_t(point);
+int GetDayOfWeek(const ATimePoint point) {
+    const std::time_t currentTime = std::chrono::system_clock::to_time_t(point);
     std::tm tm{};
 #ifdef WIN32
-    localtime_s(&tm, &current_time);
+    localtime_s(&tm, &currentTime);
 #else
     localtime_r(&current_time, &tm);
 #endif
     return tm.tm_wday;
 }
 
-unsigned GetDayOfMonth(const std::chrono::time_point<std::chrono::system_clock> point) {
-    const auto local_time = std::chrono::current_zone()->to_local(point);
-    const std::chrono::year_month_day ymd(std::chrono::floor<std::chrono::days>(local_time));
+unsigned GetDayOfMonth(const ATimePoint point) {
+    const auto localTime = std::chrono::current_zone()->to_local(point);
+    const std::chrono::year_month_day ymd(std::chrono::floor<std::chrono::days>(localTime));
     return static_cast<unsigned>(ymd.day());
 }
 
-int GetDayOfYear(const std::chrono::time_point<std::chrono::system_clock> point) {
-    const auto local_time = std::chrono::current_zone()->to_local(point);
+int GetDayOfYear(const ATimePoint point) {
+    const auto localTime = std::chrono::current_zone()->to_local(point);
 
-    const auto today = std::chrono::floor<std::chrono::days>(local_time);
+    const auto today = std::chrono::floor<std::chrono::days>(localTime);
 
-    const auto year = std::chrono::floor<std::chrono::years>(local_time);
-    const auto first_day_of_year = std::chrono::floor<std::chrono::days>(year);
+    const auto thisYear = std::chrono::floor<std::chrono::years>(localTime);
+    const auto firstDayOfYear = std::chrono::floor<std::chrono::days>(thisYear);
 
-    return today.time_since_epoch().count() - first_day_of_year.time_since_epoch().count() + 1;
+    return today.time_since_epoch().count() - firstDayOfYear.time_since_epoch().count() + 1;
 }
 
-unsigned int GetPassedDays(const std::chrono::time_point<std::chrono::system_clock> pointX, const std::chrono::time_point<std::chrono::system_clock> pointY) {
-    if (pointY <= pointX)
+int GetDaysGone(const ATimePoint former, const ATimePoint latter) {
+    if (latter <= former)
         return 0;
 
-    const auto local_time_x = std::chrono::current_zone()->to_local(pointX);
-    const auto local_time_y = std::chrono::current_zone()->to_local(pointY);
+    const auto formerLocalTime = std::chrono::current_zone()->to_local(former);
+    const auto latterLocalTime = std::chrono::current_zone()->to_local(latter);
 
-    const auto days_x = std::chrono::floor<std::chrono::days>(local_time_x);
-    const auto days_y = std::chrono::floor<std::chrono::days>(local_time_y);
+    const auto formerDays = std::chrono::floor<std::chrono::days>(formerLocalTime);
+    const auto latterDays = std::chrono::floor<std::chrono::days>(latterLocalTime);
 
-    return days_y.time_since_epoch().count() - days_x.time_since_epoch().count();
+    return latterDays.time_since_epoch().count() - formerDays.time_since_epoch().count();
 }
 
-std::chrono::time_point<std::chrono::system_clock> GetDayZeroTime(const std::chrono::time_point<std::chrono::system_clock> point) {
-    const auto days =  std::chrono::floor<std::chrono::days>(std::chrono::current_zone()->to_local(point));
-    return std::chrono::current_zone()->to_sys(days);
+ATimePoint GetDayZeroTime(const ATimePoint point) {
+    const auto zeroLocalTime =  std::chrono::floor<std::chrono::days>(std::chrono::current_zone()->to_local(point));
+    return std::chrono::current_zone()->to_sys(zeroLocalTime);
 }

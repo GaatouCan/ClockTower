@@ -44,6 +44,7 @@ void UScene::PlayerEnterScene(const std::shared_ptr<IAbstractPlayer> &player) {
     {
         std::scoped_lock lock(mMutex);
         mPlayerMap[player->GetPlayerID()] = player;
+        spdlog::info("{} - Player[{}] Enter Scene[{}].", __FUNCTION__, player->GetFullID(), mSceneID);
     }
     player->OnEnterScene(this);
 }
@@ -64,6 +65,7 @@ void UScene::PlayerLeaveScene(const std::shared_ptr<IAbstractPlayer> &player, co
             return;
 
         mPlayerMap.erase(player->GetPlayerID());
+        spdlog::info("{} - Player[{}] Leave Scene[{}].", __FUNCTION__, player->GetFullID(), mSceneID);
     }
 
     if (!bChange)

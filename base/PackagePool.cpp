@@ -159,7 +159,7 @@ void UPackagePool::Expanse() {
     if (mUseCount == 0)
         return;
 
-    if (std::floor(mQueue.size() / GetCapacity()) >= sExpanseRate)
+    if (std::floor(mQueue.size() / GetCapacity()) <= sExpanseRate)
         return;
 
     const auto num = static_cast<size_t>(std::ceil(static_cast<float>(GetCapacity()) * sExpanseScale));

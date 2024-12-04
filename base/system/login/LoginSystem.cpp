@@ -31,7 +31,7 @@ awaitable<void> ULoginSystem::OnLogin(const AConnectionPointer &conn, IPackage *
 
     const auto info = co_await mHandler->ParseLoginInfo(pkg);
     if (!info.pid.IsValid()) {
-        spdlog::warn("{} - Connection[{}] context is null but not receive the login request", conn->RemoteAddress().to_string(), __FUNCTION__);
+        spdlog::warn("{} - Connection[{}] context is null but not receive the login request", __FUNCTION__, conn->RemoteAddress().to_string());
         co_return;
     }
 

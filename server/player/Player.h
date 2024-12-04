@@ -22,7 +22,6 @@ struct FEP_PlayerLogout final : IEventParam {
 class UPlayer final : public IAbstractPlayer {
 
     AConnectionPointer mConn;
-    uint64_t mId;
 
     ATimePoint mLoginTime;
     ATimePoint mLogoutTime;

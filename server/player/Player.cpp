@@ -14,13 +14,12 @@
 
 UPlayer::UPlayer(AConnectionPointer conn)
     : IAbstractPlayer(std::move(conn)),
-      mId(std::any_cast<uint64_t>(mConn->GetContext())),
       mComponentModule(this),
       mEventModule(this) {
 }
 
 UPlayer::~UPlayer() {
-    spdlog::trace("{} - {}", __FUNCTION__, mId);
+    spdlog::trace("{} - {}", __FUNCTION__, GetFullID());
 }
 
 UComponentModule &UPlayer::GetComponentModule() {

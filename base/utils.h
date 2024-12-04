@@ -54,7 +54,7 @@ int GetDaysGone(ATimePoint former, ATimePoint latter = std::chrono::system_clock
 ATimePoint GetDayZeroTime(ATimePoint point = std::chrono::system_clock::now());
 
 template<typename T>
-bool IsPODType() {
+consteval bool IsPODType() {
     if constexpr (std::is_pointer_v<T>) {
         if constexpr (std::is_trivial_v<std::remove_pointer_t<T>> && std::is_standard_layout_v<std::remove_pointer_t<T>>)
             return true;
@@ -69,7 +69,7 @@ bool IsPODType() {
 }
 
 template<typename T>
-bool CheckPODType(T) {
+consteval bool CheckPODType(T) {
     return IsPODType<T>();
 }
 

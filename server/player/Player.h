@@ -6,7 +6,6 @@
 #include <system/scene/AbstractPlayer.h>
 #include <Connection.h>
 #include <RepeatedTimer.h>
-#include <utils.h>
 #include <system/login/PlatformInfo.h>
 #include <system/event/EventParam.h>
 
@@ -31,8 +30,6 @@ class UPlayer final : public IAbstractPlayer {
     UComponentModule mComponentModule;
     UEventModule mEventModule;
 
-    std::map<uint64_t, URepeatedTimer> mTimerMap;
-
     FPlatformInfo mPlatform;
 
 public:
@@ -49,23 +46,6 @@ public:
 
     bool IsOnline() const;
 
-    template<typename FUNC, typename... ARGS>
-    uint64_t SetTimer(const std::chrono::duration<uint32_t> expire, const bool repeat, FUNC &&func, ARGS &&... args) {
-        const uint64_t timerID = UnixTime();
-        if (auto [iter, res] = mTimerMap.insert_or_assign(timerID, GetSocket().get_executor()); res) {
-            iter->second
-                    .SetTimerID(timerID)
-                    .SetExpireTime(expire)
-                    .SetLoop(repeat)
-                    .SetCallback(std::forward<FUNC>(func), std::forward<ARGS>(args)...);
-
-            iter->second.Start();
-            return timerID;
-        }
-        return 0;
-    }
-
-    void StopTimer(uint64_t timerID);
     void Send(uint32_t id, std::string_view data) const;
     void Send(uint32_t id, const std::stringstream &ss) const;
 

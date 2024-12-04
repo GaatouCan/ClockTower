@@ -70,7 +70,7 @@ void UPlayer::OnLogout() {
         return;
     }
     mLoginTime = NowTimePoint();
-    mTimerMap.clear();
+    CleanAllTimer();
 
     if (const auto sys = GetSystem<UDatabaseSystem>(); sys != nullptr) {
         sys->PushTask([self = shared_from_this()](mysqlx::Schema &schema) {
@@ -106,12 +106,6 @@ bool UPlayer::IsOnline() const {
            && (mLogoutTime <= mLoginTime);
 }
 
-void UPlayer::StopTimer(const uint64_t timerID) {
-    if (const auto iter = mTimerMap.find(timerID); iter != mTimerMap.end()) {
-        iter->second.Stop();
-        mTimerMap.erase(iter);
-    }
-}
 
 void UPlayer::Send(const uint32_t id, const std::string_view data) const {
     const auto pkg = dynamic_cast<FPackage *>(BuildPackage());

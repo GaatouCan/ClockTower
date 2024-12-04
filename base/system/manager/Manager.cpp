@@ -6,6 +6,11 @@ IManager::IManager(FContextNode &ctx)
 }
 
 
+void IManager::CleanAllTimer() {
+    std::scoped_lock lock(mTimerMutex);
+    mTimerMap.clear();
+}
+
 AThreadID IManager::GetThreadID() const {
     return mContextNode.tid;
 }
@@ -25,7 +30,8 @@ IPackage * IManager::BuildPackage() const {
     return mContextNode.pool.Acquire();
 }
 
-void IManager::StopTimer(const ATimerID timerID) {
+void IManager::StopTimer(const FGeneratedID timerID) {
+    std::scoped_lock lock(mTimerMutex);
     if (const auto iter = mTimerMap.find(timerID); iter != mTimerMap.end()) {
         iter->second.Stop();
         mTimerMap.erase(iter);

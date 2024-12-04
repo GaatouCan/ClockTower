@@ -15,6 +15,7 @@ IAbstractPlayer::IAbstractPlayer(AConnectionPointer conn)
 }
 
 IAbstractPlayer::~IAbstractPlayer() {
+
 }
 
 bool IAbstractPlayer::SetConnection(AConnectionPointer conn) {
@@ -121,4 +122,17 @@ void IAbstractPlayer::SetPlatformInfo(const FPlatformInfo &platform) {
 
 const FPlatformInfo &IAbstractPlayer::GetPlatformInfo() const {
     return mPlatform;
+}
+
+void IAbstractPlayer::StopTimer(const FGeneratedID timerID) {
+    std::scoped_lock lock(mTimerMutex);
+    if (const auto iter = mTimerMap.find(timerID); iter != mTimerMap.end()) {
+        iter->second.Stop();
+        mTimerMap.erase(iter);
+    }
+}
+
+void IAbstractPlayer::CleanAllTimer() {
+    std::scoped_lock lock(mTimerMutex);
+    mTimerMap.clear();
 }

@@ -16,12 +16,12 @@ URepeatedTimer::~URepeatedTimer() {
     Stop();
 }
 
-URepeatedTimer &URepeatedTimer::SetTimerID(const ATimerID id) {
+URepeatedTimer &URepeatedTimer::SetTimerID(const FGeneratedID id) {
     mTimerId = id;
     return *this;
 }
 
-ATimerID URepeatedTimer::GetTimerID() const {
+FGeneratedID URepeatedTimer::GetTimerID() const {
     return mTimerId;
 }
 

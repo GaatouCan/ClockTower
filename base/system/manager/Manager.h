@@ -5,12 +5,17 @@
 #include "../../ContextNode.h"
 
 #include <map>
+#include <mutex>
+#include <shared_mutex>
 #include <spdlog/spdlog.h>
 
 class IManager {
 
     FContextNode &mContextNode;
-    std::map<ATimerID, URepeatedTimer> mTimerMap;
+
+    std::map<FGeneratedID, URepeatedTimer> mTimerMap;
+    std::mutex mTimerMutex;
+    std::shared_mutex mTimerSharedMutex;
 
 public:
     IManager() = delete;
@@ -45,22 +50,33 @@ public:
     }
 
     template<typename Functor, typename... Args>
-    ATimerID SetTimer(const std::chrono::duration<uint32_t> expire, const bool repeat, Functor &&func, Args &&... args) {
-        const uint64_t timerID = UnixTime();
-        if (auto [iter, res] = mTimerMap.insert_or_assign(timerID, mContextNode.ctx); res) {
-            iter->second
-                    .SetTimerID(timerID)
-                    .SetExpireTime(expire)
-                    .SetLoop(repeat)
-                    .SetCallback(std::forward<Functor>(func), std::forward<Args>(args)...);
-
-            iter->second.Start();
-            return timerID;
+    FGeneratedID SetTimer(const std::chrono::duration<uint32_t> expire, const bool repeat, Functor &&func, Args &&... args) {
+        FGeneratedID timerID = FGeneratedID::RandGenerate();
+        {
+            std::shared_lock lock(mTimerSharedMutex);
+            while (mTimerMap.contains(timerID)) {
+                timerID = FGeneratedID::RandGenerate();
+            }
         }
-        return 0;
+
+        {
+            std::scoped_lock lock(mTimerMutex);
+            if (auto [iter, res] = mTimerMap.insert_or_assign(timerID, mContextNode.ctx); res) {
+                iter->second
+                        .SetTimerID(timerID)
+                        .SetExpireTime(expire)
+                        .SetLoop(repeat)
+                        .SetCallback(std::forward<Functor>(func), std::forward<Args>(args)...);
+
+                iter->second.Start();
+                return timerID;
+            }
+        }
+        return {};
     }
 
-    void StopTimer(ATimerID timerID);
+    void StopTimer(FGeneratedID timerID);
+    void CleanAllTimer();
 };
 
 template<typename T>

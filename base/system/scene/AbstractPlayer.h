@@ -3,8 +3,11 @@
 #include "../../PlayerID.h"
 #include "../../Character.h"
 #include "../../Connection.h"
+#include "../../RepeatedTimer.h"
 #include "../login/PlatformInfo.h"
 
+#include <mutex>
+#include <shared_mutex>
 #include <spdlog/spdlog.h>
 
 class IAbstractPlayer : public UCharacter, public std::enable_shared_from_this<IAbstractPlayer> {
@@ -18,6 +21,10 @@ class IAbstractPlayer : public UCharacter, public std::enable_shared_from_this<I
     ATimePoint mLeaveTime;
 
     FPlatformInfo mPlatform;
+
+    std::map<FGeneratedID, URepeatedTimer> mTimerMap;
+    std::mutex mTimerMutex;
+    mutable std::shared_mutex mTimerSharedMutex;
 
 public:
     IAbstractPlayer() = delete;
@@ -66,4 +73,34 @@ public:
             co_return;
         }, detached);
     }
+
+    template<typename FUNC, typename... ARGS>
+    FGeneratedID SetTimer(const std::chrono::duration<uint32_t> expire, const bool repeat, FUNC &&func, ARGS &&... args) {
+        FGeneratedID timerID = FGeneratedID::RandGenerate();
+        {
+            std::shared_lock lock(mTimerSharedMutex);
+            while (mTimerMap.contains(timerID)) {
+                timerID = FGeneratedID::RandGenerate();
+            }
+        }
+
+
+        {
+            std::scoped_lock lock(mTimerMutex);
+            if (auto [iter, res] = mTimerMap.insert_or_assign(timerID, GetSocket().get_executor()); res) {
+                iter->second
+                        .SetTimerID(timerID)
+                        .SetExpireTime(expire)
+                        .SetLoop(repeat)
+                        .SetCallback(std::forward<FUNC>(func), std::forward<ARGS>(args)...);
+
+                iter->second.Start();
+                return timerID;
+            }
+        }
+        return {};
+    }
+
+    void StopTimer(FGeneratedID timerID);
+    void CleanAllTimer();
 };

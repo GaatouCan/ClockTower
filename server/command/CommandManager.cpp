@@ -11,6 +11,8 @@
 #include <spdlog/spdlog.h>
 #include <orm/command.orm.h>
 
+#include "system/database/Serializer.h"
+
 
 UCommandManager::UCommandManager(FContextNode &ctx)
     : IManager(ctx) {
@@ -57,11 +59,32 @@ awaitable<void> UCommandManager::OnOperateCommand(
     const std::string &type,
     const std::string &args)
 {
-    const auto sys = GetSystem<UCommandSystem>();
-    if (sys == nullptr)
+    if (mCurrentOperateCommandSet.contains(commandID))
         co_return;
 
-    const auto cmd = sys->CreateOperateCommand(type, args);
+    orm::UDBTable_Command cmdRow(commandID, creator, type, args, createTime, 1, "");
+
+    const auto dbSys = GetSystem<UDatabaseSystem>();
+    if (dbSys == nullptr)
+        co_return;
+
+    const bool ret = co_await dbSys->AsyncTask([cmdRow](mysqlx::Schema &schema) mutable -> bool {
+        if (auto table = schema.getTable(cmdRow.GetTableName()); table.existsInDatabase()) {
+            USerializer serializer(table);
+            serializer.Serialize(&cmdRow);
+            return true;
+        }
+        return false;
+    }, asio::use_awaitable);
+
+    if (!ret)
+        co_return;
+
+    const auto cmdSys = GetSystem<UCommandSystem>();
+    if (cmdSys == nullptr)
+        co_return;
+
+    const auto cmd = cmdSys->CreateOperateCommand(type, args);
     if (cmd == nullptr)
         co_return;
 
@@ -71,14 +94,20 @@ awaitable<void> UCommandManager::OnOperateCommand(
 
     mCurrentOperateCommandSet.emplace(commandID);
 
-    // if (const auto cmd = std::dynamic_pointer_cast<IOperateCommand>(std::invoke(iter->second, obj)); cmd != nullptr) {
-    //     cmd->SetCommandID(commandID);
-    //     cmd->SetCreateTime(createTime);
-    //     cmd->SetCreator(creator);
-    //     bool res = co_await cmd->Execute();
-    // }
+    const bool bFinished = co_await cmd->Execute();
+    mCurrentOperateCommandSet.erase(commandID);
 
-    co_await cmd->Execute();
+    cmdRow.finish_time = bFinished ? UnixTime() : 0;
+
+    co_await dbSys->AsyncTask([cmdRow](mysqlx::Schema &schema) mutable -> bool {
+        if (auto table = schema.getTable(cmdRow.GetTableName()); table.existsInDatabase()) {
+            USerializer serializer(table);
+            serializer.Serialize(&cmdRow);
+            return true;
+        }
+        return false;
+    }, asio::use_awaitable);
+
     co_return;
 }
 
@@ -99,22 +128,4 @@ awaitable<void> UCommandManager::FetchOperateCommand() {
         auto row = deserializer.TDeserialize<orm::UDBTable_Command>();
         co_await OnOperateCommand(row.id, row.create_time, row.creator, row.type, row.param);
     }
-    // for (auto row : res->fetchAll()) {
-    //     const uint64_t id = row[0].get<uint64_t>();
-    //     auto creator = row[1].get<std::string>();
-    //     auto type = row[2].get<std::string>();
-    //     auto param = row[3].get<std::string>();
-    //     const uint64_t create_time = row[4].get<uint64_t>();
-    //     const uint64_t finish_time = row[5].get<uint64_t>();
-    //     auto extend = row[6].get<std::string>();
-    //
-    //     co_await OnOperateCommand(id, create_time, creator, type, param);
-    //     sys->PushTask([id](mysqlx::Schema &schema) -> bool {
-    //         if (auto table = schema.getTable("command"); table.existsInDatabase()) {
-    //             table.update().set("finish_time", 1).where("id = : id").bind("id", id).execute();
-    //             return true;
-    //         }
-    //         return false;
-    //     });
-    // }
 }

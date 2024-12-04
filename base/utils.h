@@ -52,3 +52,53 @@ int GetDayOfYear(ATimePoint point = std::chrono::system_clock::now());
 int GetDaysGone(ATimePoint former, ATimePoint latter = std::chrono::system_clock::now());
 
 ATimePoint GetDayZeroTime(ATimePoint point = std::chrono::system_clock::now());
+
+template<typename T>
+bool IsPODType() {
+    if constexpr (std::is_pointer_v<T>) {
+        if constexpr (std::is_trivial_v<std::remove_pointer_t<T>> && std::is_standard_layout_v<std::remove_pointer_t<T>>)
+            return true;
+        else
+            return false;
+    } else {
+        if constexpr (std::is_trivial_v<T> && std::is_standard_layout_v<T>)
+            return true;
+        else
+            return false;
+    }
+}
+
+template<typename T>
+bool CheckPODType(T) {
+    return IsPODType<T>();
+}
+
+template<typename T>
+std::vector<uint8_t> PODToByteArray(T data) {
+    if constexpr (!IsPODType<T>()) {
+        return {};
+    }
+    std::vector<uint8_t> bytes;
+    if constexpr (std::is_pointer_v<T>) {
+        bytes.resize(sizeof(std::remove_pointer_t<T>));
+        memcpy(bytes.data(), data, sizeof(std::remove_pointer_t<T>));
+    } else {
+        bytes.resize(sizeof(data));
+        memcpy(bytes.data(), &data, sizeof(data));
+    }
+    return bytes;
+}
+
+template<typename T>
+bool ByteArrayToPOD(const std::vector<uint8_t>& bytes, T *data) {
+    if constexpr (!IsPODType<T>())
+        return false;
+
+    if (bytes.size() < sizeof(std::remove_pointer_t<T>))
+        return false;
+
+    memset(data, 0, sizeof(std::remove_pointer_t<T>));
+    memcpy(data, bytes.data(), sizeof(std::remove_pointer_t<T>));
+
+    return true;
+}

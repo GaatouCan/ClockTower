@@ -111,7 +111,7 @@ file(GLOB_RECURSE PLAYER_SRC ${CMAKE_SOURCE_DIR}/server/player/*.h ${CMAKE_SOURC
 file(GLOB_RECURSE CONFIG_SRC ${CMAKE_SOURCE_DIR}/server/config/*.h ${CMAKE_SOURCE_DIR}/server/config/*.cpp)
 file(GLOB_RECURSE WORLD_SRC ${CMAKE_SOURCE_DIR}/server/world/*.h ${CMAKE_SOURCE_DIR}/server/world/*.cpp)
 
-set(SERVER_SRC ${COMMON_SRC} ${IMPL_SRC} ${COMMAND_SRC} ${CONFIG_SRC} ${PLAYER_SRC} server/server.cpp)
+set(SERVER_SRC ${COMMON_SRC} ${IMPL_SRC} ${COMMAND_SRC} ${CONFIG_SRC} ${PLAYER_SRC} ${WORLD_SRC} server/server.cpp)
 if (MSVC)
     foreach(file ${SERVER_SRC})
         get_filename_component(PARENT_DIR "${file}" DIRECTORY)

@@ -1,7 +1,6 @@
 #include "ChatRoom.h"
 
 #include "../../../player/Player.h"
-#include "../../../player/PlayerCache.h"
 #include "../../../player/PlayerManager.h"
 #include "system/manager/ManagerSystem.h"
 #include "../../../common/ProtoType.h"
@@ -39,10 +38,6 @@ FPlayerID UChatRoom::GetLeaderID() const {
 
 
 awaitable<void> UChatRoom::SendAllRoomInfo(const std::shared_ptr<UPlayer> &plr) const {
-    const auto cacheMgr = GetManager<UPlayerCache>();
-    if (cacheMgr == nullptr)
-        co_return;
-
     const auto playerMgr = GetManager<UPlayerManager>();
     if (playerMgr == nullptr)
         co_return;
@@ -54,7 +49,7 @@ awaitable<void> UChatRoom::SendAllRoomInfo(const std::shared_ptr<UPlayer> &plr) 
     response.set_reason(Chat::SC_ChatRoomResponse::NORMAL_SEND);
 
     for (const auto &memberId: mMemberSet) {
-        auto node = co_await cacheMgr->FindCacheNode(memberId.ToUInt64());
+        auto node = co_await playerMgr->FindCacheNode(memberId);
         if (!node.has_value())
             continue;
 
@@ -75,10 +70,6 @@ awaitable<void> UChatRoom::SendAllRoomInfo(const std::shared_ptr<UPlayer> &plr) 
 }
 
 awaitable<void> UChatRoom::UpdateMemberInfo(std::set<FPlayerID> members, const std::vector<FCacheNode *> &cacheVec) const {
-    const auto cacheMgr = GetManager<UPlayerCache>();
-    if (cacheMgr == nullptr)
-        co_return;
-
     const auto playerMgr = GetManager<UPlayerManager>();
     if (playerMgr == nullptr)
         co_return;
@@ -93,18 +84,18 @@ awaitable<void> UChatRoom::UpdateMemberInfo(std::set<FPlayerID> members, const s
         if (cache == nullptr)
             continue;
 
-        // if (!mMemberSet.contains(cache->pid))
-        //     continue;
+        if (!mMemberSet.contains(cache->pid))
+            continue;
 
         const auto member = response.add_memberlist();
-        member->set_pid(cache->pid);
+        member->set_pid(cache->pid.ToUInt64());
         member->set_online(cache->IsOnline());
 
-        // members.erase(cache->pid);
+        members.erase(cache->pid);
     }
 
     for (const auto &memberId: members) {
-        auto node = co_await cacheMgr->FindCacheNode(memberId.ToUInt64());
+        auto node = co_await playerMgr->FindCacheNode(memberId);
         if (!node.has_value())
             continue;
 

@@ -12,6 +12,7 @@ class UCommandManager final : public IManager {
     std::shared_ptr<spdlog::logger> mClientLogger;
     std::shared_ptr<spdlog::logger> mOperateLogger;
 
+    ATimePoint mFetchTime;
     std::set<uint64_t> mCurrentOperateCommandSet;
 
 public:

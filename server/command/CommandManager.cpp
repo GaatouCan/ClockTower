@@ -31,6 +31,11 @@ UCommandManager::~UCommandManager() {
 void UCommandManager::OnTick(ATimePoint now) {
     IManager::OnTick(now);
 
+    const auto diff = std::chrono::duration_cast<std::chrono::seconds>(now - mFetchTime);
+    if (diff.count() < 5)
+        return;
+
+    mFetchTime = now;
     co_spawn(GetIOContext(), FetchOperateCommand(), detached);
 }
 

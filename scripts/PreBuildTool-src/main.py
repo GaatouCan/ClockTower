@@ -39,6 +39,8 @@ def main(argv):
             config["sql"]["gen"],
             config["sql"]["desc"]
         )
+    else:
+        print('-- Only generate configuration files')
     
     # 生成配置
     xlsx2json.generate_config_json(

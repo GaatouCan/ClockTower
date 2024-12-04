@@ -91,17 +91,17 @@ def parse_table_field(line: str) -> dict:
 def generate_orm_clazz(src: str, dist: str, desc: str):
     """生成ORM CPP类"""
 
-    assert src, 'sql输入路径错误'
-    assert dist, 'orm输出路径错误'
-    assert desc, 'desc输出路径错误'
+    assert src, 'sql input path error'
+    assert dist, 'orm output path error'
+    assert desc, 'desc output path error'
 
-    print(f'sql 输入路径: {os.getcwd()}\\{src}')
-    print(f'orm 输出路径: {os.getcwd()}\\{dist}')
-    print(f'describe 输出路径: {os.getcwd()}\\{desc}')
+    print(f'-- SQL input path: {os.getcwd()}\\{src}')
+    print(f'-- ORM output path: {os.getcwd()}\\{dist}')
+    print(f'-- Describe output path: {os.getcwd()}\\{desc}')
 
     if not os.path.exists(dist):
         os.makedirs(dist)
-        print("创建ORM文件夹")
+        print("-- Creating ORM folder")
 
     sql_list = {}
     table_name_set = set()
@@ -132,7 +132,7 @@ def generate_orm_clazz(src: str, dist: str, desc: str):
                     if line.startswith("CREATE TABLE"):
                         if next:
                             if table_info['name'] in table_name_set:
-                                raise NameError(f"{table_info['name']}重复定义") 
+                                raise NameError(f"{table_info['name']} redefined.") 
                     
                             table_name_set.add(table_info['name'])
                             
@@ -184,12 +184,12 @@ def generate_orm_clazz(src: str, dist: str, desc: str):
 
                 if next:
                     if table_info['name'] in table_name_set:
-                        raise NameError(f"{table_info['name']}重复定义") 
+                        raise NameError(f"{table_info['name']} redefined.") 
                     
                     table_name_set.add(table_info['name'])
                     sql_list[file_name].append(table_info)
 
-                print(f"\t已加载 {file.name}")    
+                print(f"-- \t{file.name} loaded")    
 
     # 生成JSON数据文件
     with open(desc, 'w', encoding='utf-8') as file:
@@ -554,6 +554,6 @@ def generate_orm_clazz(src: str, dist: str, desc: str):
 #             file.write('} // orm')
 #         file_count += 1
 
-    print('已完成%d个文件转换' % file_count)
+    print(f'-- {file_count} files has done')
 
 generate_orm_clazz("struct/sql", "struct/orm", "struct/describe.json")

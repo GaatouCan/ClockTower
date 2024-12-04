@@ -6,15 +6,15 @@ VERSION = '0.1'
 def generate_protobuf_define(src: str, dist: str, proto: list, expt: list, include_dir: str):
     """生成协议枚举类型、回调函数声明头文件和回调注册源文件"""
     
-    assert src, 'proto输入路径错误'
-    assert dist, 'proto输出路径错误'
+    assert src, 'proto input path error'
+    assert dist, 'proto output path error'
 
-    print(f'proto 输入路径: {os.getcwd()}\\{src}')
-    print(f'proto 输出路径: {os.getcwd()}\\{dist}')
+    print(f'-- Protobuf input path: {os.getcwd()}\\{src}')
+    print(f'-- Protobuf output path: {os.getcwd()}\\{dist}')
 
     if not os.path.exists(dist):
         os.makedirs(dist)
-        print("创建协议相关文件夹")
+        print("-- Creating proto output folder")
 
     proto_data = []
     proto_name_set = []
@@ -34,7 +34,7 @@ def generate_protobuf_define(src: str, dist: str, proto: list, expt: list, inclu
                     line = line[8:-1].strip()
                     if line.startswith('CS'):
                         if line in proto_name_set:
-                            raise f"{line}重复定义"
+                            raise f"{line} redefined."
 
                         if line in expt:
                             package['list'].append({'proto': line, 'callback': 0})
@@ -45,7 +45,7 @@ def generate_protobuf_define(src: str, dist: str, proto: list, expt: list, inclu
 
                     if line.startswith("SC"):
                         if line in proto_name_set:
-                            raise NameError(f"{line}重复定义")
+                            raise NameError(f"{line} redefined.")
 
                         package['list'].append({'proto': line, 'callback': 0})
                         proto_name_set.append(line)
@@ -54,7 +54,7 @@ def generate_protobuf_define(src: str, dist: str, proto: list, expt: list, inclu
 
             proto_data.append(package)
 
-            print(f"\t已加载 {file.name}")
+            print(f"-- \t{file.name} have done")
 
 
     with open(os.path.join(dist, 'ProtoType.h'), 'w', encoding='utf-8') as file:

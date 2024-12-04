@@ -52,6 +52,6 @@ public:
 
     std::shared_ptr<IAbstractPlayer> GetPlayer(const FPlayerID &pid) const;
 
-    void BroadCast(IPackage *pkg, const std::set<FPlayerID> &except);
+    void BroadCast(IPackage *pkg, const std::set<FPlayerID> &except = {});
 };
 

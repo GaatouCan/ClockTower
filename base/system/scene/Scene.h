@@ -51,5 +51,7 @@ public:
     void PlayerLeaveScene(const std::shared_ptr<IAbstractPlayer> &player, bool bChange = false);
 
     std::shared_ptr<IAbstractPlayer> GetPlayer(const FPlayerID &pid) const;
+
+    void BroadCast(IPackage *pkg, const std::set<FPlayerID> &except);
 };
 

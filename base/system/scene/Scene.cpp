@@ -80,3 +80,22 @@ std::shared_ptr<IAbstractPlayer> UScene::GetPlayer(const FPlayerID &pid) const {
     }
     return nullptr;
 }
+
+void UScene::BroadCast(IPackage *pkg, const std::set<FPlayerID> &except) {
+    if (pkg == nullptr)
+        return;
+
+    std::shared_lock lock(mSharedMutex);
+    for (const auto &[pid, plr]: mPlayerMap) {
+        if (except.contains(pid))
+            continue;
+
+        const auto tPkg = plr->BuildPackage();
+        tPkg->CopyFromOther(pkg);
+        plr->SendPackage(tPkg);
+    }
+
+    if (const auto pool = pkg->GetOwnerPool(); pool != nullptr) {
+        pool->Recycle(pkg);
+    }
+}

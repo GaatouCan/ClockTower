@@ -66,16 +66,17 @@ endforeach ()
 add_library(proto_static STATIC ${PROTOBUF_FILES})
 target_link_libraries(proto_static PRIVATE protobuf::libprotobuf)
 
-#    execute_process(
-#            COMMAND ./PreBuildTool.exe "--config=config.json"
-#            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-#    )
-#else ()
-#    execute_process(
-#            COMMAND ./PreBuildTool "--config=build.json"
-#            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-#    )
-#endif ()
+if (MSVC)
+    execute_process(
+            COMMAND ./pbt.exe "--config=config.json"
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    )
+else ()
+    execute_process(
+            COMMAND ./pbt "--config=build.json"
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    )
+endif ()
 
 file(GLOB_RECURSE BASE_SRC
         ${CMAKE_SOURCE_DIR}/base/*.h

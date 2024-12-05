@@ -95,4 +95,5 @@ cmake --build . --target install --config=Release
 cd ../../
 
 cd ../
+ldconfig
 echo "Third Library Build Finished."

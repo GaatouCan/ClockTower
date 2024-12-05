@@ -16,7 +16,7 @@ struct FByteArray {
         return mBytes;
     }
 
-    [[nodiscard]] size_t Length() const {
+    [[nodiscard]] size_t GetLength() const {
         return mBytes.size();
     }
 
@@ -102,8 +102,10 @@ int main() {
         37, 42, true, "Gaatou"
     };
 
-    const FByteArray bytes = FByteArray::FromType(&demo);
-    spdlog::info("{}", bytes.Length());
+    FByteArray bytes;
+
+    bytes = PODToByteArray(demo);
+    spdlog::info("{}", bytes.GetLength());
 
     FDemo tmp{};
     if (bytes.CastToType(&tmp))

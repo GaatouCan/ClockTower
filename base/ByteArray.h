@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <utility>
 
 struct FByteArray {
     std::vector<uint8_t> mBytes;
@@ -14,8 +15,12 @@ struct FByteArray {
         return mBytes;
     }
 
-    [[nodiscard]] size_t Length() const {
+    [[nodiscard]] size_t GetLength() const {
         return mBytes.size();
+    }
+
+    [[nodiscard]] const uint8_t *GetRawPointer() const {
+        return mBytes.data();
     }
 
     template<typename T>

@@ -4,7 +4,7 @@ CREATE TABLE `appearance`
     `avatar` INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '头像',
     `avatar_frame` INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '头像框',
     `update_time` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
-    `extend` TEXT COMMENT '扩展字段',
+    `extend` BLOB COMMENT '扩展字段',
     PRIMARY KEY (`pid`)
 ) ENGINE = InnoDB CHARACTER SET = utf16 COMMENT '玩家外观';
 

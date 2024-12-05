@@ -1,8 +1,6 @@
-#include <spdlog/spdlog.h>
-#include <asio.hpp>
-#include <concepts>
-#include <string>
+#pragma once
 
+#include <vector>
 
 struct FByteArray {
     std::vector<uint8_t> mBytes;
@@ -85,30 +83,4 @@ bool ByteArrayToPOD(const std::vector<uint8_t> &bytes, T *data) {
     memcpy(data, bytes.data(), sizeof(std::remove_pointer_t<T>));
 
     return true;
-}
-struct FDemo {
-    uint32_t hello;
-    uint32_t world;
-    bool bFlag;
-    char name[20];
-};
-
-int main() {
-    spdlog::info("Hello World!");
-
-    spdlog::info("{}", std::is_standard_layout_v<std::vector<uint8_t> >);
-
-    FDemo demo{
-        37, 42, true, "Gaatou"
-    };
-
-    const FByteArray bytes = FByteArray::FromType(&demo);
-    spdlog::info("{}", bytes.Length());
-
-    FDemo tmp{};
-    if (ByteArrayToPOD(bytes, &tmp)) {
-        spdlog::info("{} - {} - {} - {}", tmp.hello, tmp.world, tmp.bFlag, tmp.name);
-    }
-
-    return 0;
 }

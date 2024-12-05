@@ -99,7 +99,7 @@ git submodule update --init --recursive
 
 call %CMAKE% . -G "Visual Studio 17 2022" -B ./build -DCMAKE_INSTALL_PREFIX=%INSTALL_DIR%/protobuf -DCMAKE_DEBUG_POSTFIX='d' -DCMAKE_CXX_STANDARD=20 -DBUILD_TESTING=OFF -DABSL_PROPAGATE_CXX_STD=ON -Dprotobuf_BUILD_LIBPROTOC=ON -Dprotobuf_BUILD_SHARED_LIBS=ON -Dprotobuf_BUILD_TESTS=OFF -DZLIB_INCLUDE_DIR=%ZLIB_INC_DIR% -DZLIB_LIBRARY_DEBUG=%ZLIB_LIB_DEBUG% -DZLIB_LIBRARY_RELEASE=%ZLIB_LIB_RELEASE%
 
-cd 。/build
+cd ./build
 call %CMAKE% --build . --target install --config=Debug
 call %CMAKE% --build . --target install --config=Release
 

@@ -16,7 +16,7 @@ FPackage::FPackage(const FPackage &rhs) : FPackage() {
     if (this != &rhs) {
         memcpy(&mHeader, &rhs.mHeader, sizeof(mHeader));
 
-        mData.reserve(rhs.mData.size());
+        mData.resize(rhs.mData.size());
         memcpy(mData.data(), rhs.mData.data(), rhs.mData.size());
 
         mHeader.size = mData.size();
@@ -36,7 +36,7 @@ FPackage &FPackage::operator=(const FPackage &rhs) {
     if (this != &rhs) {
         memcpy(&mHeader, &rhs.mHeader, sizeof(mHeader));
 
-        mData.reserve(rhs.mData.size());
+        mData.resize(rhs.mData.size());
         memcpy(mData.data(), rhs.mData.data(), rhs.mData.size());
 
         mHeader.size = mData.size();

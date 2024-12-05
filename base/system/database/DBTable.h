@@ -32,4 +32,4 @@ concept DBTABLE_TYPE = std::derived_from<T, IDBTable>;
 }
 
 #define DB_CAST_TO_BLOB(field) \
-mysqlx::bytes(field.GetRawPointer(), field.GetLength())
+mysqlx::bytes(field.data(), field.size())

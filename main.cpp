@@ -16,8 +16,28 @@ struct FByteArray {
         return mBytes;
     }
 
-    [[nodiscard]] size_t GetLength() const {
+    [[nodiscard]] size_t size() const {
         return mBytes.size();
+    }
+
+    [[nodiscard]] const uint8_t *data() const {
+        return mBytes.data();
+    }
+
+    auto begin() -> decltype(mBytes)::iterator {
+        return mBytes.begin();
+    }
+
+    auto end() -> decltype(mBytes)::iterator {
+        return mBytes.end();
+    }
+
+    [[nodiscard]] auto begin() const -> decltype(mBytes)::const_iterator {
+        return mBytes.begin();
+    }
+
+    [[nodiscard]] auto end() const -> decltype(mBytes)::const_iterator {
+        return mBytes.end();
     }
 
     template<typename T>
@@ -98,14 +118,12 @@ int main() {
 
     spdlog::info("{}", std::is_standard_layout_v<std::vector<uint8_t> >);
 
-    FDemo demo{
+    constexpr FDemo demo{
         37, 42, true, "Gaatou"
     };
 
-    FByteArray bytes;
-
-    bytes = PODToByteArray(demo);
-    spdlog::info("{}", bytes.GetLength());
+    const FByteArray bytes = FByteArray::FromType(demo);
+    spdlog::info("{}", std::string(bytes.begin(), bytes.end()));
 
     FDemo tmp{};
     if (bytes.CastToType(&tmp))

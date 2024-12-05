@@ -38,7 +38,7 @@ struct FByteArray {
 
     template<typename T>
     requires IsPODType<T>
-    bool CastToType(T *target) {
+    bool CastToType(T *target) const {
         if (mBytes.size() < sizeof(std::remove_pointer_t<T>))
             return false;
 

@@ -40,7 +40,7 @@ struct FByteArray {
 
     template<typename T>
     requires IsPODType<T>
-    bool CastToType(T *target) {
+    bool CastToType(T *target) const {
         if (mBytes.size() < sizeof(std::remove_pointer_t<T>))
             return false;
 
@@ -106,9 +106,9 @@ int main() {
     spdlog::info("{}", bytes.Length());
 
     FDemo tmp{};
-    if (ByteArrayToPOD(bytes, &tmp)) {
+    if (bytes.CastToType(&tmp))
         spdlog::info("{} - {} - {} - {}", tmp.hello, tmp.world, tmp.bFlag, tmp.name);
-    }
+
 
     return 0;
 }

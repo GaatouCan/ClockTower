@@ -4,7 +4,7 @@ SOURCE_DIR="source"
 INSTALL_DIR="../../install"
 
 ASIO_DIR="asio-1.30.2"
-LUA_DIR="lua-5.4.7"
+#LUA_DIR="lua-5.4.7"
 
 ZLIB_INC_DIR="$INSTALL_DIR/zlib/include"
 ZLIB_LIB_DEBUG="$INSTALL_DIR/zlib/lib/libz.so"
@@ -24,7 +24,7 @@ cd "$SOURCE_DIR" || exit
 # git clone -b v1.15.0 https://github.com/gabime/spdlog.git
 
 cd spdlog || exit
-cmake . -G "Unix Makefiles" -B ./build -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR"/spdlog -DSPDLOG_BUILD_EXAMPLE=OFF -DSPDLOG_BUILD_SHARED=ON
+cmake . -G "Unix Makefiles" -B ./build -DSPDLOG_BUILD_EXAMPLE=OFF -DSPDLOG_BUILD_SHARED=ON
 
 TARGET_LIST+=("spdlog")
 cd ../
@@ -32,7 +32,7 @@ cd ../
 # asio
 if [ -d "$ASIO_DIR" ]; then
      cd "$ASIO_DIR" || exit
-     cmake . -G "Unix Makefiles" -B ./build -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR"/asio
+     cmake . -G "Unix Makefiles" -B ./build
 
      TARGET_LIST+=("$ASIO_DIR")
      cd ../
@@ -42,7 +42,7 @@ fi
 # git clone -b v3.11.3 https://github.com/nlohmann/json.git
 
 cd json || exit
-cmake . -G "Unix Makefiles" -B ./build -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR"/nlohmann_json -DJSON_BuildTests=OFF -DBUILD_TESTING=OFF
+cmake . -G "Unix Makefiles" -B ./build -DJSON_BuildTests=OFF -DBUILD_TESTING=OFF
 
 
 TARGET_LIST+=("json")
@@ -52,7 +52,7 @@ cd ../
 # git clone -b 0.8.0 https://github.com/jbeder/yaml-cpp.git
 
 cd yaml-cpp || exit
-cmake . -G "Unix Makefiles" -B ./build -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR"/YAML_CPP -DYAML_BUILD_SHARED_LIBS=ON -DYAML_CPP_BUILD_TESTS=OFF -DBUILD_TESTING=OFF
+cmake . -G "Unix Makefiles" -B ./build -DYAML_BUILD_SHARED_LIBS=ON -DYAML_CPP_BUILD_TESTS=OFF -DBUILD_TESTING=OFF
 
 TARGET_LIST+=("yaml-cpp")
 cd ../
@@ -70,7 +70,7 @@ cd ../
 # git clone -b v1.3.1 https://github.com/madler/zlib.git
 
 cd zlib || exit
-cmake . -G "Unix Makefiles" -B ./build -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR"/zlib -DINSTALL_BIN_DIR="$INSTALL_DIR"/zlib/bin -DINSTALL_INC_DIR="$INSTALL_DIR"/zlib/include -DINSTALL_LIB_DIR="$INSTALL_DIR"/zlib/lib -DINSTALL_MAN_DIR="$INSTALL_DIR"/zlib/share/man -DINSTALL_PKGCONFIG_DIR="$INSTALL_DIR"/zlib/share/pkgconfig
+cmake . -G "Unix Makefiles" -B ./build
 
 TARGET_LIST+=("zlib")
 cd ../
@@ -88,7 +88,7 @@ done
 cd protobuf || exit
 # git submodule update --init --recursive
 
-cmake . -G "Unix Makefiles" -B ./build -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR"/protobuf -DBUILD_TESTING=OFF -DABSL_PROPAGATE_CXX_STD=ON -DCMAKE_CXX_STANDARD=20 -Dprotobuf_BUILD_LIBPROTOC=ON -Dprotobuf_BUILD_SHARED_LIBS=ON -Dprotobuf_BUILD_TESTS=OFF -DZLIB_INCLUDE_DIR="$ZLIB_INC_DIR" -DZLIB_LIBRARY_DEBUG="$ZLIB_LIB_DEBUG" -DZLIB_LIBRARY_RELEASE="$ZLIB_LIB_RELEASE"
+cmake . -G "Unix Makefiles" -B ./build -DBUILD_TESTING=OFF -DABSL_PROPAGATE_CXX_STD=ON -DCMAKE_CXX_STANDARD=20 -Dprotobuf_BUILD_LIBPROTOC=ON -Dprotobuf_BUILD_SHARED_LIBS=ON -Dprotobuf_BUILD_TESTS=OFF
 
 cd build || exit
 cmake --build . --target install --config=Release

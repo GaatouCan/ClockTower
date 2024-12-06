@@ -12,11 +12,16 @@
 
 awaitable<std::shared_ptr<IAbstractPlayer>> ULoginHandlerImpl::OnPlayerLogin(const std::shared_ptr<UConnection> &conn, const FLoginInfo &info) {
     if (const auto plrMgr = GetManager<UPlayerManager>(); plrMgr != nullptr) {
-        auto plr = co_await plrMgr->OnPlayerLogin(conn, info.pid);
-        co_return plr;
+        try {
+            auto plr = co_await plrMgr->OnPlayerLogin(conn, info.pid);
+            co_return plr;
+        } catch (std::exception &e) {
+            spdlog::error("{} - {}", __FUNCTION__, e.what());
+            co_return nullptr;
+        }
     }
 
-    spdlog::warn("{} - PlayerManager not found", __FUNCTION__);
+    spdlog::critical("{} - PlayerManager not found", __FUNCTION__);
     co_return nullptr;
 }
 

@@ -21,9 +21,13 @@ void UConnectionHandlerImpl::OnClosed() {
     const auto pid = std::any_cast<FPlayerID>(mConn.lock()->GetContext());
     mConn.lock()->ResetContext();
 
-    if (const auto plrMgr = GetManager<UPlayerManager>(); plrMgr != nullptr)
-        plrMgr->OnPlayerLogout(pid);
-    else
+    if (const auto plrMgr = GetManager<UPlayerManager>(); plrMgr != nullptr) {
+        try {
+            plrMgr->OnPlayerLogout(pid);
+        } catch (std::exception &e) {
+            spdlog::error("{} - {}", __FUNCTION__, e.what());
+        }
+    } else
         spdlog::error("{} - Fail to Found PlayerManager", __FUNCTION__);
 }
 

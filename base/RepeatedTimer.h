@@ -1,7 +1,7 @@
 #pragma once
 
 #include "common.h"
-#include "GeneratedID.h"
+#include "UniqueID.h"
 
 // using ATimerID = FGeneratedID;
 using ATimerFunctor = std::function<void()>;
@@ -11,7 +11,7 @@ class URepeatedTimer final {
     AIOContext &mContext;
     ASystemTimer mTimer;
 
-    FGeneratedID mTimerId;
+    FUniqueID mTimerId;
     ATimerFunctor mFunctor;
 
     std::chrono::duration<uint32_t> mExpire;
@@ -27,8 +27,8 @@ public:
 
     DISABLE_COPY_MOVE(URepeatedTimer)
 
-    URepeatedTimer &SetTimerID(FGeneratedID id);
-    [[nodiscard]] FGeneratedID GetTimerID() const;
+    URepeatedTimer &SetTimerID(FUniqueID id);
+    [[nodiscard]] FUniqueID GetTimerID() const;
 
     URepeatedTimer &SetExpireTime(std::chrono::duration<uint32_t> expire);
     URepeatedTimer &SetLoop(bool loop);

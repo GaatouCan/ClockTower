@@ -172,7 +172,7 @@ awaitable<void> UConnection::WritePackage() {
 awaitable<void> UConnection::ReadPackage() {
     try {
         if (mCodec == nullptr) {
-            spdlog::error("{} - PacakgeCodec Undefined - key[{}]", __FUNCTION__, mKey.empty() ? "null" : mKey);
+            spdlog::error("{} - PackageCodec Undefined - key[{}]", __FUNCTION__, mKey.empty() ? "null" : mKey);
             Disconnect();
             co_return;
         }

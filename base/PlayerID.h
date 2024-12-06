@@ -9,15 +9,15 @@ struct FPlayerID {
     uint32_t localID;
     uint32_t crossID;
 
-    uint32_t GetLocalID() const {
+    [[nodiscard]] uint32_t GetLocalID() const {
         return localID;
     }
 
-    uint32_t GetCrossID() const {
+    [[nodiscard]] uint32_t GetCrossID() const {
         return crossID;
     }
 
-    uint64_t ToUInt64() const {
+    [[nodiscard]] uint64_t ToUInt64() const {
         return crossID * kCrossServerIDOffset + localID;
     }
 
@@ -39,7 +39,7 @@ struct FPlayerID {
         return !(*this == other);
     }
 
-    bool IsValid() const {
+    [[nodiscard]] bool IsValid() const {
         return (localID >= 1000 && localID <= 99999) && crossID > 0;
     }
 };

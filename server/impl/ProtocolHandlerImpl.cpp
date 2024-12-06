@@ -11,13 +11,19 @@
 awaitable<void> UProtocolHandlerImpl::Execute(const AProtoFunctor &func, const std::shared_ptr<UConnection> &conn, IPackage *pkg) {
     const auto plrMgr = GetManager<UPlayerManager>();
     if (plrMgr == nullptr) {
-        spdlog::warn("{} - PlayerManager not found", __FUNCTION__);
+        spdlog::critical("{} - PlayerManager not found", __FUNCTION__);
         co_return;
     }
 
     const auto pid = std::any_cast<FPlayerID>(conn->GetContext());
     if (const auto plr = plrMgr->FindPlayer(pid); plr != nullptr) {
-        assert(plr->GetConnection() == conn);
-        co_await std::invoke(func, plr, pkg);
+        try {
+            assert(plr->GetConnection() == conn);
+            co_await std::invoke(func, plr, pkg);
+        } catch (std::exception &e) {
+            spdlog::error("{} - Player[{}] Invoke Protocol Handler Error: {}", __FUNCTION__, plr->GetFullID(), e.what());
+        }
+    } else {
+        spdlog::warn("{} - Player[{}] Not Found", __FUNCTION__, pid.ToUInt64());
     }
 }

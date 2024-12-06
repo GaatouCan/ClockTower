@@ -22,7 +22,7 @@ class IAbstractPlayer : public UCharacter, public std::enable_shared_from_this<I
 
     FPlatformInfo mPlatform;
 
-    std::map<FGeneratedID, URepeatedTimer> mTimerMap;
+    std::map<FUniqueID, URepeatedTimer> mTimerMap;
     std::mutex mTimerMutex;
     mutable std::shared_mutex mTimerSharedMutex;
 
@@ -75,12 +75,12 @@ public:
     }
 
     template<typename FUNC, typename... ARGS>
-    FGeneratedID SetTimer(const std::chrono::duration<uint32_t> expire, const bool repeat, FUNC &&func, ARGS &&... args) {
-        FGeneratedID timerID = FGeneratedID::RandGenerate();
+    FUniqueID SetTimer(const std::chrono::duration<uint32_t> expire, const bool repeat, FUNC &&func, ARGS &&... args) {
+        FUniqueID timerID = FUniqueID::RandGenerate();
         {
             std::shared_lock lock(mTimerSharedMutex);
             while (mTimerMap.contains(timerID)) {
-                timerID = FGeneratedID::RandGenerate();
+                timerID = FUniqueID::RandGenerate();
             }
         }
 
@@ -101,6 +101,6 @@ public:
         return {};
     }
 
-    void StopTimer(FGeneratedID timerID);
+    void StopTimer(FUniqueID timerID);
     void CleanAllTimer();
 };

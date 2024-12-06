@@ -124,7 +124,7 @@ const FPlatformInfo &IAbstractPlayer::GetPlatformInfo() const {
     return mPlatform;
 }
 
-void IAbstractPlayer::StopTimer(const FGeneratedID timerID) {
+void IAbstractPlayer::StopTimer(const FUniqueID timerID) {
     std::scoped_lock lock(mTimerMutex);
     if (const auto iter = mTimerMap.find(timerID); iter != mTimerMap.end()) {
         iter->second.Stop();

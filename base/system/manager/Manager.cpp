@@ -30,7 +30,7 @@ IPackage * IManager::BuildPackage() const {
     return mContextNode.pool.Acquire();
 }
 
-void IManager::StopTimer(const FGeneratedID timerID) {
+void IManager::StopTimer(const FUniqueID timerID) {
     std::scoped_lock lock(mTimerMutex);
     if (const auto iter = mTimerMap.find(timerID); iter != mTimerMap.end()) {
         iter->second.Stop();

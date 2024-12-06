@@ -2,13 +2,13 @@
 
 #include "ChatRoom.h"
 
-#include <GeneratedID.h>
+#include <UniqueID.h>
 #include <system/manager/Manager.h>
 
 
 class UChatManager final : public IManager {
 
-    std::map<FGeneratedID, UChatRoom *> mChatRoomMap;
+    std::map<FUniqueID, UChatRoom *> mChatRoomMap;
 
 public:
 

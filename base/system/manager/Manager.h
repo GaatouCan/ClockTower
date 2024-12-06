@@ -13,7 +13,7 @@ class IManager {
 
     FContextNode &mContextNode;
 
-    std::map<FGeneratedID, URepeatedTimer> mTimerMap;
+    std::map<FUniqueID, URepeatedTimer> mTimerMap;
     std::mutex mTimerMutex;
     std::shared_mutex mTimerSharedMutex;
 
@@ -50,12 +50,12 @@ public:
     }
 
     template<typename Functor, typename... Args>
-    FGeneratedID SetTimer(const std::chrono::duration<uint32_t> expire, const bool repeat, Functor &&func, Args &&... args) {
-        FGeneratedID timerID = FGeneratedID::RandGenerate();
+    FUniqueID SetTimer(const std::chrono::duration<uint32_t> expire, const bool repeat, Functor &&func, Args &&... args) {
+        FUniqueID timerID = FUniqueID::RandGenerate();
         {
             std::shared_lock lock(mTimerSharedMutex);
             while (mTimerMap.contains(timerID)) {
-                timerID = FGeneratedID::RandGenerate();
+                timerID = FUniqueID::RandGenerate();
             }
         }
 
@@ -75,7 +75,7 @@ public:
         return {};
     }
 
-    void StopTimer(FGeneratedID timerID);
+    void StopTimer(FUniqueID timerID);
     void CleanAllTimer();
 };
 

@@ -6,7 +6,7 @@
 #include <vector>
 #include <asio.hpp>
 
-#include <GeneratedID.h>
+#include <UniqueID.h>
 #include <PlayerID.h>
 
 using asio::awaitable;
@@ -31,7 +31,7 @@ class UChatRoom final : public std::enable_shared_from_this<UChatRoom> {
 
     class UChatManager *mOwner;
 
-    FGeneratedID mRoomId;
+    FUniqueID mRoomId;
     FPlayerID mLeaderId;
 
     std::set<FPlayerID> mMemberSet;
@@ -47,8 +47,8 @@ public:
     explicit UChatRoom(UChatManager *owner);
     ~UChatRoom();
 
-    UChatRoom &SetRoomID(FGeneratedID roomId);
-    [[nodiscard]] FGeneratedID GetRoomID() const;
+    UChatRoom &SetRoomID(FUniqueID roomId);
+    [[nodiscard]] FUniqueID GetRoomID() const;
 
     UChatRoom &SetLeaderID(const FPlayerID &leaderId);
     [[nodiscard]] FPlayerID GetLeaderID() const;

@@ -18,7 +18,7 @@ UChatRoom::UChatRoom(UChatManager *owner)
 UChatRoom::~UChatRoom() {
 }
 
-UChatRoom &UChatRoom::SetRoomID(const FGeneratedID roomId) {
+UChatRoom &UChatRoom::SetRoomID(const FUniqueID roomId) {
     mRoomId = roomId;
     return *this;
 }
@@ -28,7 +28,7 @@ UChatRoom &UChatRoom::SetLeaderID(const FPlayerID &leaderId) {
     return *this;
 }
 
-FGeneratedID UChatRoom::GetRoomID() const {
+FUniqueID UChatRoom::GetRoomID() const {
     return mRoomId;
 }
 

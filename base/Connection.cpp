@@ -196,7 +196,7 @@ awaitable<void> UConnection::ReadPackage() {
             mPool.Recycle(pkg);
         }
     } catch (std::exception &e) {
-        spdlog::error("{} : {}", __FUNCTION__, e.what());
+        spdlog::error("{} - {}", __FUNCTION__, e.what());
         Disconnect();
     }
 }

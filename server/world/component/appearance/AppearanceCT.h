@@ -29,5 +29,7 @@ public:
     void Deserialize_AvatarFrame(UDeserializer &ds);
 
     void SendInfo() const;
+
+    void ActiveAvatar(int index);
 };
 

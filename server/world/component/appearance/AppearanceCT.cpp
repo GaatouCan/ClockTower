@@ -12,6 +12,9 @@
 #include <spdlog/spdlog.h>
 #include <appearance.pb.h>
 
+#include "GameWorld.h"
+#include "system/config/ConfigSystem.h"
+
 UAppearanceCT::UAppearanceCT(UComponentModule *module)
     : IPlayerComponent(module) {
 
@@ -79,6 +82,31 @@ void UAppearanceCT::SendInfo() const {
     }
 
     SEND_PACKAGE(this, SC_AppearanceResponse, res)
+}
+
+void UAppearanceCT::ActiveAvatar(const int index) {
+    if (const auto it = mAvatarMap.find(index); it != mAvatarMap.end()) {
+        if (it->second.activated) {
+            SendInfo();
+            return;
+        }
+    }
+
+    const auto cfg = GetSystem<UConfigSystem>()->FindConfig("appearance.avatar", index);
+    if (!cfg.has_value())
+        return;
+
+    if (!mAvatarMap.contains(index)) {
+        mAvatarMap[index] = orm::UDBTable_Avatar();
+    }
+
+    mAvatarMap[index].activated = true;
+    if (const auto expired = (*cfg)["expired"].get<uint64_t>(); expired > 0) {
+        mAvatarMap[index].expired_time = UnixTime() + expired;
+    }
+
+    mAppearance.update_time = UnixTime();
+    SendInfo();
 }
 
 awaitable<void> protocol::CS_AppearanceRequest(const std::shared_ptr<IAbstractPlayer> &plr, IPackage *pkg) {

@@ -3,6 +3,7 @@
 #include "common.h"
 
 #include <queue>
+#include <set>
 #include <yaml-cpp/yaml.h>
 
 
@@ -15,7 +16,7 @@ class IPackage;
 class UPackagePool final {
 
     std::queue<IPackage *> mQueue;
-    size_t mUseCount;
+    std::set<IPackage *> mInUseSet;
     ATimePoint mCollectTime;
 
     // 扩容和收缩临界点和比例

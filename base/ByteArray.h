@@ -60,10 +60,6 @@ struct FByteArray {
     template<typename T>
     requires IsPODType<T>
     bool CastToType(T *target) const {
-        // if (mBytes.size() < sizeof(std::remove_pointer_t<T>)) {
-        //    spdlog::warn("{} - bytes length[{}] less than struct size[{}]", __FUNCTION__, mBytes.size(), sizeof(std::remove_pointer_t<T>));
-        // }
-
         const auto size = mBytes.size() < sizeof(std::remove_pointer_t<T>) ? mBytes.size() : sizeof(std::remove_pointer_t<T>);
 
         memset(target, 0, size);
@@ -98,9 +94,6 @@ std::vector<uint8_t> PODToByteArray(T data) {
 template<typename T>
 requires FByteArray::IsPODType<T>
 bool ByteArrayToPOD(const std::vector<uint8_t> &bytes, T *data) {
-    // if (bytes.size() < sizeof(std::remove_pointer_t<T>))
-    //    spdlog::warn("{} - bytes size[{}] less then target size[{}]", __FUNCTION__, bytes.size(), sizeof(std::remove_pointer_t<T>));
-
     const auto size = bytes.size() < sizeof(std::remove_pointer_t<T>) ? bytes.size() : sizeof(std::remove_pointer_t<T>);
 
     memset(data, 0, size);

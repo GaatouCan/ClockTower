@@ -45,8 +45,7 @@ void PackageDefaultInit(IPackage *pkg) {
     }
 }
 
-UPackagePool::UPackagePool(const size_t capacity)
-    : mUseCount(0) {
+UPackagePool::UPackagePool(const size_t capacity) {
     for (size_t i = 0; i < capacity; i++) {
         IPackage *pkg = nullptr;
         if (sCreatePackage)
@@ -70,7 +69,7 @@ UPackagePool::~UPackagePool() {
 }
 
 size_t UPackagePool::GetCapacity() const {
-    return mUseCount + mQueue.size();
+    return mQueue.size() + mInUseSet.size();
 }
 
 IPackage *UPackagePool::Acquire() {
@@ -78,13 +77,13 @@ IPackage *UPackagePool::Acquire() {
 
     IPackage *pkg = mQueue.front();
     mQueue.pop();
-    mUseCount++;
 
     if (sInitPackage)
         std::invoke(sInitPackage, pkg);
     else
         PackageDefaultInit(pkg);
 
+    mInUseSet.insert(pkg);
     return pkg;
 }
 
@@ -92,7 +91,7 @@ void UPackagePool::Recycle(IPackage *pkg) {
     if (pkg != nullptr) {
         pkg->Reset();
         mQueue.push(pkg);
-        mUseCount--;
+        mInUseSet.erase(pkg);
     }
 
     Collect();
@@ -156,14 +155,14 @@ void UPackagePool::SetPackageInitializer(const std::function<void(IPackage *)> &
 }
 
 void UPackagePool::Expanse() {
-    if (mUseCount == 0)
+    if (mInUseSet.empty() && !mQueue.empty())
         return;
 
     if (std::floor(mQueue.size() / GetCapacity()) <= sExpanseRate)
         return;
 
     const auto num = static_cast<size_t>(std::ceil(static_cast<float>(GetCapacity()) * sExpanseScale));
-    spdlog::trace("{} - Pool Rest[{}], Current Using[{}], Expand Number[{}].", __FUNCTION__, mQueue.size(), mUseCount, num);
+    spdlog::trace("{} - Pool Rest[{}], Current Using[{}], Expand Number[{}].", __FUNCTION__, mQueue.size(), mInUseSet.size(), num);
 
     for (size_t i = 0; i < num; i++) {
         IPackage *pkg = nullptr;
@@ -186,13 +185,22 @@ void UPackagePool::Collect() {
     if (now - mCollectTime < std::chrono::seconds(3))
         return;
 
+    for (auto it = mInUseSet.begin(); it != mInUseSet.end();) {
+        if (!(*it)->IsAvailable()) {
+            (*it)->Reset();
+            mQueue.push(*it);
+            it = mInUseSet.erase(it);
+        } else
+            ++it;
+    }
+
     if (mQueue.size() <= sMinCapacity || std::floor(mQueue.size() / GetCapacity()) < sCollectRate)
         return;
 
     mCollectTime = now;
 
     const auto num = static_cast<size_t>(std::ceil(static_cast<float>(GetCapacity()) * sCollectScale));
-    spdlog::trace("{} - Pool Rest[{}], Current Using[{}], Collect Number[{}].", __FUNCTION__, mQueue.size(), mUseCount, num);
+    spdlog::trace("{} - Pool Rest[{}], Current Using[{}], Collect Number[{}].", __FUNCTION__, mQueue.size(), mInUseSet.size(), num);
 
     for (size_t i = 0; i < num && mQueue.size() > sMinCapacity; i++) {
         const auto pkg = mQueue.front();

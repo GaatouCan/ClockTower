@@ -28,6 +28,7 @@ void UMultiContextPool::Start(const size_t num) {
             });
 
             node.tid = std::this_thread::get_id();
+            node.pool.SetThreadID(node.tid);
             node.ctx.run();
         });
     }

@@ -61,6 +61,9 @@ UPackagePool::UPackagePool(const size_t capacity) {
 }
 
 UPackagePool::~UPackagePool() {
+    for (const auto it : mInUseSet) {
+        delete it;
+    }
     while (!mQueue.empty()) {
         const auto pkg = mQueue.front();
         mQueue.pop();
@@ -72,7 +75,34 @@ size_t UPackagePool::GetCapacity() const {
     return mQueue.size() + mInUseSet.size();
 }
 
+void UPackagePool::SetThreadID(const AThreadID id) {
+    mThreadID = id;
+}
+
+AThreadID UPackagePool::GetThreadID() const {
+    return mThreadID;
+}
+
+bool UPackagePool::IsInSameThread() const {
+    return mThreadID == std::this_thread::get_id();
+}
+
 IPackage *UPackagePool::Acquire() {
+    if (!IsInSameThread()) {
+        std::scoped_lock lock(mMutex);
+        Expanse();
+
+        IPackage *pkg = mQueue.front();
+        mQueue.pop();
+
+        if (sInitPackage)
+            std::invoke(sInitPackage, pkg);
+        else
+            PackageDefaultInit(pkg);
+
+        mInUseSet.insert(pkg);
+        return pkg;
+    }
     Expanse();
 
     IPackage *pkg = mQueue.front();
@@ -88,13 +118,24 @@ IPackage *UPackagePool::Acquire() {
 }
 
 void UPackagePool::Recycle(IPackage *pkg) {
-    if (pkg != nullptr) {
+    if (pkg == nullptr)
+        return;
+
+    if (!IsInSameThread()) {
+        std::scoped_lock lock(mMutex);
+
         pkg->Reset();
         mQueue.push(pkg);
         mInUseSet.erase(pkg);
+
+        Reduce();
     }
 
-    Collect();
+    pkg->Reset();
+    mQueue.push(pkg);
+    mInUseSet.erase(pkg);
+
+    Reduce();
 }
 
 void UPackagePool::LoadConfig(const YAML::Node &cfg) {
@@ -178,7 +219,7 @@ void UPackagePool::Expanse() {
     }
 }
 
-void UPackagePool::Collect() {
+void UPackagePool::Reduce() {
     const auto now = NowTimePoint();
 
     // 不要太频繁

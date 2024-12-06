@@ -4,6 +4,7 @@
 
 #include <queue>
 #include <set>
+#include <mutex>
 #include <yaml-cpp/yaml.h>
 
 
@@ -11,13 +12,15 @@ class IPackage;
 
 /**
  * 数据包池
- * @attention 单线程下使用 设计为一个数据包池对应一个线程下的io_context
  */
 class UPackagePool final {
 
     std::queue<IPackage *> mQueue;
     std::set<IPackage *> mInUseSet;
     ATimePoint mCollectTime;
+    AThreadID mThreadID;
+
+    std::mutex mMutex;
 
     // 扩容和收缩临界点和比例
     // 每个线程下的数据包池行为目前设计为一致
@@ -41,6 +44,10 @@ public:
     DISABLE_COPY_MOVE(UPackagePool)
 
     [[nodiscard]] size_t GetCapacity() const;
+
+    void SetThreadID(AThreadID id);
+    [[nodiscard]] AThreadID GetThreadID() const;
+    [[nodiscard]] bool IsInSameThread() const;
 
     /**
      * 从池里获取一个数据包
@@ -74,5 +81,5 @@ public:
 
 private:
     void Expanse();
-    void Collect();
+    void Reduce();
 };

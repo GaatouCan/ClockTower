@@ -131,18 +131,18 @@ awaitable<void> UConnection::Watchdog() {
         } while (mDeadline > now && mContextNullCount < kNullContextMaxCount);
 
         if (mSocket.is_open()) {
-            spdlog::warn("Watchdog Timer Timeout {}", mSocket.remote_endpoint().address().to_string());
+            spdlog::warn("{} - Watchdog Timer Timeout - key[{}]", __FUNCTION__, mKey.empty() ? "null" : mKey);
             Disconnect();
         }
     } catch (std::exception &e) {
-        spdlog::warn("{} - {}", __FUNCTION__, e.what());
+        spdlog::warn("{} - {} - key[{}]", __FUNCTION__, e.what(), mKey.empty() ? "null" : mKey);
     }
 }
 
 awaitable<void> UConnection::WritePackage() {
     try {
         if (mCodec == nullptr) {
-            spdlog::critical("{} - codec undefined", __FUNCTION__);
+            spdlog::critical("{} - codec undefined - key[{}]", __FUNCTION__, mKey.empty() ? "null" : mKey);
             Disconnect();
             co_return;
         }
@@ -158,13 +158,13 @@ awaitable<void> UConnection::WritePackage() {
                 }
                 mPool.Recycle(pkg);
             } else {
-                spdlog::warn("{} - write failed", __FUNCTION__);
+                spdlog::warn("{} - Write Failed - key[{}]", __FUNCTION__, mKey.empty() ? "null" : mKey);
                 mPool.Recycle(pkg);
                 Disconnect();
             }
         }
     } catch (std::exception &e) {
-        spdlog::error("{} : {}", __FUNCTION__, e.what());
+        spdlog::error("{} - {} - key[{}]", __FUNCTION__, e.what(), mKey.empty() ? "null" : mKey);
         Disconnect();
     }
 }
@@ -172,7 +172,7 @@ awaitable<void> UConnection::WritePackage() {
 awaitable<void> UConnection::ReadPackage() {
     try {
         if (mCodec == nullptr) {
-            spdlog::error("{} - codec undefined", __FUNCTION__);
+            spdlog::error("{} - PacakgeCodec Undefined - key[{}]", __FUNCTION__, mKey.empty() ? "null" : mKey);
             Disconnect();
             co_return;
         }
@@ -189,14 +189,14 @@ awaitable<void> UConnection::ReadPackage() {
                     co_await mHandler->OnReadPackage(pkg);
                 }
             } else {
-                spdlog::warn("{} - Read failed", __FUNCTION__);
+                spdlog::warn("{} - Read failed - key[{}]", __FUNCTION__, mKey.empty() ? "null" : mKey);
                 Disconnect();
             }
 
             mPool.Recycle(pkg);
         }
     } catch (std::exception &e) {
-        spdlog::error("{} - {}", __FUNCTION__, e.what());
+        spdlog::error("{} - {} - key[{}]", __FUNCTION__, e.what(), mKey.empty() ? "null" : mKey);
         Disconnect();
     }
 }

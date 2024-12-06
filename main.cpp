@@ -9,10 +9,10 @@ struct FByteArray {
 
     FByteArray() = default;
 
-    FByteArray(const std::vector<uint8_t> &bytes)
+    explicit FByteArray(const std::vector<uint8_t> &bytes)
         : mBytes(bytes) {}
 
-    operator std::vector<uint8_t>() const {
+    explicit operator std::vector<uint8_t>() const {
         return mBytes;
     }
 
@@ -123,12 +123,12 @@ int main() {
     };
 
     const FByteArray bytes = FByteArray::FromType(demo);
-    spdlog::info("{}", std::string(bytes.begin(), bytes.end()));
+    const auto vec = std::vector<uint8_t>(bytes);
+    spdlog::info("{}", std::string(vec.begin(), vec.end()));
 
     FDemo tmp{};
     if (bytes.CastToType(&tmp))
         spdlog::info("{} - {} - {} - {}", tmp.hello, tmp.world, tmp.bFlag, tmp.name);
-
 
     return 0;
 }

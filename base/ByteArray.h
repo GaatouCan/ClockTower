@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <utility>
-#include <spdlog/spdlog.h>
 
 struct FByteArray {
     std::vector<uint8_t> mBytes;
@@ -48,26 +47,22 @@ struct FByteArray {
     template<typename T>
     requires IsPODType<T>
     void CastFromType(T source) {
-        try {
-            if constexpr (std::is_pointer_v<T>) {
-                constexpr auto size = sizeof(std::remove_pointer_t<T>);
-                mBytes.resize(size);
-                memcpy(mBytes.data(), source, size);
-            } else {
-                mBytes.resize(sizeof(T));
-                memcpy(mBytes.data(), &source, sizeof(T));
-            }
-        } catch (std::length_error &e) {
-            spdlog::error("{} - {}", __FUNCTION__, e.what());
+        if constexpr (std::is_pointer_v<T>) {
+            constexpr auto size = sizeof(std::remove_pointer_t<T>);
+            mBytes.resize(size);
+            memcpy(mBytes.data(), source, size);
+        } else {
+            mBytes.resize(sizeof(T));
+            memcpy(mBytes.data(), &source, sizeof(T));
         }
     }
 
     template<typename T>
     requires IsPODType<T>
     bool CastToType(T *target) const {
-        if (mBytes.size() < sizeof(std::remove_pointer_t<T>)) {
-            spdlog::warn("{} - bytes length[{}] less than struct size[{}]", __FUNCTION__, mBytes.size(), sizeof(std::remove_pointer_t<T>));
-        }
+        // if (mBytes.size() < sizeof(std::remove_pointer_t<T>)) {
+        //    spdlog::warn("{} - bytes length[{}] less than struct size[{}]", __FUNCTION__, mBytes.size(), sizeof(std::remove_pointer_t<T>));
+        // }
 
         const auto size = mBytes.size() < sizeof(std::remove_pointer_t<T>) ? mBytes.size() : sizeof(std::remove_pointer_t<T>);
 
@@ -90,16 +85,12 @@ template<typename T>
 requires FByteArray::IsPODType<T>
 std::vector<uint8_t> PODToByteArray(T data) {
     std::vector<uint8_t> bytes;
-    try {
-        if constexpr (std::is_pointer_v<T>) {
-            bytes.resize(sizeof(std::remove_pointer_t<T>));
-            memcpy(bytes.data(), data, sizeof(std::remove_pointer_t<T>));
-        } else {
-            bytes.resize(sizeof(data));
-            memcpy(bytes.data(), &data, sizeof(data));
-        }
-    } catch (std::length_error &e) {
-        spdlog::error("{} - {}", __FUNCTION__, e.what());
+    if constexpr (std::is_pointer_v<T>) {
+        bytes.resize(sizeof(std::remove_pointer_t<T>));
+        memcpy(bytes.data(), data, sizeof(std::remove_pointer_t<T>));
+    } else {
+        bytes.resize(sizeof(data));
+        memcpy(bytes.data(), &data, sizeof(data));
     }
     return bytes;
 }
@@ -107,8 +98,8 @@ std::vector<uint8_t> PODToByteArray(T data) {
 template<typename T>
 requires FByteArray::IsPODType<T>
 bool ByteArrayToPOD(const std::vector<uint8_t> &bytes, T *data) {
-    if (bytes.size() < sizeof(std::remove_pointer_t<T>))
-        spdlog::warn("{} - bytes size[{}] less then target size[{}]", __FUNCTION__, bytes.size(), sizeof(std::remove_pointer_t<T>));
+    // if (bytes.size() < sizeof(std::remove_pointer_t<T>))
+    //    spdlog::warn("{} - bytes size[{}] less then target size[{}]", __FUNCTION__, bytes.size(), sizeof(std::remove_pointer_t<T>));
 
     const auto size = bytes.size() < sizeof(std::remove_pointer_t<T>) ? bytes.size() : sizeof(std::remove_pointer_t<T>);
 

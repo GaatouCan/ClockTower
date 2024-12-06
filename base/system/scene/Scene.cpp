@@ -97,6 +97,7 @@ void UScene::BroadCast(IPackage *pkg, const std::set<FPlayerID> &except) {
         plr->SendPackage(tPkg);
     }
 
+    pkg->Invalid();
     if (const auto pool = pkg->GetOwnerPool(); pool != nullptr) {
         pool->Recycle(pkg);
     }

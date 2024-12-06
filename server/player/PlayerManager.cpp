@@ -103,6 +103,7 @@ void UPlayerManager::SendToList(IPackage *pkg, const std::set<FPlayerID>& player
         }
     }
 
+    pkg->Invalid();
     if (const auto pool = pkg->GetOwnerPool(); pool != nullptr) {
         pool->Recycle(pkg);
     }

@@ -40,7 +40,7 @@ awaitable<void> ULoginSystem::OnLogin(const AConnectionPointer &conn, IPackage *
         co_return;
     }
 
-    spdlog::trace("{} - Player id: {}, token: {}", __FUNCTION__, info.pid.ToUInt64(), info.token);
+    spdlog::debug("{} - Player id: {}, token: {}", __FUNCTION__, info.pid.ToUInt64(), info.token);
     if (const auto pid = VerifyToken(info.pid, info.token); pid.IsValid() && pid.crossID == GetServerID()) {
         conn->SetContext(std::make_any<FPlayerID>(pid));
 

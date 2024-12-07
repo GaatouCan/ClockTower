@@ -11,17 +11,21 @@ USceneSystem::~USceneSystem() {
 }
 
 void USceneSystem::Init() {
-    const auto cfg = GetServerConfig();
+    const auto& cfg = GetServerConfig();
 
     size_t index = 0;
     for (const auto it : cfg["scene"]["main"]) {
         auto scene = new UScene(index++);
         mSceneVector.push_back(scene);
+
+        spdlog::info("{} - Created Main Scene[{}].", __FUNCTION__, scene->GetSceneID());
     }
 
     for (const auto it : cfg["scene"]["state"]) {
         auto scene = new UScene(index++);
         mSceneVector.push_back(scene);
+
+        spdlog::info("{} - Created State Scene[{}].", __FUNCTION__, scene->GetSceneID());
     }
 }
 

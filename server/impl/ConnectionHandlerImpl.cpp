@@ -32,7 +32,7 @@ void UConnectionHandlerImpl::OnClosed() {
 }
 
 awaitable<void> UConnectionHandlerImpl::OnReadPackage(IPackage *pkg) {
-    spdlog::trace("{} - Receive Package[{}] From {}.", __FUNCTION__, ProtoTypeToString(static_cast<protocol::EProtoType>(pkg->GetID())), mConn.lock()->RemoteAddress().to_string());
+    spdlog::debug("{} - Receive Package[{}] From {}.", __FUNCTION__, ProtoTypeToString(static_cast<protocol::EProtoType>(pkg->GetID())), mConn.lock()->RemoteAddress().to_string());
 
     if (!mConn.lock()->GetContext().has_value()) {
         if (const auto sys = GetSystem<ULoginSystem>(); sys != nullptr) {

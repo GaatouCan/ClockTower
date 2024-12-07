@@ -194,6 +194,7 @@ void UPackagePool::Expanse() {
             mQueue.push(pkg);
         }
     }
+    spdlog::trace("{} - Pool Rest[{}], Current Using[{}].", __FUNCTION__, mQueue.size(), mInUseSet.size());
 }
 
 void UPackagePool::Reduce() {

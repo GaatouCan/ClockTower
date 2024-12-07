@@ -43,7 +43,7 @@ awaitable<void> ULoginSystem::OnLogin(const AConnectionPointer &conn, IPackage *
 
         if (const auto plr = co_await mHandler->OnPlayerLogin(conn, info); plr != nullptr) {
             if (const auto sys = GetSystem<USceneSystem>(); sys != nullptr) {
-                if (const auto scene = sys->GetMainScene(); scene != nullptr) {
+                if (const auto scene = sys->GetSceneByID(conn->GetNodeIndex()); scene != nullptr) {
                     scene->PlayerEnterScene(plr);
                 }
             }

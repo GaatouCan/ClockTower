@@ -11,6 +11,7 @@ std::chrono::duration<uint32_t> UConnection::sReadTimeout = 10s;
 UConnection::UConnection(ATcpSocket socket, UPackagePool &pool)
     : mSocket(std::move(socket)),
       mPool(pool),
+      mNodeIndex(0),
       mWatchdogTimer(mSocket.get_executor()) {
 }
 
@@ -45,6 +46,15 @@ void UConnection::Disconnect() {
     while (!mOutput.IsEmpty()) {
         mPool.Recycle(mOutput.PopFront());
     }
+}
+
+UConnection & UConnection::SetNodeIndex(const size_t idx) {
+    mNodeIndex = idx;
+    return *this;
+}
+
+size_t UConnection::GetNodeIndex() const {
+    return mNodeIndex;
 }
 
 UConnection &UConnection::SetContext(const std::any &ctx) {

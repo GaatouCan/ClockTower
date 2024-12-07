@@ -10,4 +10,5 @@ struct FContextNode {
     UPackagePool pool;
     AIOContext ctx;
     AThreadID tid;
+    size_t index; // From 0
 };

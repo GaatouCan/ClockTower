@@ -133,7 +133,7 @@ awaitable<void> UGameWorld::WaitForConnect() {
 
         while (bRunning) {
             // PackagePool and io_context in per sub thread
-            auto &[pool, ctx, tid] = mPool.NextContextNode();
+            auto &[pool, ctx, tid, index] = mPool.NextContextNode();
 
             if (auto socket = co_await mAcceptor.async_accept(ctx); socket.is_open()) {
                 const auto addr = socket.remote_endpoint().address();
@@ -162,7 +162,7 @@ awaitable<void> UGameWorld::WaitForConnect() {
                 const auto conn = std::make_shared<UConnection>(std::move(socket), pool);
                 spdlog::info("Accept Connection From: {}", addr.to_string());
 
-                conn->SetThreadID(tid).SetKey(key);
+                conn->SetThreadID(tid).SetNodeIndex(index).SetKey(key);
 
                 if (mConnectionFilter)
                     std::invoke(mConnectionFilter, conn);

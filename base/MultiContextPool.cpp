@@ -19,6 +19,11 @@ UMultiContextPool::~UMultiContextPool() {
 
 void UMultiContextPool::Start(const size_t num) {
     mNodeVec = std::vector<FContextNode>(num);
+
+    for (size_t idx = 0; idx < num; ++idx) {
+        mNodeVec[idx].index = idx + 1;
+    }
+
     for (auto &node: mNodeVec) {
         mWorkVec.emplace_back(node.ctx);
         mThreadVec.emplace_back([this, &node] {

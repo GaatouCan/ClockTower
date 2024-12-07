@@ -1,5 +1,6 @@
 #include "SceneSystem.h"
 #include "Scene.h"
+#include "../config/ConfigSystem.h"
 
 constexpr int kSceneCount = 10;
 
@@ -10,10 +11,17 @@ USceneSystem::~USceneSystem() {
 }
 
 void USceneSystem::Init() {
-    for (uint32_t index = 0; index < kSceneCount; index++) {
-        auto scene = new UScene(index + 1);
-        // scene->SetSceneID(index + 1);
-        mSceneVector.emplace_back(scene);
+    const auto cfg = GetServerConfig();
+
+    size_t index = 0;
+    for (const auto it : cfg["scene"]["main"]) {
+        auto scene = new UScene(index++);
+        mSceneVector.push_back(scene);
+    }
+
+    for (const auto it : cfg["scene"]["state"]) {
+        auto scene = new UScene(index++);
+        mSceneVector.push_back(scene);
     }
 }
 
@@ -22,8 +30,8 @@ UScene * USceneSystem::GetMainScene() const {
 }
 
 UScene * USceneSystem::GetSceneByID(const uint32_t id) const {
-    if (id == 0 || id > mSceneVector.size()) {
+    if (id >= mSceneVector.size()) {
         return nullptr;
     }
-    return mSceneVector[id - 1];
+    return mSceneVector[id];
 }

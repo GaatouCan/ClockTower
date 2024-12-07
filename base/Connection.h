@@ -14,6 +14,7 @@ class UConnection final : public std::enable_shared_from_this<UConnection> {
 
     ATcpSocket mSocket;
     UPackagePool &mPool;
+    size_t mNodeIndex;
 
     TSDeque<IPackage *> mOutput;
 
@@ -44,6 +45,9 @@ public:
 
     void ConnectToClient();
     void Disconnect();
+
+    UConnection &SetNodeIndex(size_t idx);
+    [[nodiscard]] size_t GetNodeIndex() const;
 
     UConnection &SetContext(const std::any &ctx);
     UConnection &ResetContext();

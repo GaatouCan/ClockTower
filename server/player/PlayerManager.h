@@ -30,6 +30,8 @@ public:
         return "UPlayerManager";
     }
 
+    void OnDayChange() override;
+
     awaitable<std::shared_ptr<UPlayer>> OnPlayerLogin(const std::shared_ptr<UConnection> &conn, const FPlayerID &id);
 
     void OnPlayerLogout(FPlayerID pid);

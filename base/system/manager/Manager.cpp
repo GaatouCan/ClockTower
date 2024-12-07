@@ -22,6 +22,9 @@ bool IManager::IsSameThread() const {
 void IManager::OnTick(ATimePoint now) {
 }
 
+void IManager::OnDayChange() {
+}
+
 AIOContext &IManager::GetIOContext() const {
     return mContextNode.ctx;
 }

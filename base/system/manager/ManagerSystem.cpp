@@ -41,6 +41,7 @@ void UManagerSystem::Init() {
         try {
             ATimePoint point = NowTimePoint();
             point = std::chrono::floor<std::chrono::seconds>(point);
+            auto day = std::chrono::floor<std::chrono::days>(point).time_since_epoch().count();
 
             while (!mContextNode.ctx.stopped()) {
                 point += std::chrono::seconds(1);
@@ -49,6 +50,12 @@ void UManagerSystem::Init() {
 
                 for (const auto mgr: std::views::values(mManagerMap))
                     mgr->OnTick(point);
+
+                if (const auto today = std::chrono::floor<std::chrono::days>(point).time_since_epoch().count(); today != day) {
+                    day = today;
+                    for (const auto mgr: std::views::values(mManagerMap))
+                        mgr->OnDayChange();
+                }
             }
         } catch (std::exception &e) {
             spdlog::warn("{}", e.what());

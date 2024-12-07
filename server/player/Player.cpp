@@ -30,6 +30,10 @@ UEventModule &UPlayer::GetEventModule() {
     return mEventModule;
 }
 
+void UPlayer::OnDayChange() {
+    mComponentModule.OnDayChange();
+}
+
 awaitable<void> UPlayer::OnLogin() {
     if (!IsSameThread()) {
         RunInThread(&UPlayer::OnLogin, this);

@@ -22,6 +22,12 @@ UPlayer * UComponentModule::GetOwner() const {
     return mOwner;
 }
 
+void UComponentModule::OnDayChange() {
+    for (const auto &[comp, serializers] : mComponentMap | std::views::values) {
+        comp->OnDayChange(false);
+    }
+}
+
 void UComponentModule::Serialize(mysqlx::Schema &schema) {
     for (const auto& [comp, serialize] : std::views::values(mComponentMap)) {
         for (const auto& [tableName, node] : serialize) {

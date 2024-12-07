@@ -32,6 +32,7 @@ public:
     [[nodiscard]] bool IsSameThread() const;
 
     virtual void OnTick(ATimePoint now);
+    virtual void OnDayChange();
 
     [[nodiscard]] AIOContext &GetIOContext() const;
 

@@ -35,6 +35,8 @@ public:
 
     [[nodiscard]] UPlayer *GetOwner() const;
 
+    void OnDayChange();
+
     template<typename T>
     requires std::derived_from<T, IPlayerComponent>
     T *CreateComponent() {

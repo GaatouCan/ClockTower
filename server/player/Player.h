@@ -40,6 +40,8 @@ public:
     UComponentModule &GetComponentModule();
     UEventModule &GetEventModule();
 
+    void OnDayChange();
+
     awaitable<void> OnLogin();
     void OnLogout(bool bForce = false, const std::string &otherAddress = "");
 

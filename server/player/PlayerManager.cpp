@@ -12,6 +12,14 @@ UPlayerManager::~UPlayerManager() {
     mPlayerMap.clear();
 }
 
+void UPlayerManager::OnDayChange() {
+    for (const auto &plr: mPlayerMap | std::views::values) {
+        if (plr != nullptr && plr->IsOnline()) {
+            plr->OnDayChange();
+        }
+    }
+}
+
 awaitable<std::shared_ptr<UPlayer>> UPlayerManager::OnPlayerLogin(const std::shared_ptr<UConnection> &conn, const FPlayerID &id) {
     if (conn == nullptr || std::any_cast<FPlayerID>(conn->GetContext()) != id) {
         spdlog::error("{} - Null Connection Pointer Or Player ID Not Equal," __FUNCTION__);

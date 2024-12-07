@@ -76,7 +76,7 @@ if (MSVC)
     )
 else ()
     execute_process(
-            COMMAND ./pbt "--config=build.json"
+            COMMAND ./pbt "--config=config.json"
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     )
 endif ()

@@ -2,6 +2,7 @@
 #include "Player.h"
 
 #include <GameWorld.h>
+#include <system/config/ConfigSystem.h>
 
 UPlayerManager::UPlayerManager(FContextNode &ctx)
     : IManager(ctx) {
@@ -18,6 +19,11 @@ awaitable<std::shared_ptr<UPlayer>> UPlayerManager::OnPlayerLogin(const std::sha
     }
 
     if (const auto plr = FindPlayer(id.localID); plr != nullptr) {
+        {
+            std::scoped_lock lock(mPlayerMutex);
+            mPlayerMap.erase(id.localID);
+        }
+
         spdlog::info("{} - Player[{}] Over Login", __FUNCTION__, plr->GetFullID());
 
         plr->TryLeaveScene();
@@ -34,13 +40,14 @@ awaitable<std::shared_ptr<UPlayer>> UPlayerManager::OnPlayerLogin(const std::sha
     const auto plr = std::make_shared<UPlayer>(conn);
 
     {
-        std::unique_lock lock(mPlayerMutex);
+        std::scoped_lock lock(mPlayerMutex);
         mPlayerMap[id.localID] = plr;
     }
-    spdlog::info("{} - New Player[{}] Login", __FUNCTION__, plr->GetFullID());
 
+    spdlog::info("{} - New Player[{}] Login", __FUNCTION__, plr->GetFullID());
     co_await plr->OnLogin();
 
+    // 同步玩家缓存数据
     SyncCache(plr);
 
     co_return plr;
@@ -71,25 +78,6 @@ std::shared_ptr<UPlayer> UPlayerManager::RemovePlayer(const uint32_t pid) {
     }
     return nullptr;
 }
-
-// void UPlayerManager::Broadcast(IPackage *pkg, const std::set<uint64_t> &except) {
-//     if (pkg == nullptr)
-//         return;
-//
-//     for (const auto &[pid, plr] : mPlayerMap) {
-//         if (except.contains(pid))
-//             continue;
-//
-//         if (plr->IsOnline()) {
-//             const auto tPkg = plr->GetConnection()->BuildPackage();
-//             tPkg->CopyFromOther(pkg);
-//             plr->Send(tPkg);
-//         }
-//     }
-//     if (const auto pool = pkg->GetOwnerPool(); pool != nullptr) {
-//         pool->Recycle(pkg);
-//     }
-// }
 
 void UPlayerManager::SendToList(IPackage *pkg, const std::set<FPlayerID>& players) {
     if (pkg == nullptr)
@@ -140,6 +128,11 @@ void UPlayerManager::SyncCache(const FCacheNode &node) {
 awaitable<std::optional<FCacheNode>> UPlayerManager::FindCacheNode(const FPlayerID &pid) {
     if (!pid.IsValid())
         co_return std::nullopt;
+
+    if (pid.crossID != GetServerID()) {
+        // TODO
+        co_return std::nullopt;
+    }
 
     if (const auto plr = FindPlayer(pid.localID); plr != nullptr) {
         SyncCache(plr);

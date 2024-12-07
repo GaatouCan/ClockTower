@@ -1,14 +1,14 @@
 echo "Creating Third Library..."
 
 SOURCE_DIR="source"
-INSTALL_DIR="../../install"
+# INSTALL_DIR="../../install"
 
 ASIO_DIR="asio-1.30.2"
 #LUA_DIR="lua-5.4.7"
 
-ZLIB_INC_DIR="$INSTALL_DIR/zlib/include"
-ZLIB_LIB_DEBUG="$INSTALL_DIR/zlib/lib/libz.so"
-ZLIB_LIB_RELEASE="$INSTALL_DIR/zlib/lib/libz.so"
+# ZLIB_INC_DIR="$INSTALL_DIR/zlib/include"
+# ZLIB_LIB_DEBUG="$INSTALL_DIR/zlib/lib/libz.so"
+# ZLIB_LIB_RELEASE="$INSTALL_DIR/zlib/lib/libz.so"
 
 TARGET_LIST=()
 
@@ -83,7 +83,7 @@ for elem in "${TARGET_LIST[@]}"; do
 done
 
 # protobuf
-# git clone -b v29.0 https://github.com/protocolbuffers/protobuf.git
+# git clone -b v29.1 https://github.com/protocolbuffers/protobuf.git
 
 cd protobuf || exit
 # git submodule update --init --recursive

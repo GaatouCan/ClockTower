@@ -92,7 +92,7 @@ for %%i in (%TARGET_LIST%) do (
 )
 
 @REM protobuf
-@REM git clone -b v29.0 https://github.com/protocolbuffers/protobuf.git
+@REM git clone -b v29.1 https://github.com/protocolbuffers/protobuf.git
 
 cd ./protobuf
 git submodule update --init --recursive

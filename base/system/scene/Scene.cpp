@@ -18,17 +18,12 @@ uint32_t UScene::GetSceneID() const {
 }
 
 void UScene::PlayerEnterScene(const std::shared_ptr<IAbstractPlayer> &player) {
-    // if (std::this_thread::get_id() != GetWorld().GetThreadID()) {
-    //     RunInThread(&UScene::PlayerEnterScene, this, player);
-    //     return;
-    // }
-
     if (player == nullptr)
         return;
 
     {
         std::shared_lock lock(mSharedMutex);
-        if (mPlayerMap.contains(player->GetPlayerID()))
+        if (mPlayerMap.contains(player->GetLocalID()))
             return;
     }
 
@@ -43,28 +38,23 @@ void UScene::PlayerEnterScene(const std::shared_ptr<IAbstractPlayer> &player) {
 
     {
         std::scoped_lock lock(mMutex);
-        mPlayerMap[player->GetPlayerID()] = player;
+        mPlayerMap[player->GetLocalID()] = player;
         spdlog::info("{} - Player[{}] Enter Scene[{}].", __FUNCTION__, player->GetFullID(), mSceneID);
     }
     player->OnEnterScene(this);
 }
 
 void UScene::PlayerLeaveScene(const std::shared_ptr<IAbstractPlayer> &player, const bool bChange) {
-    // if (std::this_thread::get_id() != GetWorld().GetThreadID()) {
-    //     RunInThread(&UScene::PlayerLeaveScene, this, player, bChange);
-    //     return;
-    // }
-
     if (player == nullptr)
         return;
 
     {
         std::scoped_lock lock(mSharedMutex);
 
-        if (!mPlayerMap.contains(player->GetPlayerID()))
+        if (!mPlayerMap.contains(player->GetLocalID()))
             return;
 
-        mPlayerMap.erase(player->GetPlayerID());
+        mPlayerMap.erase(player->GetLocalID());
         spdlog::info("{} - Player[{}] Leave Scene[{}].", __FUNCTION__, player->GetFullID(), mSceneID);
     }
 
@@ -72,8 +62,8 @@ void UScene::PlayerLeaveScene(const std::shared_ptr<IAbstractPlayer> &player, co
         player->OnLeaveScene(this);
 }
 
-std::shared_ptr<IAbstractPlayer> UScene::GetPlayer(const FPlayerID &pid) const {
-    if (!pid.IsValid())
+std::shared_ptr<IAbstractPlayer> UScene::GetPlayer(const uint32_t pid) const {
+    if (pid < kPlayerLocalIDBegin || pid > kPlayerLocalIDEnd)
         return nullptr;
 
     std::shared_lock lock(mSharedMutex);
@@ -83,7 +73,7 @@ std::shared_ptr<IAbstractPlayer> UScene::GetPlayer(const FPlayerID &pid) const {
     return nullptr;
 }
 
-void UScene::BroadCast(IPackage *pkg, const std::set<FPlayerID> &except) {
+void UScene::BroadCast(IPackage *pkg, const std::set<uint32_t> &except) {
     if (pkg == nullptr)
         return;
 

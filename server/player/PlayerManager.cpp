@@ -17,7 +17,7 @@ awaitable<std::shared_ptr<UPlayer>> UPlayerManager::OnPlayerLogin(const std::sha
         co_return nullptr;
     }
 
-    if (const auto plr = FindPlayer(id); plr != nullptr) {
+    if (const auto plr = FindPlayer(id.localID); plr != nullptr) {
         spdlog::info("{} - Player[{}] Over Login", __FUNCTION__, plr->GetFullID());
 
         plr->TryLeaveScene();
@@ -35,7 +35,7 @@ awaitable<std::shared_ptr<UPlayer>> UPlayerManager::OnPlayerLogin(const std::sha
 
     {
         std::unique_lock lock(mPlayerMutex);
-        mPlayerMap[id] = plr;
+        mPlayerMap[id.localID] = plr;
     }
     spdlog::info("{} - New Player[{}] Login", __FUNCTION__, plr->GetFullID());
 
@@ -48,13 +48,13 @@ awaitable<std::shared_ptr<UPlayer>> UPlayerManager::OnPlayerLogin(const std::sha
 
 void UPlayerManager::OnPlayerLogout(const FPlayerID pid) {
     spdlog::info("{} - Player[{}] Logout", __FUNCTION__, pid.ToUInt64());
-    if (const auto plr = RemovePlayer(pid); plr != nullptr) {
+    if (const auto plr = RemovePlayer(pid.localID); plr != nullptr) {
         plr->TryLeaveScene();
         plr->OnLogout();
     }
 }
 
-std::shared_ptr<UPlayer> UPlayerManager::FindPlayer(const FPlayerID &pid) {
+std::shared_ptr<UPlayer> UPlayerManager::FindPlayer(const uint32_t pid) {
     std::shared_lock lock(mPlayerSharedMutex);
     if (const auto it = mPlayerMap.find(pid); it != mPlayerMap.end()) {
         return it->second;
@@ -62,7 +62,7 @@ std::shared_ptr<UPlayer> UPlayerManager::FindPlayer(const FPlayerID &pid) {
     return nullptr;
 }
 
-std::shared_ptr<UPlayer> UPlayerManager::RemovePlayer(const FPlayerID &pid) {
+std::shared_ptr<UPlayer> UPlayerManager::RemovePlayer(const uint32_t pid) {
     std::scoped_lock lock(mPlayerMutex);
     if (const auto it = mPlayerMap.find(pid); it != mPlayerMap.end()) {
         auto res = it->second;
@@ -95,8 +95,9 @@ void UPlayerManager::SendToList(IPackage *pkg, const std::set<FPlayerID>& player
     if (pkg == nullptr)
         return;
 
-    for (const auto pid : players) {
-        if (const auto plr = FindPlayer(pid); plr != nullptr && plr->IsOnline()) {
+    for (const auto [localID, crossID] : players) {
+
+        if (const auto plr = FindPlayer(localID); plr != nullptr && plr->IsOnline()) {
             const auto tPkg = plr->GetConnection()->BuildPackage();
             tPkg->CopyFromOther(pkg);
             plr->SendPackage(tPkg);
@@ -119,8 +120,8 @@ void UPlayerManager::SyncCache(const std::shared_ptr<UPlayer> &plr) {
     SyncCache(node);
 }
 
-void UPlayerManager::SyncCache(const FPlayerID &pid) {
-    if (!pid.IsValid())
+void UPlayerManager::SyncCache(const uint32_t pid) {
+    if (pid < kPlayerLocalIDBegin || pid > kPlayerLocalIDEnd)
         return;
 
     const auto plr = FindPlayer(pid);
@@ -132,7 +133,7 @@ void UPlayerManager::SyncCache(const FCacheNode &node) {
         return;
 
     std::scoped_lock lock(mCacheMutex);
-    mCacheMap[node.pid] = node;
+    mCacheMap[node.pid.localID] = node;
     spdlog::info("{} - Player[{}] Success.", __FUNCTION__, node.pid.ToUInt64());
 }
 
@@ -140,12 +141,12 @@ awaitable<std::optional<FCacheNode>> UPlayerManager::FindCacheNode(const FPlayer
     if (!pid.IsValid())
         co_return std::nullopt;
 
-    if (const auto plr = FindPlayer(pid); plr != nullptr) {
+    if (const auto plr = FindPlayer(pid.localID); plr != nullptr) {
         SyncCache(plr);
     }
 
     std::shared_lock lock(mCacheSharedMutex);
-    if (const auto it = mCacheMap.find(pid); it != mCacheMap.end()) {
+    if (const auto it = mCacheMap.find(pid.localID); it != mCacheMap.end()) {
         co_return std::make_optional(it->second);
     }
 

@@ -22,7 +22,7 @@ class UScene final {
 
     uint32_t mSceneID;
 
-    std::map<FPlayerID, std::shared_ptr<IAbstractPlayer>> mPlayerMap;
+    std::map<uint32_t, std::shared_ptr<IAbstractPlayer>> mPlayerMap;
     std::mutex mMutex;
     mutable std::shared_mutex mSharedMutex;
 
@@ -50,8 +50,8 @@ public:
     void PlayerEnterScene(const std::shared_ptr<IAbstractPlayer> &player);
     void PlayerLeaveScene(const std::shared_ptr<IAbstractPlayer> &player, bool bChange = false);
 
-    std::shared_ptr<IAbstractPlayer> GetPlayer(const FPlayerID &pid) const;
+    std::shared_ptr<IAbstractPlayer> GetPlayer(uint32_t pid) const;
 
-    void BroadCast(IPackage *pkg, const std::set<FPlayerID> &except = {});
+    void BroadCast(IPackage *pkg, const std::set<uint32_t> &except = {});
 };
 

@@ -14,11 +14,11 @@ class UConnection;
 
 class UPlayerManager final : public IManager {
 
-    std::map<FPlayerID, std::shared_ptr<UPlayer>> mPlayerMap;
+    std::map<uint32_t, std::shared_ptr<UPlayer>> mPlayerMap;
     std::mutex mPlayerMutex;
     mutable std::shared_mutex mPlayerSharedMutex;
 
-    std::map<FPlayerID, FCacheNode> mCacheMap;
+    std::map<uint32_t, FCacheNode> mCacheMap;
     std::mutex mCacheMutex;
     mutable std::shared_mutex mCacheSharedMutex;
 
@@ -34,15 +34,15 @@ public:
 
     void OnPlayerLogout(FPlayerID pid);
 
-    std::shared_ptr<UPlayer> FindPlayer(const FPlayerID &pid);
-    std::shared_ptr<UPlayer> RemovePlayer(const FPlayerID &pid);
+    std::shared_ptr<UPlayer> FindPlayer(uint32_t pid);
+    std::shared_ptr<UPlayer> RemovePlayer(uint32_t pid);
 
     // void Broadcast(IPackage *pkg, const std::set<uint64_t> &except = {});
 
     void SendToList(IPackage *pkg, const std::set<FPlayerID>& players);
 
     void SyncCache(const std::shared_ptr<UPlayer> &plr);
-    void SyncCache(const FPlayerID &pid);
+    void SyncCache(uint32_t pid);
     void SyncCache(const FCacheNode &node);
 
     awaitable<std::optional<FCacheNode>> FindCacheNode(const FPlayerID &pid);

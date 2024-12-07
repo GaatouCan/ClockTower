@@ -3,6 +3,8 @@
 #include <cstdint>
 
 static constexpr unsigned int kCrossServerIDOffset = 1'000'000;
+static constexpr unsigned int kPlayerLocalIDBegin = 1'000;
+static constexpr unsigned int kPlayerLocalIDEnd = 99'999;
 
 struct FPlayerID {
     // 1000 - 99999
@@ -40,6 +42,6 @@ struct FPlayerID {
     }
 
     [[nodiscard]] bool IsValid() const {
-        return (localID >= 1000 && localID <= 99999) && crossID > 0;
+        return (localID >= kPlayerLocalIDBegin && localID <= kPlayerLocalIDEnd) && crossID > 0;
     }
 };

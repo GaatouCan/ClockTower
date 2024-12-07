@@ -52,7 +52,7 @@ awaitable<void> UCommandManager::OnClientCommand(
     if (cmd == nullptr)
         co_return;
 
-    cmd->SetSender(player->GetFullID());
+    cmd->SetSender(player->GetLocalID());
     co_await cmd->Execute();
     co_return;
 }

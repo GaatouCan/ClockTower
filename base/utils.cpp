@@ -118,7 +118,7 @@ int GetDayOfWeek(const ATimePoint point) {
 #ifdef WIN32
     localtime_s(&tm, &currentTime);
 #else
-    localtime_r(&current_time, &tm);
+    localtime_r(&currentTime, &tm);
 #endif
     return tm.tm_wday;
 }

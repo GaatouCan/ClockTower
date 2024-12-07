@@ -18,14 +18,14 @@ void USceneSystem::Init() {
         auto scene = new UScene(index++);
         mSceneVector.push_back(scene);
 
-        spdlog::info("{} - Created Main Scene[{}].", __FUNCTION__, scene->GetSceneID());
+        spdlog::info("\tCreated Main Scene[{}].", scene->GetSceneID());
     }
 
     for (const auto it : cfg["scene"]["state"]) {
         auto scene = new UScene(index++);
         mSceneVector.push_back(scene);
 
-        spdlog::info("{} - Created State Scene[{}].", __FUNCTION__, scene->GetSceneID());
+        spdlog::info("\tCreated State Scene[{}].", scene->GetSceneID());
     }
 }
 

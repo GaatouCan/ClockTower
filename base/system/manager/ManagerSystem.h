@@ -31,7 +31,7 @@ public:
     T* CreateManager() {
         auto mgr = new T(mContextNode);
         mManagerMap[typeid(T)] = mgr;
-        spdlog::info("{} - Loaded {}", __FUNCTION__, mgr->GetManagerName());
+        spdlog::info("\tLoaded {}", mgr->GetManagerName());
         return mgr;
     }
 

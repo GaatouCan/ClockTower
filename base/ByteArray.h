@@ -60,12 +60,13 @@ struct FByteArray {
     template<typename T>
     requires IsPODType<T>
     bool CastToType(T *target) const {
-        const auto size = mBytes.size() < sizeof(std::remove_pointer_t<T>) ? mBytes.size() : sizeof(std::remove_pointer_t<T>);
+        const bool ret = mBytes.size() >= sizeof(std::remove_pointer_t<T>);
+        const auto size = ret ?  sizeof(std::remove_pointer_t<T>) : mBytes.size();
 
         memset(target, 0, size);
         memcpy(target, mBytes.data(), size);
 
-        return true;
+        return ret;
     }
 
     template<typename T>
@@ -94,10 +95,11 @@ std::vector<uint8_t> PODToByteArray(T data) {
 template<typename T>
 requires FByteArray::IsPODType<T>
 bool ByteArrayToPOD(const std::vector<uint8_t> &bytes, T *data) {
-    const auto size = bytes.size() < sizeof(std::remove_pointer_t<T>) ? bytes.size() : sizeof(std::remove_pointer_t<T>);
+    const bool ret = bytes.size() >= sizeof(std::remove_pointer_t<T>);
+    const auto size = ret ? sizeof(std::remove_pointer_t<T>) : bytes.size();
 
     memset(data, 0, size);
     memcpy(data, bytes.data(), size);
 
-    return true;
+    return ret;
 }

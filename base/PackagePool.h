@@ -4,7 +4,7 @@
 
 #include <queue>
 #include <set>
-#include <mutex>
+#include <shared_mutex>
 #include <yaml-cpp/yaml.h>
 
 
@@ -17,10 +17,10 @@ class UPackagePool final {
 
     std::queue<IPackage *> mQueue;
     std::set<IPackage *> mInUseSet;
-    ATimePoint mCollectTime;
-    AThreadID mThreadID;
+    std::atomic<ATimePoint> mCollectTime;
 
     std::mutex mMutex;
+    mutable std::shared_mutex mSharedMutex;
 
     // 扩容和收缩临界点和比例
     // 每个线程下的数据包池行为目前设计为一致
@@ -44,10 +44,6 @@ public:
     DISABLE_COPY_MOVE(UPackagePool)
 
     [[nodiscard]] size_t GetCapacity() const;
-
-    void SetThreadID(AThreadID id);
-    [[nodiscard]] AThreadID GetThreadID() const;
-    [[nodiscard]] bool IsInSameThread() const;
 
     /**
      * 从池里获取一个数据包

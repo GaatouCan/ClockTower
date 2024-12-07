@@ -74,8 +74,8 @@ public:
         }, detached);
     }
 
-    template<typename FUNC, typename... ARGS>
-    FUniqueID SetTimer(const std::chrono::duration<uint32_t> expire, const bool repeat, FUNC &&func, ARGS &&... args) {
+    template<typename Functor, typename... Args>
+    std::optional<FUniqueID> SetTimer(const std::chrono::duration<uint32_t> expire, const bool repeat, Functor &&func, Args &&... args) {
         FUniqueID timerID = FUniqueID::RandGenerate();
         {
             std::shared_lock lock(mTimerSharedMutex);
@@ -84,7 +84,6 @@ public:
             }
         }
 
-
         {
             std::scoped_lock lock(mTimerMutex);
             if (auto [iter, res] = mTimerMap.insert_or_assign(timerID, GetSocket().get_executor()); res) {
@@ -92,13 +91,13 @@ public:
                         .SetTimerID(timerID)
                         .SetExpireTime(expire)
                         .SetLoop(repeat)
-                        .SetCallback(std::forward<FUNC>(func), std::forward<ARGS>(args)...);
+                        .SetCallback(std::forward<Functor>(func), std::forward<Args>(args)...);
 
                 iter->second.Start();
                 return timerID;
             }
         }
-        return {};
+        return std::nullopt;
     }
 
     void StopTimer(FUniqueID timerID);

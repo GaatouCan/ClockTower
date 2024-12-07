@@ -43,6 +43,9 @@ public:
         } catch (std::bad_cast &e) {
             pkg->Invalid();
             spdlog::error("{} - {}", __FUNCTION__, e.what());
+        } catch (std::system_error &e) {
+            pkg->Invalid();
+            spdlog::warn("{} - {}", __FUNCTION__, e.what());
         }
     }
 

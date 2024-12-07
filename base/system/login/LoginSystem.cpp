@@ -52,7 +52,7 @@ awaitable<void> ULoginSystem::OnLogin(const AConnectionPointer &conn, IPackage *
                 }
             }
         }
-    } else if (pid.IsValid()) {
+    } else if (!pid.IsValid()) {
         spdlog::error("{} - Player ID not available - key[{}]", __FUNCTION__, conn->GetKey());
     } else if (pid.crossID != GetServerID()) {
         spdlog::error("{} - Server ID[{}] error, Connection Server ID[{}] - key[{}]", __FUNCTION__, GetServerID(), pid.ToUInt64(), conn->GetKey());

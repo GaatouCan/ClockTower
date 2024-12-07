@@ -86,6 +86,7 @@ IPackage *UPackagePool::Acquire() {
         pkg = mQueue.front();
         mQueue.pop();
         mInUseSet.insert(pkg);
+        spdlog::trace("{} - Rest[{}], Current Use[{}]", __FUNCTION__, mQueue.size(), mInUseSet.size());
     }
 
     if (sInitPackage)
@@ -107,6 +108,7 @@ void UPackagePool::Recycle(IPackage *pkg) {
 
         mQueue.push(pkg);
         mInUseSet.erase(pkg);
+        spdlog::trace("{} - Rest[{}], Current Use[{}]", __FUNCTION__, mQueue.size(), mInUseSet.size());
     }
 
     Reduce();
@@ -218,7 +220,7 @@ void UPackagePool::Reduce() {
 
     mCollectTime = now;
 
-    const auto num = static_cast<size_t>(std::ceil(static_cast<float>(GetCapacity()) * sCollectScale));
+    const auto num = static_cast<size_t>(std::floor(static_cast<float>(GetCapacity()) * sCollectScale));
     spdlog::trace("{} - Pool Rest[{}], Current Using[{}], Collect Number[{}].", __FUNCTION__, mQueue.size(), mInUseSet.size(), num);
 
     std::scoped_lock lock(mMutex);
@@ -227,4 +229,6 @@ void UPackagePool::Reduce() {
         mQueue.pop();
         delete pkg;
     }
+
+    spdlog::trace("{} - Pool Rest[{}], Current Using[{}].", __FUNCTION__, mQueue.size(), mInUseSet.size());
 }

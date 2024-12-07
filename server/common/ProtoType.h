@@ -14,7 +14,7 @@ namespace protocol {
 		// Login
 		CS_LoginRequest = 1001,
 		SC_LoginResponse = 1002,
-		SC_OverrideLoginResponse = 1003,
+		SC_ForceLogoutResponse = 1003,
 
 		// Appearance
 		CS_AppearanceRequest = 2001,
@@ -35,7 +35,7 @@ namespace protocol {
 			// Login
 			case EProtoType::CS_LoginRequest: return "CS_LoginRequest";
 			case EProtoType::SC_LoginResponse: return "SC_LoginResponse";
-			case EProtoType::SC_OverrideLoginResponse: return "SC_OverrideLoginResponse";
+			case EProtoType::SC_ForceLogoutResponse: return "SC_ForceLogoutResponse";
 
 			// Appearance
 			case EProtoType::CS_AppearanceRequest: return "CS_AppearanceRequest";

@@ -28,13 +28,12 @@ awaitable<std::shared_ptr<UPlayer>> UPlayerManager::OnPlayerLogin(const std::sha
 
         plr->TryLeaveScene();
 
-        // 首先断开旧连接
+        if (plr->IsOnline()) {
+            plr->OnLogout(true, conn->RemoteAddress().to_string());
+        }
+
         plr->GetConnection()->ResetContext();
         plr->GetConnection()->Disconnect();
-
-        if (plr->IsOnline()) {
-            plr->OnLogout();
-        }
     }
 
     const auto plr = std::make_shared<UPlayer>(conn);

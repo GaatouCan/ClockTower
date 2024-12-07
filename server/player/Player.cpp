@@ -63,12 +63,12 @@ awaitable<void> UPlayer::OnLogin() {
     DISPATCH_EVENT(PLAYER_LOGIN, param)
 }
 
-void UPlayer::OnLogout() {
+void UPlayer::OnLogout(const bool bForce, const std::string &otherAddress) {
     if (!IsSameThread()) {
         RunInThread(&UPlayer::OnLogin, this);
         return;
     }
-    mLoginTime = NowTimePoint();
+    mLogoutTime = NowTimePoint();
     CleanAllTimer();
 
     if (const auto sys = GetSystem<UDatabaseSystem>(); sys != nullptr) {
@@ -89,6 +89,14 @@ void UPlayer::OnLogout() {
 
     mComponentModule.OnLogout();
     spdlog::info("{} - Player[{}] Logout.", __FUNCTION__, GetFullID());
+
+    if (bForce) {
+        Login::SC_ForceLogoutResponse res;
+        res.set_player_id(GetFullID());
+        res.set_address(otherAddress);
+
+        SEND_PACKAGE(this, SC_ForceLogoutResponse, res)
+    }
 
     const auto param = new FEP_PlayerLogout;
     param->pid = GetFullID();

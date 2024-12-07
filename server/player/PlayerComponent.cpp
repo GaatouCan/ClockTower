@@ -25,6 +25,9 @@ void IPlayerComponent::OnLogin() {
 void IPlayerComponent::OnLogout() {
 }
 
+void IPlayerComponent::OnDayChange(bool bLogin) {
+}
+
 void IPlayerComponent::SyncCache(FCacheNode *node) {
 }
 

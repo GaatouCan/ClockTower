@@ -19,6 +19,7 @@ public:
 
     virtual void OnLogin();
     virtual void OnLogout();
+    virtual void OnDayChange(bool bLogin);
 
     virtual void SyncCache(struct FCacheNode *node);
 

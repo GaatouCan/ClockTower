@@ -22,6 +22,7 @@ message SC_LoginResponse {
   string describe = 3;
 }
 
-message SC_OverrideLoginResponse {
+message SC_ForceLogoutResponse {
   uint64 player_id = 1;
+  string address = 2;
 }

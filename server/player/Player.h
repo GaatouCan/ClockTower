@@ -41,7 +41,7 @@ public:
     UEventModule &GetEventModule();
 
     awaitable<void> OnLogin();
-    void OnLogout();
+    void OnLogout(bool bForce = false, const std::string &otherAddress = "");
 
     bool IsOnline() const;
 

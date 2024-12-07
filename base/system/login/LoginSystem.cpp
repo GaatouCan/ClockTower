@@ -8,6 +8,8 @@
 
 #include <spdlog/spdlog.h>
 
+#include "../config/ConfigSystem.h"
+
 
 void ULoginSystem::Init() {
 }
@@ -28,7 +30,8 @@ awaitable<void> ULoginSystem::OnLogin(const AConnectionPointer &conn, IPackage *
 
     if (mHandler == nullptr) {
         spdlog::critical("{} - handler not set.", __FUNCTION__);
-        co_return;
+        GetWorld().Shutdown();
+        exit(-1);
     }
 
     const auto info = co_await mHandler->ParseLoginInfo(pkg);
@@ -38,18 +41,23 @@ awaitable<void> ULoginSystem::OnLogin(const AConnectionPointer &conn, IPackage *
     }
 
     spdlog::trace("{} - Player id: {}, token: {}", __FUNCTION__, info.pid.ToUInt64(), info.token);
-    if (const auto pid = VerifyToken(info.pid, info.token); pid.IsValid()) {
+    if (const auto pid = VerifyToken(info.pid, info.token); pid.IsValid() && pid.crossID == GetServerID()) {
         conn->SetContext(std::make_any<FPlayerID>(pid));
 
         if (const auto plr = co_await mHandler->OnPlayerLogin(conn, info); plr != nullptr) {
             if (const auto sys = GetSystem<USceneSystem>(); sys != nullptr) {
                 if (const auto scene = sys->GetSceneByID(conn->GetNodeIndex()); scene != nullptr) {
                     scene->PlayerEnterScene(plr);
+                    co_return;
                 }
             }
-        } else {
-            conn->ResetContext();
-            conn->Disconnect();
         }
+    } else if (pid.IsValid()) {
+        spdlog::error("{} - Player ID not available - key[{}]", __FUNCTION__, conn->GetKey());
+    } else if (pid.crossID != GetServerID()) {
+        spdlog::error("{} - Server ID[{}] error, Connection Server ID[{}] - key[{}]", __FUNCTION__, GetServerID(), pid.ToUInt64(), conn->GetKey());
     }
+
+    conn->ResetContext();
+    conn->Disconnect();
 }

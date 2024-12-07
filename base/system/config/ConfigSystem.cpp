@@ -26,6 +26,7 @@ void UConfigSystem::Init() {
     assert(!mConfig["server"].IsNull());
     assert(!mConfig["server"]["port"].IsNull());
     assert(!mConfig["server"]["work_thread"].IsNull());
+    assert(!mConfig["server"]["cross_id"].IsNull());
 
     assert(!mConfig["log_dir"].IsNull());
 

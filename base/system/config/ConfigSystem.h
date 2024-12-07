@@ -78,5 +78,10 @@ inline const YAML::Node &GetServerConfig() {
     return cfgSys->GetConfig();
 }
 
+inline uint32_t GetServerID() {
+    const auto cfg = GetServerConfig();
+    return cfg["server"]["cross_id"].as<uint32_t>();
+}
+
 #define REGISTER_LOGIC_CONFIG(cfg, ...) \
     sys->CreateLogicConfig<cfg>({__VA_ARGS__});

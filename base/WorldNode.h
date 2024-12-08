@@ -9,6 +9,7 @@
 #include <memory>
 
 class UWorldNode final : std::enable_shared_from_this<UWorldNode> {
+
     ATcpSocket mSocket;
     UPackagePool &mPool;
     size_t mNodeIndex;
@@ -27,4 +28,10 @@ class UWorldNode final : std::enable_shared_from_this<UWorldNode> {
 
     uint32_t mContextNullCount = 0;
     std::any mContext;
+
+public:
+    UWorldNode() = delete;
+
+    explicit UWorldNode(ATcpSocket socket, UPackagePool &pool);
+    ~UWorldNode();
 };

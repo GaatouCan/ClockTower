@@ -1,8 +1,6 @@
 #pragma once
 
-#include "actor.h"
-
-class UCharacter : public UActor {
+class UCharacter {
 public:
-    ~UCharacter() override = default;
+    virtual ~UCharacter() = default;
 };

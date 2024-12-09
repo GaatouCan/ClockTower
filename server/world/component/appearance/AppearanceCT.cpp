@@ -13,7 +13,7 @@
 #include <appearance.pb.h>
 
 #include "game_world.h"
-#include "system/config/ConfigSystem.h"
+#include "system/config/config_system.h"
 
 UAppearanceCT::UAppearanceCT(UComponentModule *module)
     : IPlayerComponent(module) {

@@ -6,8 +6,8 @@
 #include <vector>
 #include <asio.hpp>
 
-#include <UniqueID.h>
-#include <PlayerID.h>
+#include <unique_id.h>
+#include <player_id.h>
 
 using asio::awaitable;
 

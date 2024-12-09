@@ -2,8 +2,8 @@
 
 #include "CacheNode.h"
 
-#include <system/manager/Manager.h>
-#include <PlayerID.h>
+#include <system/manager/manager.h>
+#include <player_id.h>
 
 #include <mutex>
 #include <shared_mutex>

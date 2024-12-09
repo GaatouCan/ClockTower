@@ -83,7 +83,6 @@ endif ()
 
 file(GLOB_RECURSE BASE_SRC
         ${CMAKE_SOURCE_DIR}/base/*.h
-        ${CMAKE_SOURCE_DIR}/base/*.cpp
         ${CMAKE_SOURCE_DIR}/base/*.cc
 )
 

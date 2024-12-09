@@ -2,8 +2,8 @@
 
 #include "ChatRoom.h"
 
-#include <UniqueID.h>
-#include <system/manager/Manager.h>
+#include <unique_id.h>
+#include <system/manager/manager.h>
 
 
 class UChatManager final : public IManager {

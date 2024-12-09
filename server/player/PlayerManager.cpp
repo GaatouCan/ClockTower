@@ -2,7 +2,7 @@
 #include "Player.h"
 
 #include <game_world.h>
-#include <system/config/ConfigSystem.h>
+#include <system/config/config_system.h>
 
 UPlayerManager::UPlayerManager(FContextNode &ctx)
     : IManager(ctx) {

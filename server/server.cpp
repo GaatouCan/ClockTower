@@ -1,7 +1,7 @@
 ﻿#include <game_world.h>
 
-#include <system/protocol/ProtocolSystem.h>
-#include <system/login/LoginSystem.h>
+#include <system/protocol/protocol_system.h>
+#include <system/login/login_system.h>
 
 #include "impl/ConnectionHandlerImpl.h"
 #include "impl/ProtocolHandlerImpl.h"

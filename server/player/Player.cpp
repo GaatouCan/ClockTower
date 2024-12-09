@@ -4,8 +4,8 @@
 
 #include <game_world.h>
 #include <impl/package.h>
-#include <system/event/EventSystem.h>
-#include <system/database/DatabaseSystem.h>
+#include <system/event/event_system.h>
+#include <system/database/database_system.h>
 
 #include <utility>
 #include <ranges>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <system/manager/Manager.h>
+#include <system/manager/manager.h>
 #include <spdlog/spdlog.h>
 
 

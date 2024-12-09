@@ -2,7 +2,7 @@
 
 #include "../common/Event.h"
 
-#include <system/event/EventParam.h>
+#include <system/event/event_param.h>
 
 #include <queue>
 #include <mutex>

@@ -3,11 +3,11 @@
 #include "ComponentModule.h"
 #include "EventModule.h"
 
-#include <system/scene/AbstractPlayer.h>
+#include <system/scene/abstract_player.h>
 #include <connection.h>
-#include <RepeatedTimer.h>
-#include <system/login/PlatformInfo.h>
-#include <system/event/EventParam.h>
+#include <repeated_timer.h>
+#include <system/login/platform_info.h>
+#include <system/event/event_param.h>
 
 #include <spdlog/spdlog.h>
 

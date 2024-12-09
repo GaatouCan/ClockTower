@@ -215,7 +215,7 @@ def generate_orm_clazz(src: str, dist: str, desc: str):
  */\n\n''')
 
             file.write('#pragma once\n\n')
-            file.write('#include "../../base/system/database/DBTable.h"\n\n')
+            file.write('#include "../../base/system/database/db_table.h"\n\n')
 
             file.write('namespace orm {\n\n')
 

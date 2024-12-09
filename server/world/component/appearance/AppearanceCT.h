@@ -2,8 +2,8 @@
 
 #include "../../../player/PlayerComponent.h"
 
-#include <system/database/Serializer.h>
-#include <system/database/Deserializer.h>
+#include <system/database/serializer.h>
+#include <system/database/deserializer.h>
 #include <orm/appearance.orm.h>
 
 class UAppearanceCT final : public IPlayerComponent {

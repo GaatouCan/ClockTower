@@ -2,16 +2,16 @@
 
 #include "../player/Player.h"
 
-#include <system/command/AbstractCommand.h>
-#include <system/command/CommandSystem.h>
-#include <system/database/DatabaseSystem.h>
-#include <system/database/Deserializer.h>
+#include <system/command/abstract_command.h>
+#include <system/command/command_system.h>
+#include <system/database/database_system.h>
+#include <system/database/deserializer.h>
 #include <GameWorld.h>
 
 #include <spdlog/spdlog.h>
 #include <orm/command.orm.h>
 
-#include "system/database/Serializer.h"
+#include "system/database/serializer.h"
 
 
 UCommandManager::UCommandManager(FContextNode &ctx)

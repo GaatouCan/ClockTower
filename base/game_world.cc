@@ -3,12 +3,12 @@
 #include "utils.h"
 #include "impl/package_codec_impl.h"
 
-#include "system/config/ConfigSystem.h"
-#include "system/protocol/ProtocolSystem.h"
-#include "system/login/LoginSystem.h"
-#include "system/scene/SceneSystem.h"
-#include "system/manager/ManagerSystem.h"
-#include "system/event/EventSystem.h"
+#include "system/config/config_system.h"
+#include "system/protocol/protocol_system.h"
+#include "system/login/login_system.h"
+#include "system/scene/scene_system.h"
+#include "system/manager/manager_system.h"
+#include "system/event/event_system.h"
 
 
 UGameWorld::UGameWorld()

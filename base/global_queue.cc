@@ -59,11 +59,15 @@ void UGlobalQueue::OnPushTask(UTaskQueue *queue) {
         return;
 
     if (queue->IsEmpty())
-        return; {
+        return;
+
+    {
         std::shared_lock lock(mSharedMutex);
         if (!mEmptySet.contains(queue))
             return;
-    } {
+    }
+
+    {
         std::scoped_lock lock(mMutex);
         mEmptySet.erase(queue);
         mQueue.emplace(queue);
@@ -75,12 +79,15 @@ void UGlobalQueue::OnPushTask(UTaskQueue *queue) {
     mCondVar.notify_one();
 }
 
-UTaskQueue *UGlobalQueue::WaitForQueue() { {
+UTaskQueue *UGlobalQueue::WaitForQueue() {
+    {
         std::unique_lock lock(mBlocking);
         mCondVar.wait(lock, [this] { return !mQueue.empty() || bQuit; });
     }
 
-    UTaskQueue *res = nullptr; {
+    UTaskQueue *res = nullptr;
+
+    {
         std::scoped_lock lock(mMutex);
         res = mQueue.front();
         mQueue.pop();
@@ -103,7 +110,9 @@ void UGlobalQueue::PushQueue(UTaskQueue *queue) {
         std::scoped_lock lock(mMutex);
         mEmptySet.emplace(queue);
         return;
-    } {
+    }
+
+    {
         std::scoped_lock lock(mMutex);
         mQueue.emplace(queue);
     }

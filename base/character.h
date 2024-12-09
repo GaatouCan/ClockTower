@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Actor.h"
+#include "actor.h"
 
 class UCharacter : public UActor {
 public:

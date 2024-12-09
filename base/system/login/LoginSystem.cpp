@@ -1,7 +1,7 @@
 #include "LoginSystem.h"
 
-#include "../../Connection.h"
-#include "../../GameWorld.h"
+#include "../../connection.h"
+#include "../../game_world.h"
 
 #include "../scene/SceneSystem.h"
 #include "../scene/Scene.h"

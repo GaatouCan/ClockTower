@@ -4,7 +4,7 @@
 #include "EventModule.h"
 
 #include <system/scene/AbstractPlayer.h>
-#include <Connection.h>
+#include <connection.h>
 #include <RepeatedTimer.h>
 #include <system/login/PlatformInfo.h>
 #include <system/event/EventParam.h>

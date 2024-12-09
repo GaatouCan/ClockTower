@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../SubSystem.h"
-#include "../../GameWorld.h"
+#include "../../sub_system.h"
+#include "../../game_world.h"
 #include "LogicConfig.h"
 
 #include <spdlog/spdlog.h>

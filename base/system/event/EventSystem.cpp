@@ -1,5 +1,5 @@
 ﻿#include "EventSystem.h"
-#include "../../GameWorld.h"
+#include "../../game_world.h"
 
 #include <ranges>
 

@@ -4,7 +4,7 @@
 #include "../../../player/Player.h"
 #include "../../../common/proto_def.h"
 
-#include <impl/Package.h>
+#include <impl/package.h>
 #include <utils.h>
 
 #include <ranges>
@@ -12,7 +12,7 @@
 #include <spdlog/spdlog.h>
 #include <appearance.pb.h>
 
-#include "GameWorld.h"
+#include "game_world.h"
 #include "system/config/ConfigSystem.h"
 
 UAppearanceCT::UAppearanceCT(UComponentModule *module)

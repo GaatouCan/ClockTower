@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Package.h"
+#include "../package.h"
 
 #include <vector>
 #include <sstream>
@@ -20,18 +20,18 @@ class FPackage final : public IPackage {
     friend class UPackageCodecImpl;
 
     struct FHeader {
-        uint32_t magic;
-        uint32_t version;
+        uint32_t mMagic;
+        uint32_t mVersion;
 
-        ECodecMethod method;
-        uint16_t reserved;
+        ECodecMethod mMethod;
+        uint16_t mReserved;
 
-        uint32_t id;
-        size_t size;
+        uint32_t mID;
+        size_t mLength;
     };
 
     FHeader mHeader;
-    std::vector<uint8_t> mData;
+    std::vector<uint8_t> mBytes;
 
 public:
     FPackage();

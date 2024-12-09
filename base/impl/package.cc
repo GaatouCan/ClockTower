@@ -1,4 +1,4 @@
-#include "Package.h"
+#include "package.h"
 
 #ifdef __linux__
 #include <cstring>
@@ -16,10 +16,10 @@ FPackage::FPackage(const FPackage &rhs) : FPackage() {
     if (this != &rhs) {
         memcpy(&mHeader, &rhs.mHeader, sizeof(mHeader));
 
-        mData.resize(rhs.mData.size());
-        memcpy(mData.data(), rhs.mData.data(), rhs.mData.size());
+        mBytes.resize(rhs.mBytes.size());
+        memcpy(mBytes.data(), rhs.mBytes.data(), rhs.mBytes.size());
 
-        mHeader.size = mData.size();
+        mHeader.mLength = mBytes.size();
     }
 }
 
@@ -27,8 +27,8 @@ FPackage::FPackage(FPackage &&rhs) noexcept : FPackage() {
     if (this != &rhs) {
         memcpy(&mHeader, &rhs.mHeader, sizeof(mHeader));
 
-        mData = std::move(rhs.mData);
-        mHeader.size = mData.size();
+        mBytes = std::move(rhs.mBytes);
+        mHeader.mLength = mBytes.size();
     }
 }
 
@@ -36,10 +36,10 @@ FPackage &FPackage::operator=(const FPackage &rhs) {
     if (this != &rhs) {
         memcpy(&mHeader, &rhs.mHeader, sizeof(mHeader));
 
-        mData.resize(rhs.mData.size());
-        memcpy(mData.data(), rhs.mData.data(), rhs.mData.size());
+        mBytes.resize(rhs.mBytes.size());
+        memcpy(mBytes.data(), rhs.mBytes.data(), rhs.mBytes.size());
 
-        mHeader.size = mData.size();
+        mHeader.mLength = mBytes.size();
     }
     return *this;
 }
@@ -48,18 +48,18 @@ FPackage &FPackage::operator=(FPackage &&rhs) noexcept {
     if (this != &rhs) {
         memcpy(&mHeader, &rhs.mHeader, sizeof(mHeader));
 
-        mData = std::move(rhs.mData);
-        mHeader.size = mData.size();
+        mBytes = std::move(rhs.mBytes);
+        mHeader.mLength = mBytes.size();
     }
     return *this;
 }
 
 FPackage::FPackage(const uint32_t id, const std::string_view data)
     : FPackage() {
-    mData.resize(data.size());
-    memcpy(mData.data(), data.data(), data.size());
-    mHeader.id = id;
-    mHeader.size = mData.size();
+    mBytes.resize(data.size());
+    memcpy(mBytes.data(), data.data(), data.size());
+    mHeader.mID = id;
+    mHeader.mLength = mBytes.size();
 }
 
 FPackage::FPackage(const uint32_t id, const std::stringstream &ss)
@@ -69,32 +69,32 @@ FPackage::FPackage(const uint32_t id, const std::stringstream &ss)
 void FPackage::Reset() {
     memset(&mHeader, 0, sizeof(mHeader));
 
-    mData.clear();
-    mData.shrink_to_fit();
+    mBytes.clear();
+    mBytes.shrink_to_fit();
 }
 
 void FPackage::Invalid() {
-    mHeader.id = kUnavailablePackageId;
+    mHeader.mID = kUnavailablePackageId;
 }
 
 bool FPackage::IsAvailable() const {
-    return mHeader.id > kUnavailablePackageId;
+    return mHeader.mID > kUnavailablePackageId;
 }
 
 FPackage &FPackage::ChangeMethod(const ECodecMethod method) {
-    mHeader.method = method;
+    mHeader.mMethod = method;
     return *this;
 }
 
 FPackage &FPackage::SetPackageID(const uint32_t id) {
-    mHeader.id = id;
+    mHeader.mID = id;
     return *this;
 }
 
 FPackage &FPackage::SetData(const std::string_view data) {
-    mData.resize(data.size());
-    memcpy(mData.data(), data.data(), data.size());
-    mHeader.size = mData.size();
+    mBytes.resize(data.size());
+    memcpy(mBytes.data(), data.data(), data.size());
+    mHeader.mLength = mBytes.size();
     return *this;
 }
 
@@ -103,29 +103,29 @@ FPackage &FPackage::SetData(const std::stringstream &ss) {
 }
 
 FPackage &FPackage::SetMagic(const uint32_t magic) {
-    mHeader.magic = magic;
+    mHeader.mMagic = magic;
     return *this;
 }
 
 FPackage &FPackage::SetVersion(const uint32_t version) {
-    mHeader.version = version;
+    mHeader.mVersion = version;
     return *this;
 }
 
 uint32_t FPackage::GetMagic() const {
-    return mHeader.magic;
+    return mHeader.mMagic;
 }
 
 uint32_t FPackage::GetVersion() const {
-    return mHeader.version;
+    return mHeader.mVersion;
 }
 
 ECodecMethod FPackage::GetMethod() const {
-    return mHeader.method;
+    return mHeader.mMethod;
 }
 
 uint32_t FPackage::GetID() const {
-    return mHeader.id;
+    return mHeader.mID;
 }
 
 void FPackage::CopyFromOther(IPackage *other) {
@@ -135,13 +135,13 @@ void FPackage::CopyFromOther(IPackage *other) {
 }
 
 size_t FPackage::GetDataLength() const {
-    return mData.size();
+    return mBytes.size();
 }
 
 std::string FPackage::GetData() const {
-    return {mData.begin(), mData.end()};
+    return {mBytes.begin(), mBytes.end()};
 }
 
 const std::vector<uint8_t> &FPackage::GetRawData() const {
-    return mData;
+    return mBytes;
 }

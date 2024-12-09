@@ -1,4 +1,4 @@
-#include "MultiContextPool.h"
+#include "multi_context_pool.h"
 
 #include <spdlog/spdlog.h>
 
@@ -21,19 +21,19 @@ void UMultiContextPool::Start(const size_t num) {
     mNodeVec = std::vector<FContextNode>(num);
 
     for (size_t idx = 0; idx < num; ++idx) {
-        mNodeVec[idx].index = idx + 1;
+        mNodeVec[idx].mIndex = idx + 1;
     }
 
     for (auto &node: mNodeVec) {
-        mWorkVec.emplace_back(node.ctx);
+        mWorkVec.emplace_back(node.mIOContext);
         mThreadVec.emplace_back([this, &node] {
-            asio::signal_set signals(node.ctx, SIGINT, SIGTERM);
+            asio::signal_set signals(node.mIOContext, SIGINT, SIGTERM);
             signals.async_wait([&](auto, auto) {
-                node.ctx.stop();
+                node.mIOContext.stop();
             });
 
-            node.tid = std::this_thread::get_id();
-            node.ctx.run();
+            node.mThreadID = std::this_thread::get_id();
+            node.mIOContext.run();
         });
     }
     spdlog::info("MultiContextPool Started With {} Thread(s).", num);

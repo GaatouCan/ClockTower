@@ -1,6 +1,6 @@
-#include "PackageCodecImpl.h"
-#include "Package.h"
-#include "../Connection.h"
+#include "package_codec_impl.h"
+#include "package.h"
+#include "../connection.h"
 
 awaitable<void> UPackageCodecImpl::EncodeT(FPackage *pkg) {
     if (const auto len = co_await async_write(mConn.lock()->GetSocket(), asio::buffer(&pkg->mHeader, FPackage::headerSize)); len == 0) {
@@ -9,10 +9,10 @@ awaitable<void> UPackageCodecImpl::EncodeT(FPackage *pkg) {
         co_return;
     }
 
-    if (pkg->mHeader.size == 0)
+    if (pkg->mHeader.mLength == 0)
         co_return;
 
-    co_await async_write(mConn.lock()->GetSocket(), asio::buffer(pkg->mData));
+    co_await async_write(mConn.lock()->GetSocket(), asio::buffer(pkg->mBytes));
 }
 
 awaitable<void> UPackageCodecImpl::DecodeT(FPackage *pkg) {
@@ -22,9 +22,9 @@ awaitable<void> UPackageCodecImpl::DecodeT(FPackage *pkg) {
         co_return;
     }
 
-    if (pkg->mHeader.size == 0)
+    if (pkg->mHeader.mLength == 0)
         co_return;
 
-    pkg->mData.resize(pkg->mHeader.size);
-    co_await async_read(mConn.lock()->GetSocket(), asio::buffer(pkg->mData));
+    pkg->mBytes.resize(pkg->mHeader.mLength);
+    co_await async_read(mConn.lock()->GetSocket(), asio::buffer(pkg->mBytes));
 }

@@ -1,9 +1,9 @@
 ﻿#pragma once
 
 #include "common.h"
-#include "MultiContextPool.h"
-#include "Connection.h"
-#include "SubSystem.h"
+#include "multi_context_pool.h"
+#include "connection.h"
+#include "sub_system.h"
 
 #include <typeindex>
 #include <absl/random/random.h>
@@ -21,15 +21,15 @@ class UGameWorld final {
     ASystemTimer mFullTimer;
 
     struct FSystemPriority {
-        int priority;
-        std::type_index type;
+        int mPriority;
+        std::type_index mtTypeIndex;
 
         bool operator<(const FSystemPriority &other) const {
-            return priority < other.priority;
+            return mPriority < other.mPriority;
         }
 
         bool operator>(const FSystemPriority &other) const {
-            return priority > other.priority;
+            return mPriority > other.mPriority;
         }
     };
 

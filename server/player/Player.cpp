@@ -2,8 +2,8 @@
 
 #include "../common/ProtoType.h"
 
-#include <GameWorld.h>
-#include <impl/Package.h>
+#include <game_world.h>
+#include <impl/package.h>
 #include <system/event/EventSystem.h>
 #include <system/database/DatabaseSystem.h>
 

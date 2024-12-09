@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../../PlayerID.h"
-#include "../../Character.h"
-#include "../../Connection.h"
+#include "../../character.h"
+#include "../../connection.h"
 #include "../../RepeatedTimer.h"
 #include "../login/PlatformInfo.h"
 

@@ -1,5 +1,5 @@
-﻿#include "PackagePool.h"
-#include "impl/Package.h"
+﻿#include "package_pool.h"
+#include "impl/package.h"
 #include "system/config/ConfigSystem.h"
 
 #include <spdlog/spdlog.h>
@@ -37,8 +37,8 @@ void PackageDefaultInit(IPackage *pkg) {
     if (!cfg["package"]["version"].IsNull())
         tmp->SetVersion(cfg["package"]["version"].as<uint32_t>());
 
-    if (!cfg["package"]["method"].IsNull()) {
-        if (const auto method = cfg["package"]["method"].as<std::string>(); method == "LineBased")
+    if (!cfg["package"]["mMethod"].IsNull()) {
+        if (const auto method = cfg["package"]["mMethod"].as<std::string>(); method == "LineBased")
             tmp->ChangeMethod(ECodecMethod::LINE_BASED);
         else if (method == "Protobuf")
             tmp->ChangeMethod(ECodecMethod::PROTOBUF);

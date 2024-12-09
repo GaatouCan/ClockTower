@@ -2,7 +2,7 @@
 
 #include "../../RepeatedTimer.h"
 #include "../../utils.h"
-#include "../../ContextNode.h"
+#include "../../context_node.h"
 
 #include <map>
 #include <mutex>
@@ -40,7 +40,7 @@ public:
 
     template<typename Functor, typename... Args>
     void RunInThread(Functor &&func, Args &&... args) {
-        co_spawn(mContextNode.ctx, [func = std::forward<Functor>(func), ...args = std::forward<Args>(args)]() -> awaitable<void> {
+        co_spawn(mContextNode.mIOContext, [func = std::forward<Functor>(func), ...args = std::forward<Args>(args)]() -> awaitable<void> {
             try {
                 std::invoke(func, args...);
             } catch (std::exception &e) {
@@ -62,7 +62,7 @@ public:
 
         {
             std::scoped_lock lock(mTimerMutex);
-            if (auto [iter, res] = mTimerMap.insert_or_assign(timerID, mContextNode.ctx); res) {
+            if (auto [iter, res] = mTimerMap.insert_or_assign(timerID, mContextNode.mIOContext); res) {
                 iter->second
                         .SetTimerID(timerID)
                         .SetExpireTime(expire)

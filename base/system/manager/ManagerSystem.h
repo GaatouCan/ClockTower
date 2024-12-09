@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../GameWorld.h"
+#include "../../game_world.h"
 #include "Manager.h"
 
 #include <typeindex>

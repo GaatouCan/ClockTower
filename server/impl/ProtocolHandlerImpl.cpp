@@ -2,7 +2,7 @@
 #include "../player/Player.h"
 #include "../player/PlayerManager.h"
 
-#include <Connection.h>
+#include <connection.h>
 #include <system/manager/ManagerSystem.h>
 
 #include <spdlog/spdlog.h>

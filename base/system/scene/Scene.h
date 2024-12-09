@@ -6,7 +6,7 @@
 #include <mutex>
 #include <shared_mutex>
 
-#include "../../GameWorld.h"
+#include "../../game_world.h"
 #include "../../PlayerID.h"
 
 #ifdef __linux__

@@ -3,7 +3,7 @@
 #include "../common/ProtoType.h"
 #include "../player/PlayerManager.h"
 
-#include <GameWorld.h>
+#include <game_world.h>
 #include <system/protocol/ProtocolSystem.h>
 #include <system/login/LoginSystem.h>
 #include <system/manager/ManagerSystem.h>

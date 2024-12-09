@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../SubSystem.h"
+#include "../../sub_system.h"
 #include "EventParam.h"
 
 #include <queue>

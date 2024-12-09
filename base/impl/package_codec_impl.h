@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../PackageCodec.h"
-#include "Package.h"
+#include "../package_codec.h"
+#include "package.h"
 
 class UPackageCodecImpl final : public TPackageCodec<FPackage> {
 public:

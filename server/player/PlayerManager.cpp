@@ -1,7 +1,7 @@
 ﻿#include "PlayerManager.h"
 #include "Player.h"
 
-#include <GameWorld.h>
+#include <game_world.h>
 #include <system/config/ConfigSystem.h>
 
 UPlayerManager::UPlayerManager(FContextNode &ctx)

@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include "../../SubSystem.h"
-#include "../../TSDeque.h"
+#include "../../sub_system.h"
+#include "../../ts_deque.h"
 #include "../../DatabaseWrapper.h"
 
 #include <thread>

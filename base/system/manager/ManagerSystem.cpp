@@ -6,7 +6,7 @@
 
 UManagerSystem::UManagerSystem()
     : mManagerLoader(nullptr),
-      mTickTimer(mContextNode.ctx) {
+      mTickTimer(mContextNode.mIOContext) {
 }
 
 UManagerSystem::~UManagerSystem() {
@@ -15,8 +15,8 @@ UManagerSystem::~UManagerSystem() {
 
     mTickTimer.cancel();
 
-    if (!mContextNode.ctx.stopped())
-        mContextNode.ctx.stop();
+    if (!mContextNode.mIOContext.stopped())
+        mContextNode.mIOContext.stop();
 
     for (const auto mgr: std::views::values(mManagerMap))
         delete mgr;
@@ -28,22 +28,22 @@ void UManagerSystem::Init() {
     }
 
     mManagerThread = std::thread([this] {
-        mContextNode.tid = std::this_thread::get_id();
-        asio::signal_set signals(mContextNode.ctx, SIGINT, SIGTERM);
+        mContextNode.mThreadID = std::this_thread::get_id();
+        asio::signal_set signals(mContextNode.mIOContext, SIGINT, SIGTERM);
         signals.async_wait([&](auto, auto) {
-            mContextNode.ctx.stop();
+            mContextNode.mIOContext.stop();
         });
 
-        mContextNode.ctx.run();
+        mContextNode.mIOContext.run();
     });
 
-    co_spawn(mContextNode.ctx, [this]() mutable -> awaitable<void> {
+    co_spawn(mContextNode.mIOContext, [this]() mutable -> awaitable<void> {
         try {
             ATimePoint point = NowTimePoint();
             point = std::chrono::floor<std::chrono::seconds>(point);
             auto day = std::chrono::floor<std::chrono::days>(point).time_since_epoch().count();
 
-            while (!mContextNode.ctx.stopped()) {
+            while (!mContextNode.mIOContext.stopped()) {
                 point += std::chrono::seconds(1);
                 mTickTimer.expires_at(point);
                 co_await mTickTimer.async_wait();
@@ -68,9 +68,9 @@ void UManagerSystem::SetManagerLoader(const std::function<void(UManagerSystem *)
 }
 
 AThreadID UManagerSystem::GetThreadID() const {
-    return mContextNode.tid;
+    return mContextNode.mThreadID;
 }
 
 bool UManagerSystem::InManagerThread() const {
-    return mContextNode.tid == std::this_thread::get_id();
+    return mContextNode.mThreadID == std::this_thread::get_id();
 }

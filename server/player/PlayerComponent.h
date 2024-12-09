@@ -1,6 +1,6 @@
 #pragma once
 
-#include <impl/Package.h>
+#include <impl/package.h>
 
 class IPlayerComponent {
 

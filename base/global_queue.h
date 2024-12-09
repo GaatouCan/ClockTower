@@ -7,32 +7,38 @@
 #include <shared_mutex>
 #include <condition_variable>
 
-struct FQueueItem {
-    class UReactor *mReactor;
-    class UTaskQueue *mQueue;
-};
+
+class UReactor;
+class UTaskQueue;
+
 
 class UGlobalQueue final {
 
-    std::queue<FQueueItem> mQueue;
-
+    std::queue<UTaskQueue *> mQueue;
+    std::set<UTaskQueue *> mSet;
     std::map<UReactor *, UTaskQueue *> mReactorToQueue;
-    std::map<UTaskQueue *, UReactor *> mQueueToReactor;
-
     std::set<UTaskQueue *> mEmptySet;
 
-    std::mutex mBlockMutex;
+    std::mutex mMutex;
     mutable std::shared_mutex mSharedMutex;
 
     std::mutex mBlocking;
     std::condition_variable mCondVar;
 
+    std::atomic_bool bQuit;
+
 public:
     UGlobalQueue();
     ~UGlobalQueue();
 
+    void Quit();
+
     UTaskQueue *RegisterReactor(UReactor *reactor);
 
     UTaskQueue *FindByReactor(UReactor *reactor) const;
-    UReactor *FindByQueue(UTaskQueue *queue) const;
+
+    void OnPushTask(UTaskQueue *queue);
+
+    UTaskQueue *WaitForQueue();
+    void PushQueue(UTaskQueue *queue);
 };

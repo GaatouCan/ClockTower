@@ -7,13 +7,16 @@
 #include <shared_mutex>
 #include <condition_variable>
 
+class UGlobalQueue;
+class UReactor;
 
-using AReactorTask = std::function<void(class UReactor*)>;
+using AReactorTask = std::function<void(UReactor*)>;
 
 
 class UTaskQueue final {
 
-    class UGlobalQueue *mGlobal;
+    UGlobalQueue *mGlobal;
+    UReactor *mReactor;
 
     std::queue<AReactorTask> *mCurrentQueue;
     std::queue<AReactorTask> *mWaitingQueue;
@@ -27,8 +30,10 @@ class UTaskQueue final {
 public:
     UTaskQueue() = delete;
 
-    explicit UTaskQueue(UGlobalQueue *global);
+    UTaskQueue(UGlobalQueue *global, UReactor *reactor);
     ~UTaskQueue();
+
+    [[nodiscard]] UReactor *GetReactor() const;
 
     void PushTask(const AReactorTask &task);
 
@@ -36,6 +41,8 @@ public:
     [[nodiscard]] bool IsRunning() const;
 
     void OnAddToGlobal();
+    void OnRemoveFromGlobal();
+
     [[nodiscard]] bool IsInGlobal() const;
 
     void OnStart();

@@ -9,6 +9,9 @@ UGlobalQueue::UGlobalQueue()
 
 UGlobalQueue::~UGlobalQueue() {
     Quit();
+
+    for (const auto it: mSet)
+        delete it;
 }
 
 void UGlobalQueue::Quit() {
